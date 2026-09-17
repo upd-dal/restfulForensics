@@ -121,7 +121,7 @@
             
             <div class="page-navigation">
                <span></span>
-               <a href="#installation" class="next">Next →</a>
+               <a href="#" onclick="showPage('installation'); return false;">Next →</a>
             </div>
          </section>
          
@@ -167,8 +167,8 @@
            </section>
            
             <div class="page-navigation">
-               <a href="#introduction">← Previous</a>
-               <a href="#features" class="next">Next →</a>
+               <a href="#" onclick="showPage('introduction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('features'); return false;">Next →</a>
             </div>
            
          </section>
@@ -336,8 +336,8 @@
          </section>   
             
             <div class="page-navigation">
-               <a href="#installation">← Previous</a>
-               <a href="#dataextraction" class="next">Next →</a>
+               <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dataextraction'); return false;">Next →</a>
             </div>
          <!-- End of file conv section -->
          </section>
@@ -394,8 +394,8 @@
             </section>
             
             <div class="page-navigation">
-               <a href="#fileconversion">← Previous</a>
-               <a href="#filtering" class="next">Next →</a>
+               <a href="#" onclick="showPage('fileconversion'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('filtering'); return false;">Next →</a>
             </div>
          <!-- End of SNP Data Extraction Module -->
          </section>
@@ -438,8 +438,8 @@
             </p>
             
             <div class="page-navigation">
-               <a href="#dataextraction">← Previous</a>
-               <a href="#exploratory" class="next">Next →</a>
+               <a href="#" onclick="showPage('dataextraction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('exploratory'); return false;">Next →</a>
             </div>
          </section>
          
@@ -465,8 +465,8 @@
             <p><strong>Expected outputs</strong>: PCA plots (.png file)</p>
             
             <div class="page-navigation">
-               <a href="#filtering">← Previous</a>
-               <a href="#popsummarystat" class="next">Next →</a>
+               <a href="#" onclick="showPage('filtering'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popsummarystat'); return false;">Next →</a>
             </div>   
          </section>
          
@@ -517,8 +517,8 @@
             </section>
             
             <div class="page-navigation">
-               <a href="#exploratory">← Previous</a>
-               <a href="#popstructure" class="next">Next →</a>
+               <a href="#" onclick="showPage('exploratory'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popstructure'); return false;">Next →</a>
             </div>  
          <!-- End of Population Summary Statistics Module -->
          </section>
@@ -554,11 +554,6 @@
                   restful forensics also integrates the CLUMPP program under the 
                   <a href="#plotstructure">Plot Structure tab</a>.
                </p>
-               
-            <div class="page-navigation">
-               <a href="#popsummarystat">← Previous</a>
-               <a href="#plotstructure" class="next">Next →</a>
-            </div>
             </section>
             
             <section id="plotstructure" class="page">
@@ -582,9 +577,10 @@
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
             </section>
+            
             <div class="page-navigation">
-               <a href="#popstructure">← Previous</a>
-               <a href="#forensicparams" class="next">Next →</a>
+               <a href="#" onclick="showPage('popsummarystat'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicparams'); return false;">Next →</a>
             </div>
          <!-- End of Population Structure Analysis Module -->
          </section>
@@ -684,8 +680,8 @@
             </p>
             
             <div class="page-navigation">
-               <a href="#plotstructure">← Previous</a>
-               <a href="#forensicinference" class="next">Next →</a>
+               <a href="#" onclick="showPage('popstructure'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicinference'); return false;">Next →</a>
             </div>
          </section>
          
@@ -703,6 +699,10 @@
             </p>
             <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
             <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dnabarcoding'); return false;">Next →</a>
+            </div>
          </section>
          
          <!-- DNA Barcoding module -->
@@ -801,8 +801,8 @@
             </section>
             
             <div class="page-navigation">
-               <a href="#forensicinference">← Previous</a>
-               <a href="#workflow" class="next">Next →</a>
+               <a href="#" onclick="showPage('forensicinference'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('workflow'); return false;">Next →</a>
             </div>
          <!-- End of DNA Barcoding Module -->
          </section>
@@ -848,8 +848,8 @@
             <img src="structure_plot.jpg" alt="Figure 7. Sample results using the Plot STRUCTURE results submodule from restful forensics" class="responsive-img">
             
             <div class="page-navigation">
-               <a href="#barcoding">← Previous</a>
-               <a href="#limitations" class="next">Next →</a>
+               <a href="#" onclick="showPage('barcoding'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('limitations'); return false;">Next →</a>
             </div>
          </section>
    
@@ -927,8 +927,8 @@
             </section>
             
             <div class="page-navigation">
-               <a href="#workflow">← Previous</a>
-               <a href="#citation" class="next">Next →</a>
+               <a href="#" onclick="showPage('workflow'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('citation'); return false;">Next →</a>
             </div>
             
          </section>
@@ -936,6 +936,9 @@
          
          <section id="citation" class="page">
             <h1 class="section-title">VI Citation</h1>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('limitations'); return false;">← Previous</a>
+            </div>
          </section>
          
       </main>
