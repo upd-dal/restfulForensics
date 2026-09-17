@@ -394,6 +394,9 @@ vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
 
 
 #' Add metadata to dataframes
+#' 
+#' @param df The dataframe containing sample and genotype information.
+#' @param metadata The dataframe containing the sample and population information. Sample name should match the samples with genotype information.
 add_metadata <- function(df, metadata) {
    ref_data <- data.frame(metadata)
    ref_data <- dplyr::rename(ref_data, Sample = 1)

@@ -27,9 +27,6 @@ depth_from_vcf <- function(vcf,
     values_to = "Depth"
   )
 
-  # reference assumes there are only two columns:
-  # [1] assumes it has the same key as one either the sample or marker name similar to VCF files
-  # [2] the data to be highlighted
   if (!is.null(reference)) {
     ref <- load_csv_xlsx_files(reference)
     ref <- dplyr::rename(ref, Sample = 1, highlight = 2)
@@ -39,8 +36,6 @@ depth_from_vcf <- function(vcf,
     fill2 <- NULL
   }
 
-  # plot of depth per marker
-  # to-do: slant the rsID labels
   p_rsid <- ggplot2::ggplot(depth_long, ggplot2::aes(x = rsID, y = Depth, fill = fill2)) +
     ggplot2::geom_boxplot() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = .4)) +

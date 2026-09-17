@@ -91,6 +91,35 @@ body {
    font-size: 12px;
 }
 
+.page-navigation {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-top: 20px;
+   padding-top: 10px;
+   border-top: 1px solid #ddd;
+}
+
+.page-navigation a {
+   display: inline-block;
+   padding: 10px 16px;
+   background-color: var(--hover-bg);
+   color: #333;
+   text-decoration: none;
+   border-radius: 6px;
+   transition: 0.2 ease;
+}
+
+.page-navigation a:hover {
+   background-color: #ddd;
+}
+
+.page-navigation .next {
+   margin-left: auto;
+}
+
+
+
 .main-content {
    margin-left: var(--sidebar-width);
    padding: 40px 64px;
