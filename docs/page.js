@@ -17,3 +17,20 @@ function showPage(pageId) {
       behavior: 'auto'
    });
 }
+
+function showSection(pageId, sectionId) {
+   showPage(pageId);
+   const section = document.getElementById(sectionId);
+   
+   if (!section) {
+      console.error("Section not found:", sectionId);
+      return;
+   }
+   
+   setTimeout(() => {
+      section.scrollIntoView({
+         behavior: "smooth",
+         block: "start"
+      });
+   }, 0);
+}
