@@ -27,6 +27,14 @@ body {
    line-height: 1.6;
 }
 
+.page {
+   display: none;
+}
+
+.page.active {
+   display: block;
+}
+
 .sidebar {
    position: fixed;
    top: 0;

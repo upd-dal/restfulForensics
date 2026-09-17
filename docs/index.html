@@ -109,7 +109,7 @@
       </nav>
       
       <main class="main-content">
-         <section id="introduction" class="section">
+         <section id="introduction" class="page">
             <h1 class="section-title">I Introduction</h1>
             <p>restful forensics is an open-source Windows-based platform for 
             forensic genetics research workflow and method validation. This tool 
@@ -125,7 +125,7 @@
             </div>
          </section>
          
-         <section id="installation" class="section">
+         <section id="installation" class="page">
             <h1 class="section-title">II Installation</h1>
             
             <section id="prerequisites" class="section">
@@ -174,7 +174,7 @@
          </section>
          
          <!-- Features section -->
-         <section id="features" class="section">
+         <section id="features" class="page">
             <h1 class="section-title">III Features/Usage</h1>
             <p>This section dives into the modules and submodules of restful forensics. 
             It describes the purpose of the submodule, links relevant supplementary files,
@@ -344,7 +344,7 @@
          
          
          <!-- SNP Data Extraction module -->
-         <section id="dataextraction" class="section">
+         <section id="dataextraction" class="page">
             <h2 class="section-title">2 SNP Data Extraction</h2>
             
             <section id="extractiontab" class="section">
@@ -402,7 +402,7 @@
          
          
          
-         <section id="filtering" class="section">
+         <section id="filtering" class="page">
             <h2 class="section-title">3 Filtering</h2>
             <p>
                This module filters individuals and variants using standard filtering options available in
@@ -443,7 +443,7 @@
             </div>
          </section>
          
-         <section id="exploratory" class="section">
+         <section id="exploratory" class="page">
             <h2 class="section-title">4 Exploratory Analysis</h2>
             <p>
                This module performs exploratory analysis by running principal component analysis using the 
@@ -463,10 +463,15 @@
             The principal component for the x-axis and y-axis can also be set.
             </p>
             <p><strong>Expected outputs</strong>: PCA plots (.png file)</p>
+            
+            <div class="page-navigation">
+               <a href="#filtering">← Previous</a>
+               <a href="#popsummarystat" class="next">Next →</a>
+            </div>   
          </section>
          
          <!-- Population Summary Statistics module -->
-         <section id="popsummarystat" class="section">
+         <section id="popsummarystat" class="page">
             <h2 class="section-title">5 Population Summary Statistics</h2>
             
             <section id="rbasedpopstat" class="section">
@@ -510,11 +515,16 @@
                The mentioned scripts can be found within the R folder as helper functions.
                </p>
             </section>
+            
+            <div class="page-navigation">
+               <a href="#exploratory">← Previous</a>
+               <a href="#popstructure" class="next">Next →</a>
+            </div>  
          <!-- End of Population Summary Statistics Module -->
          </section>
          
          <!-- Population Structure Analysis module -->
-         <section id="popstructure" class="section">
+         <section id="popstructure" class="page">
             <h2 class="section-title">6 Population Structure Analysis</h2>
             
             <section id="runstructure" class="section">
@@ -544,9 +554,14 @@
                   restful forensics also integrates the CLUMPP program under the 
                   <a href="#plotstructure">Plot Structure tab</a>.
                </p>
+               
+            <div class="page-navigation">
+               <a href="#popsummarystat">← Previous</a>
+               <a href="#plotstructure" class="next">Next →</a>
+            </div>
             </section>
             
-            <section id="plotstructure" class="section">
+            <section id="plotstructure" class="page">
                <h3 class="section-title">6.2 Plot STRUCTURE results</h3>
                <p>This submodule directly accepts the structure result files as an uploaded zipped file or 
                use the results from the
@@ -567,10 +582,14 @@
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
             </section>
+            <div class="page-navigation">
+               <a href="#popstructure">← Previous</a>
+               <a href="#forensicparams" class="next">Next →</a>
+            </div>
          <!-- End of Population Structure Analysis Module -->
          </section>
          
-         <section id="forensicparams" class="section">
+         <section id="forensicparams" class="page">
             <h2 class="section-title">7 Forensic Parameters</h2>
             <p>
                This module calculates standard forensic parameters for individual identification 
@@ -664,9 +683,13 @@
                where $H$ is the proportion of homozygous individuals, $H=p^2+q^2$.
             </p>
             
+            <div class="page-navigation">
+               <a href="#plotstructure">← Previous</a>
+               <a href="#forensicinference" class="next">Next →</a>
+            </div>
          </section>
          
-         <section id="forensicinference" class="section">
+         <section id="forensicinference" class="page">
             <h2 class="section-title">8 Forensic DNA Inference</h2>
             <p>
                This module performs a NaÏve Bayes classification and leave-one-out cross-validation of individuals
@@ -776,13 +799,18 @@
                </section>
                
             </section>
+            
+            <div class="page-navigation">
+               <a href="#forensicinference">← Previous</a>
+               <a href="#workflow" class="next">Next →</a>
+            </div>
          <!-- End of DNA Barcoding Module -->
          </section>
          
          <!-- End of Features section -->
          </section>
          
-         <section id="workflow" class="section">
+         <section id="workflow" class="page">
             <h1 class="section-title">IV Workflows</h1>
             <p>
                 The features in restful forensics are modularized and can be
@@ -818,9 +846,14 @@
                visualized using CLUMPP (Fig. 7).
             </p>
             <img src="structure_plot.jpg" alt="Figure 7. Sample results using the Plot STRUCTURE results submodule from restful forensics" class="responsive-img">
+            
+            <div class="page-navigation">
+               <a href="#barcoding">← Previous</a>
+               <a href="#limitations" class="next">Next →</a>
+            </div>
          </section>
    
-         <section id="limitations" class="section">
+         <section id="limitations" class="page">
             <h1 class="section-title">V Limitations</h1>
             
             <section id="knownlimitations" class="section">
@@ -884,20 +917,24 @@
                </table>
             </section>
             
-            <section id="enhancements" class="section">
+            <section id="enhancements" class="page">
                <h2 class="section-title">Planned Enhancements</h2>
                <ol>
                   <li><strong>File Conversion: To Structure File</strong> - Additional options to set in the main and extra parameter file</li>
                   <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
                   <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
                </ol>
-
             </section>
+            
+            <div class="page-navigation">
+               <a href="#workflow">← Previous</a>
+               <a href="#citation" class="next">Next →</a>
+            </div>
             
          </section>
          
          
-         <section id="citation" class="section">
+         <section id="citation" class="page">
             <h1 class="section-title">VI Citation</h1>
          </section>
          

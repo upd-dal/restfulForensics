@@ -7,7 +7,7 @@
 workflow and method validation. This tool is built as a Shiny app in R and
 incorporates commonly used packages, functions, and software for genetic data preparation,
 pre-processing, and exploratory data analysis. 
-See the [documentation](https://nsri-dal-2025-project.github.io/restfulForensics/) for more information.
+See the [documentation](https://upd-dal.github.io/restfulForensics/) for more information.
 
 
 restful forensics is developed at the Natural Sciences Research Institute,
