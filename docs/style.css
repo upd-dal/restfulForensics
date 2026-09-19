@@ -31,10 +31,13 @@ body {
    display: flex;
    justify-content: space-between;
    align-items: center;
+   background-color: #a7c0e0;
+   padding: 15px 20px;
+   border-raidus: 8px
 }
 
 .header-img {
-   max-height: 20px;
+   max-height: 70px;
    width: auto;
 }
 
