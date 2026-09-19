@@ -15,18 +15,18 @@ University of the Philippines Diliman, Quezon City.
 
 ## Table of Contents
 1. [About](#About)  
-2. [Software Architecture](#Software-Architecture)  
-3. [Features](#Features)  
-4. [Installation](#Installation) <br>
+2. [Features](#Features)  
+3. [Installation](#Installation) <br>
    a. [Prerequisites](#A-Prerequisites) <br>
    b. [Dependency List](#B-Dependencies) <br>
    c. [Installation Guide](#C-Installation-Guide) <br>
-6. [Example Workflow](#Example-Workflow)  
-7. [Limitations](#Limitations) <br>
+4. [Example Workflow](#Example-Workflow)  
+5. [Software Architecture](#Software-Architecture) 
+6. [Limitations](#Limitations) <br>
    a. [Known Limitations](#Known-Limitations) <br>
    b. [Planned Enhancements](#Planned-Enhancements) <br>
-8. [Citation Guide](#Citation-Guide)  
-9. [License](#License)  
+7. [Citation Guide](#Citation-Guide)  
+8. [License](#License)  
 
 ## About
 The restful (Reproducible and Efficient Sequence Toolkit) forensics app is a free R-based tool developed to assist forensic genetics
@@ -35,12 +35,6 @@ genetic data preprocessing and method validation into one interactive platform u
 widely used R packages and the incorporation of external software/executables into R
 for a unified workflow.
 
-## Software Architecture
-As a shiny application, restful forensics is divided into the user interface (UI)
-and server functions. The app is modularized by having a separate UI and server
-R files for each feature. The ui section is responsible for input requests 
-which are then read and processed into the associated server files and exposed 
-by the ui.
 
 ## Features
 restful forensics has 9 distinct modules with submodules for more specific tasks.
@@ -131,6 +125,13 @@ a sample workflow can be visualized in Fig 1.
 The restful forensics has been tested using data from the 1000 Genomes Project.
 Figure 2 shows a more detailed pipeline:
 ![Figure 2. Pipelines applicable within restful forensics](docs/chart.png)
+
+## Software Architecture
+As a shiny application, restful forensics is divided into the user interface (UI)
+and server functions. The app is modularized by having a separate UI and server
+R files for each feature. The ui section is responsible for input requests 
+which are then read and processed into the associated server files and exposed 
+by the ui. The pipeline is presented in Figures 1 and 2.
 
 ## Limitations
 

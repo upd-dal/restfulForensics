@@ -27,6 +27,17 @@ body {
    line-height: 1.6;
 }
 
+.main-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.header-img {
+   max-height: 20px;
+   width: auto;
+}
+
 .page {
    display: none;
 }
