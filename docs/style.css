@@ -36,6 +36,14 @@ body {
    border-radius: 8px;
 }
 
+.header-title {
+   font-size: 35px;
+   font-weight: 600;
+   margin: 0;
+   padding: 0;
+   border-bottom: none;
+}
+
 .header-img {
    max-height: 50px;
    width: auto;
