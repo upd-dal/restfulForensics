@@ -16,6 +16,8 @@
       </script>
       <script type="text/javascript" id="MathJax-script" async
          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+         
+      <link rel="icon" type="image/png" href="logo.png">
       <title>restful forensics</title>
    </head>
    
@@ -23,68 +25,68 @@
       <nav class="sidebar">
          <h2>Documentation</h2>
          <ul class="nav-list">
-            <li class="nav-item"><a href="#introduction" class="nav-link">I Introduction</a></li>
-            <li class="nav-item"><a href="#installation" class="nav-link">II Installation</a>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('introduction'); return false;">I Introduction</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('installation'); return false;">II Installation</a>
                <ul>
-                  <li><a href="#prerequisites">Prerequisites</a></li>
-                  <li><a href="#dependency">Dependencies</a></li>
-                  <li><a href="#installationguide">Installation Guide</a></li>
+                  <li><a href="#" onclick="showSection('installation', 'prerequisites'); return false;">Prerequisites</a></li>
+                  <li><a href="#" onclick="showSection('installation', 'dependency'); return false;">Dependencies</a></li>
+                  <li><a href="#" onclick="showSection('installation', 'installationguide'); return false;">Installation Guide</a></li>
                </ul>
             </li>
             <li>
-               <a href="#features">III Features/Usage</a> <!-- Parent-->
+               <a href="#" class="nav-link" onclick="showPage('features'); return false;">III Features/Usage</a> <!-- Parent-->
                <ul>
                   <!-- File conversion module -->
                   <li>
-                     <a href="#fileconversion">1 File Conversion</a>
+                     <a href="#" onclick="showPage('fileconversion'); return false;">1 File Conversion</a>
                      <ul>
-                        <li><a href="#convertfiles">1.1 Convert Files</a></li>
-                        <li><a href="#addmeta">1.2 Add Metadata</a></li>
-                        <li><a href="#widensnp">1.3 Widen SNP calls</a></li>
-                        <li><a href="#tosnipper">1.4 To SNIPPER file</a></li>
-                        <li><a href="#tostructure">1.5 To STRUCTURE file</a></li>
-                        <li><a href="#toarlequin">1.6 To Arlequin file</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'installationguide'); return false;">1.1 Convert Files</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'addmeta'); return false;">1.2 Add Metadata</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'widensnp'); return false;">1.3 Widen SNP calls</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'tosnipper'); return false;">1.4 To SNIPPER file</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'tostructure'); return false;">1.5 To STRUCTURE file</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'toarlequin'); return false;">1.6 To Arlequin file</a></li>
                      </ul>
                   </li>
                   <!-- SNP Data Extraction module -->
                   <li>
-                     <a href="#dataextraction">2 SNP Data Extraction</a>
+                     <a href="#" onclick="showPage('dataextraction'); return false;">2 SNP Data Extraction</a>
                      <ul>
-                        <li><a href="#extractiontab">2.1 SNP Extraction</a></li>
-                        <li><a href="#concordancetab">2.2 Concordance Analysis</a></li>
+                        <li><a href="#" onclick="showSection('dataextraction', 'extractiontab'); return false;">2.1 SNP Extraction</a></li>
+                        <li><a href="#" onclick="showSection('dataextraction', 'concordancetab'); return false;">2.2 Concordance Analysis</a></li>
                      </ul>
                   </li>
                   <!-- Filtering module -->
-                  <li><a href="#filtering">3 Filtering</a></li>
+                  <li><a href="#" onclick="showPage('filtering'); return false;">3 Filtering</a></li>
                   <!-- Exploratory analysis module -->
-                  <li><a href="#exploratory">4 Exploratory Analysis</a></li>
+                  <li><a href="#" onclick="showPage('exploratory'); return false;">4 Exploratory Analysis</a></li>
                   <!-- Population summary statistics module -->
                   <li>
-                     <a href="#popsummarystat">5 Population Summary Statistics</a>
+                     <a href="#" onclick="showPage('popsummarystat'); return false;">5 Population Summary Statistics</a>
                      <ul>
-                         <li><a href="#rbasedpopstat">5.1 R-based Calculations</a></li>
-                        <li><a href="#arlecore">5.2 Arlecore</a></li>
+                         <li><a href="#" onclick="showSection('popsummarystat', 'rbasedpopstat'); return false;">5.1 R-based Calculations</a></li>
+                        <li><a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">5.2 Arlecore</a></li>
                      </ul>
                   </li>
                   <!-- Population structure analysis module -->
                   <li>
-                     <a href="#popstructure">6 Population Structure Analysis</a>
+                     <a href="#" onclick="showPage('popstructure'); return false;">6 Population Structure Analysis</a>
                      <ul>
-                         <li><a href="#runstructure">6.1 Run STRUCTURE v2.3.4</a></li>
-                        <li><a href="#plotstructure">6.2 Plot STRUCTURE results</a></li>
+                         <li><a href="#" onclick="showSection('popstructure', 'runstructure'); return false;">6.1 Run STRUCTURE v2.3.4</a></li>
+                        <li><a href="#" onclick="showSection('popstructure', 'plotstructure'); return false;">6.2 Plot STRUCTURE results</a></li>
                      </ul>
                   </li>
                   <!-- Forensic Parameters module -->
-                  <li><a href="#forensicparams">7 Forensic Parameters</a></li>
+                  <li><a href="#" onclick="showPage('forensicparams'); return false;">7 Forensic Parameters</a></li>
                   <!-- Forensic Inferencec module -->
-                  <li><a href="#forensicinference">8 Forensic DNA Inference</a></li>
+                  <li><a href="#" onclick="showPage('forensicinference'); return false;">8 Forensic DNA Inference</a></li>
                   <!-- DNA Barcoding module -->
                   <li>
-                     <a href="#dnabarcoding">9 DNA Barcoding</a>
+                     <a href="#" onclick="showPage('dnabarcoding'); return false;">9 DNA Barcoding</a>
                      <ul>
-                         <li><a href="#msa">9.1 Multiple Sequence Alignment</a></li>
-                        <li><a href="#phylogenetictree">9.2 Phylogenetic Tree Analysis</a></li>
-                        <li><a href="#barcoding">9.3 Barcoding</a>
+                         <li><a href="#" onclick="showSection('dnabarcoding', 'msa'); return false;">9.1 Multiple Sequence Alignment</a></li>
+                        <li><a href="#" onclick="showSection('dnabarcoding', 'phylogenetictree'); return false;">9.2 Phylogenetic Tree Analysis</a></li>
+                        <li><a href="#" onclick="showSection('dnabarcoding', 'barcoding'); return false;">9.3 Barcoding</a>
                         <ul>
                            <li><a href="#speciesidentification">9.3.1 Species Identification</a></li>
                            <li><a href="#optimizekmer">9.3.2 Optimize kmer values</a></li>
@@ -97,30 +99,41 @@
                   </li>
                </ul>
             </li>
-            <li class="nav-item"><a href="#workflow" class="nav-link">IV Workflows</a></li>
-            <li class="nav-item"><a href="#limitations" class="nav-link">V Limitations</a>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('workflow'); return false;">IV Workflows</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('limitations'); return false;">V Limitations</a>
                <ul>
-                  <li><a href="#knownlimitations">Known Limitations</a></li>
-                  <li><a href="#enhancements">Planned Enhancements</a></li>
+                  <li><a href="#knownlimitations" onclick="showSection('limitations', 'knownlimitations'); return false;">Known Limitations</a></li>
+                  <li><a href="#enhancements" onclick="showSection('limitations', 'enhancements'); return false;">Planned Enhancements</a></li>
                </ul>
             </li>
-            <li class="nav-item"><a href="#citation" class="nav-link">VI Citation</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('citation'); return false;">VI Citation</a></li>
          </ul>
       </nav>
       
       <main class="main-content">
-         <section id="introduction" class="section">
+         <header class="main-header">
+            <h1 class="header-title">restful forensics</h1>
+            <img src="institution_logos.png" alt="Logos" class="header-img">
+         </header>
+         
+         <section id="introduction" class="page active">
             <h1 class="section-title">I Introduction</h1>
-            <p>restful forensics is an open-source Windows-based platform for 
+            <p><b>restful forensics</b> is an open-source Windows-based platform for 
             forensic genetics research workflow and method validation. This tool 
             is built as a Shiny app in R and incorporates commonly used packages, 
             functions, and software for genetic data preparation, pre-processing, 
             and exploratory data analysis.</p>
+            <br>
             <p>restful forensics is developed at the Natural Sciences Research Institute, 
             University of the Philippines Diliman, Quezon City.</p>
+            
+            <div class="page-navigation">
+               <span></span>
+               <a href="#" onclick="showPage('installation'); return false;">Next →</a>
+            </div>
          </section>
          
-         <section id="installation" class="section">
+         <section id="installation" class="page">
             <h1 class="section-title">II Installation</h1>
             
             <section id="prerequisites" class="section">
@@ -161,10 +174,15 @@
                   </code></pre>
            </section>
            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('introduction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('features'); return false;">Next →</a>
+            </div>
+           
          </section>
          
          <!-- Features section -->
-         <section id="features" class="section">
+         <section id="features" class="page">
             <h1 class="section-title">III Features/Usage</h1>
             <p>This section dives into the modules and submodules of restful forensics. 
             It describes the purpose of the submodule, links relevant supplementary files,
@@ -174,8 +192,15 @@
                instructions for use, sample format/s required as input or as a supplementary, and sample file/s.
             </p>
             
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('fileconversion'); return false;">Next →</a>
+            </div>
+         <!-- End of Features section -->
+         </section>
+         
          <!-- File Conversion module -->
-         <section id="fileconversion" class="section">
+         <section id="fileconversion" class="page">
             <h2 class="section-title">1 File Conversion</h2>
             
             <section id="convertfiles" class="section">
@@ -325,11 +350,15 @@
             </p>
          </section>   
             
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('features'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dataextraction'); return false;">Next →</a>
+            </div>
          <!-- End of file conv section -->
          </section>
          
          <!-- SNP Data Extraction module -->
-         <section id="dataextraction" class="section">
+         <section id="dataextraction" class="page">
             <h2 class="section-title">2 SNP Data Extraction</h2>
             
             <section id="extractiontab" class="section">
@@ -377,10 +406,17 @@
                </ul>
                </p>
             </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('features'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('filtering'); return false;">Next →</a>
+            </div>
          <!-- End of SNP Data Extraction Module -->
          </section>
          
-         <section id="filtering" class="section">
+         
+         
+         <section id="filtering" class="page">
             <h2 class="section-title">3 Filtering</h2>
             <p>
                This module filters individuals and variants using standard filtering options available in
@@ -414,9 +450,14 @@
                <li><p>Depth of Coverage plot (.png file)</p></li>
             </ul>
             </p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('dataextraction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('exploratory'); return false;">Next →</a>
+            </div>
          </section>
          
-         <section id="exploratory" class="section">
+         <section id="exploratory" class="page">
             <h2 class="section-title">4 Exploratory Analysis</h2>
             <p>
                This module performs exploratory analysis by running principal component analysis using the 
@@ -436,10 +477,15 @@
             The principal component for the x-axis and y-axis can also be set.
             </p>
             <p><strong>Expected outputs</strong>: PCA plots (.png file)</p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('filtering'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popsummarystat'); return false;">Next →</a>
+            </div>   
          </section>
          
          <!-- Population Summary Statistics module -->
-         <section id="popsummarystat" class="section">
+         <section id="popsummarystat" class="page">
             <h2 class="section-title">5 Population Summary Statistics</h2>
             
             <section id="rbasedpopstat" class="section">
@@ -483,11 +529,16 @@
                The mentioned scripts can be found within the R folder as helper functions.
                </p>
             </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('exploratory'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popstructure'); return false;">Next →</a>
+            </div>  
          <!-- End of Population Summary Statistics Module -->
          </section>
          
          <!-- Population Structure Analysis module -->
-         <section id="popstructure" class="section">
+         <section id="popstructure" class="page">
             <h2 class="section-title">6 Population Structure Analysis</h2>
             
             <section id="runstructure" class="section">
@@ -540,10 +591,15 @@
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
             </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('popsummarystat'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicparams'); return false;">Next →</a>
+            </div>
          <!-- End of Population Structure Analysis Module -->
          </section>
          
-         <section id="forensicparams" class="section">
+         <section id="forensicparams" class="page">
             <h2 class="section-title">7 Forensic Parameters</h2>
             <p>
                This module calculates standard forensic parameters for individual identification 
@@ -637,9 +693,13 @@
                where $H$ is the proportion of homozygous individuals, $H=p^2+q^2$.
             </p>
             
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('popstructure'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicinference'); return false;">Next →</a>
+            </div>
          </section>
          
-         <section id="forensicinference" class="section">
+         <section id="forensicinference" class="page">
             <h2 class="section-title">8 Forensic DNA Inference</h2>
             <p>
                This module performs a NaÏve Bayes classification and leave-one-out cross-validation of individuals
@@ -653,10 +713,14 @@
             </p>
             <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
             <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dnabarcoding'); return false;">Next →</a>
+            </div>
          </section>
          
          <!-- DNA Barcoding module -->
-         <section id="dnabarcoding" class="section">
+         <section id="dnabarcoding" class="page">
             <h2 class="section-title">9 DNA Barcoding</h2>
             
             <section id="msa" class="section">
@@ -749,13 +813,16 @@
                </section>
                
             </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('forensicinference'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('workflow'); return false;">Next →</a>
+            </div>
          <!-- End of DNA Barcoding Module -->
          </section>
          
-         <!-- End of Features section -->
-         </section>
          
-         <section id="workflow" class="section">
+         <section id="workflow" class="page">
             <h1 class="section-title">IV Workflows</h1>
             <p>
                 The features in restful forensics are modularized and can be
@@ -791,9 +858,14 @@
                visualized using CLUMPP (Fig. 7).
             </p>
             <img src="structure_plot.jpg" alt="Figure 7. Sample results using the Plot STRUCTURE results submodule from restful forensics" class="responsive-img">
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('dnabarcoding'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('limitations'); return false;">Next →</a>
+            </div>
          </section>
    
-         <section id="limitations" class="section">
+         <section id="limitations" class="page">
             <h1 class="section-title">V Limitations</h1>
             
             <section id="knownlimitations" class="section">
@@ -864,18 +936,25 @@
                   <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
                   <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
                </ol>
-
             </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('workflow'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('citation'); return false;">Next →</a>
+            </div>
             
          </section>
          
          
-         <section id="citation" class="section">
+         <section id="citation" class="page">
             <h1 class="section-title">VI Citation</h1>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('limitations'); return false;">← Previous</a>
+            </div>
          </section>
          
       </main>
-      
+      <script src="page.js"></script>
    </body>
 
 
