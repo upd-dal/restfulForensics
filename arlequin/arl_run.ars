@@ -28,7 +28,7 @@
 #GENOTYPE ASSIGNMENT TEST: +32768
 #MANTEL TEST: +65536
 
-TaskNumber=3105
+TaskNumber=3073
 #----------------------------------------------------------------------------
 
 #----------------
@@ -95,7 +95,7 @@ KeepNullDistrib=0
 
 #MakeHWExactTest controls if exact test of HWE neEds to be performed (1: yes, 0: no)
 
-MakeHWExactTest=1
+MakeHWExactTest=0
 
 #HardyWeinbergTestType: DEPRECATED, replaced by key TypeOfTestHW
 #                       0 for locus by locus test, 
@@ -110,11 +110,11 @@ TypeOfTestHW=0
 
 #MarkovChainStepsHW controls the number of steps in Markov chain for HWE exact test
 
-MarkovChainStepsHW=100000
+MarkovChainStepsHW=1000000
 
 #MarkovChainDememorisationStepsHW controls the number of burnin steps in Markov <n#chain for HWE exact test
 
-MarkovChainDememorisationStepsHW=100000
+MarkovChainDememorisationStepsHW=1000000
 
 #PrecisionOnPValueHW controls the required precision on the estimated p-value of the HWE test
 #OBSOLETE FEATURE LET THE KEY VALUE TO ZERO
@@ -143,14 +143,14 @@ MakeExactTestLD=0
 #MarkovChainDememorisationStepsLD controls the number of burnin steps at the
 #beginning of the Markov chain (when gametic phae is known)
 
-MarkovChainDememorisationStepsLD=1000
+MarkovChainDememorisationStepsLD=10000
 
 #MarkovChainStepsLD controls how many steps are to be performed in the Markov chain
 #after the burnin period, when the gametic phase is known, or it is the number of permutations
 #to be performed to test the p-value of the likelihood-ratio test when the gametic phase
 #is unknown
 
-MarkovChainStepsLD=5000
+MarkovChainStepsLD=10000
 
 #PrecisionOnPValueLD controls the precision required for the 
 #p-value of the LD exact test (OBSOLETE SETTING)

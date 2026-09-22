@@ -28,11 +28,13 @@ exploratory_analysis_server <- function(input, output, session, rv) {
   output$selectedPopulation <- renderUI({
     req(Populations())
 
-    checkboxGroupInput(
+    shinyWidgets::prettyCheckboxGroup(
       inputId = "highlightPops",
       label = "Highlight Populations",
       choices = Populations(),
-      selected = NULL
+      inline = TRUE,
+      selected = NULL,
+      icon = icon("xmark")
     )
   })
 
@@ -136,7 +138,8 @@ exploratory_analysis_server <- function(input, output, session, rv) {
       pc_y = input$pcY,
       highlight_pop = input$highlightPops
     )
-    plotly::ggplotly(p)
+    plotly::ggplotly(p) %>% 
+      plotly::layout(autosize = TRUE)
   })
 
   output$downloadbarPlot <- downloadHandler(

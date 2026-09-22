@@ -75,15 +75,21 @@ convert_to_genind <- function(file, to_str = FALSE, popinfo = TRUE) {
       dplyr::rename(pops = 1)
     # add row names as numbers
     pop_df_unique$num <- seq_len(nrow(pop_df_unique))
-    # write.csv(pop_df_unique, file = "population_order.csv") # RETURN THIS FOR DOWNLOAD
 
     # replace the pops in the original df (pop_df) with the numbers
     pop_df_corr <- dplyr::left_join(pop_df, pop_df_unique, by = "pops")
     pops <- pop_df_corr$num
 
-    ### Change Ind to numeric
+    # Change Ind to numeric
     ind_only <- as.data.frame(file[, 1])
     ind_only$num <- rownames(ind_only)
+    
+    # New file
+    Label <- file$Ind
+    STR_label <- ind_only$num
+    Pop <- file$Pop
+    STR_pop <- pop_df_corr$num
+    csv_revised <- data.frame(Label, STR_label, Pop, STR_pop, file[,-c(1,2)])
 
     ind <- as.character(ind_only$num)
     pop <- as.character(pops)
@@ -114,7 +120,7 @@ convert_to_genind <- function(file, to_str = FALSE, popinfo = TRUE) {
     return(list(
       fsnps_gen = fsnps_gen,
       populations = pop_df_unique,
-      pop_labels = populations_df
+      csv_revised = csv_revised
     ))
   }
 
@@ -263,6 +269,44 @@ convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".
   return(list(pgen_prefix = merged_prefix))
 }
 
+#' Evaluate and convert data files to PLINK
+#' @return Plink2 file prefix
+convert_files <- function(input_file, output.dir = ".") {
+  
+  if (!file.exists(input_file)) {
+    stop("File not found.")
+  }
+  
+  # check if zipped or not
+  file_extension <- tools::file_ext(input_file)
+  if (file_extension %in% c("zip", "tar")) {
+    unpacked <- unpack_input_file(input_file, output.dir)
+    files <- unpacked$data_files
+    ext <- tools::file_ext(files[[1]])
+    
+    if (ext %in% c("bed", "bim", "fam")) {
+      unique_files <- unique(unlist(lapply(files, tools::file_path_sans_ext), use.names = FALSE))
+      unique_files <- as.list(unique_files)
+      merged_plink <- convert_merge_to_plink(unique_files, output.dir = output.dir, plink_files = TRUE)
+    } else {
+      merged_plink <- convert_merge_to_plink(files, output.dir = output.dir, plink_files = FALSE)
+    }
+    return(merged_plink$pgen_prefix)
+    
+  } else if (file_extension == "bed") {
+    input_prefix <- tools::file_path_sans_ext(input_file)
+    pgen_prefix <- file.path(output.dir, "input_pgen")
+    convert_to_plink2(input_file, original_name = input_prefix, isplink = TRUE, name = pgen_prefix, output_chr = "26")
+    return(pgen_prefix)
+    
+  } else {
+    pgen_prefix <- file.path(output.dir, "input_pgen")
+    convert_to_plink2(input_file, original_name = NULL, isplink = FALSE, name = pgen_prefix, output_chr = "26")
+    return(pgen_prefix)
+    
+  }
+}
+
 #' Convert PLINK 1.9 files to other formats
 #'
 #' @param prefix The prefix of the PLINK files.
@@ -366,14 +410,13 @@ merge_plink2_files <- function(base_prefix, merge_list, output_prefix) {
 #'
 #' @returns The dataframe of merged metadata with genotype information.
 vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
-  print("running conversion to csv")
   extension <- tools::file_ext(files)
 
   if (extension %in% c("vcf", "gz")) {
     raw_file <- load_vcf_files(files, output.dir = output.dir)
     raw_file <- dplyr::rename(raw_file, Sample = 1)
-    raw_file$Sample <- gsub("HGDP([0-9]+)_HGDP\\1$", "HG\\1", raw_file$Sample)
-    raw_file$Sample <- trimws(raw_file$Sample, which = "right")
+    #raw_file$Sample <- gsub("HGDP([0-9]+)_HGDP\\1$", "HG\\1", raw_file$Sample)
+    raw_file$Sample <- trimws(raw_file$Sample)
   } else {
     stop("Input is not a VCF file.")
   }
@@ -398,29 +441,39 @@ vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
 #' @param df The dataframe containing sample and genotype information.
 #' @param metadata The dataframe containing the sample and population information. Sample name should match the samples with genotype information.
 add_metadata <- function(df, metadata) {
-   ref_data <- data.frame(metadata)
-   ref_data <- dplyr::rename(ref_data, Sample = 1)
-   final_df <- dplyr::rename(df, Sample = 1)
-   
-   samples_vcf <- final_df$Sample
-   samples_ref <- ref_data$Sample
-   
-   if (sum(samples_vcf %in% samples_ref) == 0) {
+  # check if single population
+  if (is.character(metadata) && length(metadata) == 1) {
+    df$Pop <- metadata
+    df <- df %>% dplyr::relocate(tidyselect::last_col(), .after = 1)
+    return(list(
+      with_meta = df,
+      missing = NULL
+    ))
+  } else {
+    ref_data <- data.frame(metadata)
+    ref_data <- dplyr::rename(ref_data, Sample = 1)
+    final_df <- dplyr::rename(df, Sample = 1)
+    
+    samples_vcf <- final_df$Sample
+    samples_ref <- ref_data$Sample
+    
+    if (sum(samples_vcf %in% samples_ref) == 0) {
       stop("Sample IDS do not match between VCF and metadata.")
-   }
-   
-   cols <- colnames(ref_data)
-   
-   with_meta_data <- final_df %>%
+    }
+    
+    cols <- colnames(ref_data)
+    
+    with_meta_data <- final_df %>%
       dplyr::inner_join(ref_data, by = "Sample") %>%
       relocate(cols, .after = 1) 
-   
-   missing_meta <- final_df %>% dplyr::anti_join(ref_data, by = "Sample")
-   
-   return(list(
+    
+    missing_meta <- final_df %>% dplyr::anti_join(ref_data, by = "Sample")
+    
+    return(list(
       with_meta = with_meta_data,
       missing = missing_meta
-   ))
+    ))
+  }
 }
 
 #' Convert SNP genotypes to dosages
@@ -512,13 +565,13 @@ csv_to_gentibble <- function(file, loci.meta = loci.meta) {
 #'
 #' @returns The dataframe of widened and merged genotype files.
 widen_genotype_file <- function(files = files,
-                                population = NULL,
+                                #population = NULL,
                                 output.dir = ".") {
   if (!file.exists(files)) {
     stop("File does not exist in the working directory")
   } else {
     files_raw <- unpack_input_file(files, output.dir = output.dir)
-  }
+}
 
   data_list <- files_raw$data_files
   all.list <- list()
@@ -530,8 +583,7 @@ widen_genotype_file <- function(files = files,
     for (x in data_list) {
       all.list[[x]] <- readxl::read_excel(x,
         sheet = 1,
-        col_names = TRUE,
-        row.names(data_files)
+        col_names = TRUE
       )
     }
   } else if (f_ext == "csv") {
@@ -559,7 +611,6 @@ widen_genotype_file <- function(files = files,
 
   merged <- df_list %>% purrr::reduce(full_join, by = "ID")
   id <- merged$ID
-
   correct_alleles <- merged
   correct_alleles <- data.frame(t(correct_alleles))
   names(correct_alleles) <- correct_alleles[1, ]
@@ -570,22 +621,25 @@ widen_genotype_file <- function(files = files,
 
   Samples <- rownames(corrected)
   corrected <- data.frame(Samples, corrected)
+  rownames(corrected) <- NULL
+  
+  return(corrected)
 
-  if (is.null(population)) {
-    return(corrected)
-  } else {
-    pop_data <- load_csv_xlsx_files(population)
-    pop_data <- dplyr::rename(pop_data, Sample = 1, Population = 2)
-    matched <- corrected %>% dplyr::left_join(pop_data, by = "Sample")
-    data_length <- as.integer(ncol(corrected) - 1)
-    data_matched <- matched[, 2:data_length]
-    meta_begin <- as.integer(ncol(corrected) + 1)
-    meta <- matched[, meta_begin:ncol(matched)]
+#  if (is.null(population)) {
+#    return(corrected)
+#  } else {
+#    pop_data <- load_csv_xlsx_files(population)
+#    pop_data <- dplyr::rename(pop_data, Sample = 1, Population = 2)
+#    matched <- corrected %>% dplyr::left_join(pop_data, by = "Sample")
+#    data_length <- as.integer(ncol(corrected) - 1)
+#    data_matched <- matched[, 2:data_length]
+#    meta_begin <- as.integer(ncol(corrected) + 1)
+#    meta <- matched[, meta_begin:ncol(matched)]
 
-    final_df <- dplyr::bind_cols(matched$Sample, meta, data_matched)
-    names(final_df)[names(final_df) == "matched$Sample"] <- "Sample"
-    return(final_df)
-  }
+#    final_df <- dplyr::bind_cols(matched$Sample, meta, data_matched)
+#    names(final_df)[names(final_df) == "matched$Sample"] <- "Sample"
+#    return(final_df)
+#  }
 }
 
 #' Convert dataframe to structure file

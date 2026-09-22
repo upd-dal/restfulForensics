@@ -21,7 +21,7 @@ forensic_params_server <- function(input, output, session, rv) {
     markers = c("rs101", "rs102", "rs103", "rs104", "..."),
     profile = c("A/T", "G/C", "G/A", "T/T", "...")
   )
-
+  
   output$referenceData_UI <- DT::renderDataTable(
     {
       req(referenceData)
@@ -55,16 +55,10 @@ forensic_params_server <- function(input, output, session, rv) {
     )
   )
 
-  results_rv <- reactiveValues(
-    overall_metrics = NULL,
-    pop_metrics = NULL,
-    rmp_value = NULL
-  )
-  genotype_freqs <- reactiveVal(NULL)
-  gt_freq_all <- reactiveVal(NULL)
-  gt_freq_pop <- reactiveVal(NULL)
-  snpsFile <- reactiveVal(NULL)
-
+  forenParams <- reactiveVal(NULL)
+  genoFreq <- reactiveVal(NULL)
+  afTable <- reactiveVal(NULL)
+  
   observe({
     shinyjs::toggleState("calcIISNPs", !is.null(input$iisnpsFile))
   })
@@ -74,110 +68,63 @@ forensic_params_server <- function(input, output, session, rv) {
     req(input$iisnpsFile)
 
     fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
-    data_type <- evaluate_file(fileUploaded)
-    snpsFile(fileUploaded)
-    computed_af <- NULL
-    pop <- NULL
-
-    if (data_type == "gts") {
-      file <- clean_input_data(snpsFile())
-      file <- convert_to_genind(file, to_str = FALSE, popinfo = TRUE)
-      computed_af <- compute_af(file)
-      pop <- nrow(file)
-    } else if (data_type == "freqs") {
-       val <- snpsFile()[1, 2]
-       is_numeric <- is.numeric(val)
-       
-       if (!isTRUE(is_numeric)){
-          stop("Allele frequency table should contain markers on the first column
-               and frequencies per population in a column.")
-       }
-      computed_af <- snpsFile()
-    }
-
-    profile_df <- NULL
-    theta <- 0
-    pop <- NULL
-    if (!is.null(input$fileProfile)) {
-      profile_df <- load_csv_xlsx_files(input$fileProfile$datapath)
-      theta <- input$thetaValue
-    }
-
-    if (!is.null(input$floorCeiling)) {
-      pop <- input$totalPop
-    }
-
-    gt_freqs <- calc_genotype_freq(computed_af, pop = pop)
-    gt_freq_all(gt_freqs$gt_complete)
-    gt_freq_pop(gt_freqs$gt_by_pop)
-
-    res <- calc_iisnps_params(gt_freq_all(), profile = profile_df, theta = theta)
-
-
-    if (!is.null(profile_df)) {
-      results_rv$rmp_value <- res$RMP_profile
-      results_rv$overall_metrics <- res$marker_metrics
-      results_rv$pop_metrices <- NULL
-    } else {
-      results_rv$overall_metrics <- res$overall
-      results_rv$pop_metrics <- res$by_population
-      results_rv$rmp_value <- NULL
-    }
+    cleaned_data <- clean_input_data(fileUploaded)
+    genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
+    af_table <- compute_af(genind_input)
+    af_expected <- calc_expected_genotype_freq(af_table)
+    
+    gt_freqs <- calc_observed_genotype_freq(cleaned_data) # returns list of per population gt
+    params_res <- calc_iisnps_params(gt_freqs, af_expected)
+    print(params_res)
+    print(class(params_res))
+    genoFreq(gt_freqs) # list of df per population containing the observed freq
+    forenParams(params_res) # list of df per population containing the forensic param metrices
+    afTable(af_table)
     shinyjs::enable("calcIISNPs")
   })
 
-  observe({
-    req(results_rv$pop_metrics, results_rv$overall_metrics)
+  observeEvent(forenParams(), {
+    pops <- names(forenParams())
+    req(length(pops) > 0)
 
     updateSelectInput(
       session,
       "selected_pop",
-      choices = c(
-        "Overall",
-        names(results_rv$pop_metrics)
-      )
+      choices = pops,
+      selected = pops[1]
     )
   })
 
-  observe({
-    req(gt_freq_pop())
+  observeEvent(genoFreq(), {
+    pops <- names(genoFreq())
+    req(length(pops) > 0)
 
     updateSelectInput(
       session,
       "selected_pop_gt",
-      choices = c(
-        "Overall",
-        names(gt_freq_pop())
-      )
+      choices = pops,
+      selected = pops[1]
     )
   })
 
   output$genotypeFreqs_UI <- DT::renderDataTable({
-    req(gt_freq_pop(), gt_freq_all())
-
-    if (input$selected_pop == "Overall") {
-      req(gt_freq_all())
-      DT::datatable(gt_freq_all(), rownames = FALSE)
-    } else {
-      req(gt_freq_pop())
-      DT::datatable(gt_freq_pop()[[input$selected_pop_gt]],
-        rownames = FALSE
-      )
-    }
+    req(genoFreq())
+    df <- genoFreq()[[input$selected_pop_gt]]
+    DT::datatable(df, rownames = FALSE, selection = "multiple",
+                  options = list(
+                    pageLength = 10,
+                    scrollX = TRUE
+                  ))
   })
 
   output$popTable <- DT::renderDataTable({
-    req(input$selected_pop)
-
-    if (input$selected_pop == "Overall") {
-      req(results_rv$overall_metrics)
-      DT::datatable(results_rv$overall_metrics, rownames = FALSE)
-    } else {
-      req(results_rv$pop_metrics)
-      DT::datatable(results_rv$pop_metrics[[input$selected_pop]],
-        rownames = FALSE
-      )
-    }
+    req(forenParams())
+    df <- forenParams()[[input$selected_pop]]
+    DT::datatable(df, rownames = FALSE, selection = "multiple",
+                  options = list(
+                    pageLength = 10,
+                    scrollX = TRUE
+                  ))
   })
 
   output$downloadMetrics <- downloadHandler(
@@ -185,44 +132,82 @@ forensic_params_server <- function(input, output, session, rv) {
       paste0("forensic_metrics_", Sys.Date(), ".xlsx")
     },
     content = function(file) {
-      req(results_rv$overall_metrics, results_rv$pop_metrics, gt_freq_pop(), gt_freq_all())
+      req(forenParams(), genoFreq())
       sheets <- list()
-      sheets[["Forensic Params (FP)"]] <- results_rv$overall_metrics
-      pop_sheets <- results_rv$pop_metrics
-      names(pop_sheets) <- paste0("FP_", substr(gsub(
+      fp_sheets <- forenParams()
+      
+      names(fp_sheets) <- paste0("FP_", substr(gsub(
         "[^A-Za-z0-9]", "_",
-        names(pop_sheets)
+        names(fp_sheets)
       ), 1, 25))
-      sheets <- c(sheets, pop_sheets)
+      sheets <- c(sheets, fp_sheets)
 
-      sheets[["Genotype Frequency (GF)"]] <- gt_freq_all()
-      gt_pop <- gt_freq_pop()
-      names(gt_pop) <- paste0("FP_", substr(gsub(
+      gt_sheets <- genoFreq()
+      names(gt_sheets) <- paste0("GT_", substr(gsub(
         "[^A-Za-z0-9]", "_",
-        names(gt_pop)
+        names(gt_sheets)
       ), 1, 25))
-      sheets <- c(sheets, gt_pop)
+      sheets <- c(sheets, gt_sheets)
       writexl::write_xlsx(sheets, path = file)
     }
   )
 
-  output$downloadRMP <- downloadHandler(
-    filename = function() {
-      paste0("RMP_profile_", Sys.Date(), ".csv")
-    },
-    content = function(file) {
-      req(results_rv$rmp_value)
-      write.csv(data.frame(RMP = results_rv$rmp_value), file, row.names = FALSE)
-    }
-  )
-
   output$downloadMetrics_UI <- renderUI({
-    req(results_rv$overall_metrics)
+    req(forenParams(), genoFreq())
     downloadButton("downloadMetrics", "Download Forensic Parameters")
   })
 
-  output$downloadRMP_UI <- renderUI({
-    req(results_rv$rmp_value)
-    downloadButton("downloadRMP", "Download RMP")
+
+  #================= Matching Profile
+  forensicParamInput <- data.frame(
+    markers = c("rs101.A", "rs101.T", "rs102.C", "rs102.G", "..."),
+    pop1 = c("0.185185185	", "0.814814815", "0.777777778", "0.222222222", "..."),
+    pop2 = c("0.89285714", "0.10714286", "0.89285714", "0.10714286", "...")
+  )
+  
+  output$forensicParamInput_UI <- DT::renderDataTable(
+    {
+      req(forensicParamInput)
+      forensicParamInput
+    },
+    options = list(
+      scrollX = TRUE,
+      pageLength = 5
+    )
+  )
+  
+  rmpResult <- reactiveVal(NULL)
+  
+  observeEvent(input$calcRMP, {
+    disable("calcRMP")
+    profile <- load_csv_xlsx_files(input$fileProfile$datapath)
+    if (isFALSE(input$newPopDatabase)) {
+      req(afTable())
+      af_long <- af_long(afTable()) %>%
+        dplyr::filter(population == input$rmp_population)
+    } else {
+      req(input$newPopDataFile)
+      af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
+    }
+    result <- calc_rmp(
+      profile = profile,
+      af_table = af_long,
+      n_ref = input$totalPop,
+      theta = thetaValue
+    )
+    rmpResult(result)
+    enable("calcRMP")
+    })
+  
+  output$rmp_population_UI <- renderUI({
+    if (isFALSE(input$newPopDatabase)) {
+      req(afTable())
+      af_long <- af_to_long(afTable())
+      selectInput("rmp_population",
+                  "Select Reference Population",
+                  choices = unique(af_long$population))
+    } else { NULL }
   })
-}
+
+  
+  }

@@ -28,7 +28,7 @@
 #GENOTYPE ASSIGNMENT TEST: +32768
 #MANTEL TEST: +65536
 
-TaskNumber=3089
+TaskNumber=3121
 #----------------------------------------------------------------------------
 
 #----------------
@@ -95,7 +95,7 @@ KeepNullDistrib=0
 
 #MakeHWExactTest controls if exact test of HWE neEds to be performed (1: yes, 0: no)
 
-MakeHWExactTest=0
+MakeHWExactTest=1
 
 #HardyWeinbergTestType: DEPRECATED, replaced by key TypeOfTestHW
 #                       0 for locus by locus test, 

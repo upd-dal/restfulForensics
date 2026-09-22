@@ -293,7 +293,7 @@ dashboard_server <- function(input, output, session, rv) {
       tags$ul(
         tags$li(strong("Private alleles"), "[1] calculated using the poppr R package (Kamvar et al., 2014)"),
         tags$li(strong("Mean Allelic Richness"), "[2] using the hierfstat R package (Goudet, 2004)"),
-        tags$li(strong("Heterozygosity"), "[3] using the hierfstat R package (Goudet, 2004)"),
+        tags$li(strong("Heterozygosity"), "[3] using the hierfstat R package (Goudet, 2004). Exact test based on Monte Carlo permutations (Guo & Thompson, 1992) is computed using 1000 replicates."),
         tags$li(strong("Inbreeding Coefficient"), "[4] using the hierfstat R package (Goudet, 2004)"),
         tags$li(strong("Allele frequency"), "[5] using the adegenet R package (Jombart, 2008)"),
         tags$li(strong("Hardy-Weinberg equilibrium"), "[6] using the pegas R package (Paradis, 2010)"),

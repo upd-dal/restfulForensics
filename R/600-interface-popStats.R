@@ -10,6 +10,7 @@ popstats_tab <- function() {
           fluidRow(
             box(
               fileInput("popStatsFile", "Upload CSV or XLSX Dataset", accept = c(".xlsx", ".csv")),
+              numericInput("markovHWE", "Set Markov Chains for HWE calculations", value = 1000, min = 1000),
               selectInput("correctionModel", "Select Correction Model", choices = c("Bonferroni" = "Bonferroni", "FDR" = "FDR")),
               numericInput("alphaValue", "Set Alpha Value", value = 0.05, min = 0.00, max = 1),
               actionButton("runPopStats", "Analyze", icon = icon("magnifying-glass-chart")),
@@ -100,6 +101,22 @@ popstats_tab <- function() {
             box(
               fileInput("fileForArlecore", "Input file (CSV/XLSX)", accept = c("xlsx", "csv")),
               checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
+              conditionalPanel(
+                condition = "input.calcLD",
+                helpText("The Markov Chains are automatically set to 10,000 steps")
+              ),
+              
+              checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
+              conditionalPanel(
+                condition = "input.calcHWE",
+                helpText("The Markov Chains are automatically set to 1,000,000 steps")
+              ),
+              
+              conditionalPanel(
+                condition = "input.calcHWE || input.calcLD",
+                helpText("Running will take some time and will take longer with more populations/samples.")
+              ),
+
               actionButton("runArlecore", "Run Arlecore", icon = icon("arrow-up-right-from-square")),
               uiOutput("download_arlecore_results_UI")
             ),
@@ -133,10 +150,6 @@ popstats_tab <- function() {
                 title = "Results",
                 width = 12,
                 tabPanel(
-                  title = "Diversity and HWE calculations",
-                  uiOutput("population_tables")
-                ),
-                tabPanel(
                   title = "Expected Heterozygosity",
                   DT::DTOutput("hwe_arlecore"),
                   plotly::plotlyOutput("hwe_arlecore_plot"),
@@ -156,6 +169,10 @@ popstats_tab <- function() {
                   title = "Coancestry Coefficient",
                   DT::DTOutput("coancestry_arlecore"),
                   plotly::plotlyOutput("coancestry_heatmap_plot")
+                ),
+                tabPanel(
+                  title = "Diversity and HWE calculations",
+                  uiOutput("population_tables")
                 ),
                 tabPanel(
                   title = "Loci in LD",

@@ -86,8 +86,8 @@ snp_extraction_tab <- function() {
         title = "Concordance Analysis",
         fluidRow(
           box(
-            fileInput("concordanceFile1", "Upload File A", accept = c(".xlsx", ".csv")),
-            fileInput("concordanceFile2", "Upload File B", accept = c(".xlsx", ".csv")),
+            fileInput("concordanceFile1", "Upload File A", accept = c(".xlsx", ".csv", ".vcf")),
+            fileInput("concordanceFile2", "Upload File B", accept = c(".xlsx", ".csv", ".vcf")),
             checkboxInput("isPhased", "Phased genotypes", value = FALSE),
             actionButton("compareBtn", "Run Concordance Analysis", icon = icon("play"))
           ),

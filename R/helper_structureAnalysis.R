@@ -99,7 +99,8 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
   
   ## Loop through dataset to extract genotypes
   for (L in loci) {
-    thesedata <- data$tab[, grep(paste("^", L, "\\.", sep = ""), dimnames(data$tab)[[2]])] # dataotypes by locus
+    #=========================== revised by forcing 'thesedata' as a matrix in restful forensics 
+    thesedata <- as.matrix(data$tab[, grep(paste("^", L, "\\.", sep = ""), dimnames(data$tab)[[2]])])# dataotypes by locus
     al <- 1:dim(thesedata)[2] # numbered alleles
     for (s in 1:ind) {
       if (all(!is.na(thesedata[s, ]))) {
@@ -120,6 +121,8 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
   if (markers) {
     ## Add a row at the top containing loci names
     df <- as.data.frame(insertRow(as.matrix(df), 1, c(loci, "", "")))
+    df <- df[-1,]
+    df <- rbind(colnames(df), df)
   }
   
   # ---------------- #

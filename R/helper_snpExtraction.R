@@ -221,18 +221,9 @@ extract_POStoID_pgen <- function(pos_list,
 #'
 #' @returns The data frame containing the genotype of samples present in both file1 and file2.
 calc_concordance <- function(file1, file2, phased = FALSE) {
-  if (!file.exists(file1)) {
-    stop("First file does not exist in the working directory")
-  } else {
-    file1 <- load_csv_xlsx_files(file1)
-  }
-
-  if (!file.exists(file2)) {
-    stop("Second file does not exist in the working directory")
-  } else {
-    file2 <- load_csv_xlsx_files(file2)
-  }
-
+  file1 <- clean_input_data(file1)
+  file2 <- clean_input_data(file1)
+  
   file1 <- dplyr::rename(file1, Ind = 1)
   file2 <- dplyr::rename(file2, Ind = 1)
   file_list <- list(file1, file2)
@@ -276,7 +267,7 @@ calc_concordance <- function(file1, file2, phased = FALSE) {
   ID <- merged$markers
   merged <- clean_input_data(merged)
 
-  if (haplotypes == TRUE) {
+  if (phased == TRUE) {
     message("Assuming the data are haplotypes.")
     merged <- merged %>% dplyr::mutate(across(tidyselect::everything(), ~ case_when(
       . == "A" ~ "A/A",
@@ -285,7 +276,7 @@ calc_concordance <- function(file1, file2, phased = FALSE) {
       . == "G" ~ "G/G",
       TRUE ~ .x
     )))
-  } else if (haplotypes == FALSE) {
+  } else if (phased == FALSE) {
     merged <- merged %>% dplyr::mutate(across(tidyselect::everything(), ~ case_when(
       . == "A" ~ "A/A",
       . == "T" ~ "T/T",

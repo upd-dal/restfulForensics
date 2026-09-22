@@ -2,7 +2,7 @@ file_conversion_server <- function(input, output, session, rv) {
   # ================= FILE CONVERSION =====================#
   convertedVCF <- reactiveVal(NULL)
   convertedFASTA <- reactiveVal(NULL)
-  convertedCSV <- reactiveVal(NULL)
+  convertedtoCSV <- reactiveVal(NULL)
   convertedPLINK <- reactiveVal(NULL)
   convertedBreakdown <- reactiveVal(NULL)
 
@@ -86,13 +86,13 @@ file_conversion_server <- function(input, output, session, rv) {
       converted_file <- tidypopgen::gt_as_vcf(csv_to_gen_obj, file = vcf_file, overwrite = TRUE)
       convertedVCF(converted_file)
     } else {
-      prepared <- prepare_input_dataset(
+      prepared <- convert_files(
         input_file = input_file,
         output.dir = output.dir
       )
 
       result <- convert_from_plink2(
-        prefix = prepared$prefix,
+        prefix = prepared,
         output_type = outputType,
         output.dir = output.dir,
         ref = NULL
@@ -105,26 +105,52 @@ file_conversion_server <- function(input, output, session, rv) {
       if (outputType %in% c("plink2", "plink1")) {
         convertedPLINK(result)
       }
+      
+      if (outputType == "csv2") {
+        convertedtoCSV(result$with_meta)
+      }
+      
     }
     enable("ConvertFILES")
   })
 
+  output$toCSVtable <- DT::renderDataTable(
+    {
+      req(convertedtoCSV())
+      convertedtoCSV()
+    },
+    options = list(
+      scrollX = TRUE,
+      pageLength = 10
+    )
+  )
+  
   output$downloadConvertedVCF <- downloadHandler(
     filename = function() {
-      "csv_to_vcf.vcf"
+      paste0("csv_to_vcf_", timestamp, ".vcf")
     },
     content = function(file) {
       req(convertedVCF())
       file.copy(convertedVCF(), file)
     }
   )
-
+  
+  output$downloadConvertedtoCSV <- downloadHandler(
+    filename = function() {
+      paste0("file_to_csv_", timestamp, ".csv")
+    },
+    content = function(file) {
+      req(convertedtoCSV())
+      readr::write_csv(convertedtoCSV(), file)
+    }
+  )
+  
   output$downloadConvertedPLINK <- downloadHandler(
     filename = function() {
       if (output_type(input) == "plink1") {
-        "plink1_files.zip"
+        paste0("plink1_files_", timestamp, ".zip")
       } else {
-        "plink2_files.zip"
+        paste0("plink2_files_", timestamp, ".zip")
       }
     },
     content = function(file) {
@@ -143,6 +169,13 @@ file_conversion_server <- function(input, output, session, rv) {
     req(convertedPLINK())
     downloadButton("downloadConvertedPLINK", "Download PLINK File")
   })
+  
+  output$downloadtoCSV_UI <- renderUI({
+    req(convertedtoCSV())
+    downloadButton("downloadConvertedtoCSV", "Download CSV File")
+  })
+  
+  
 
   # =================== Add Metadata ======================#
   exampleRefCSV <- data.frame(
@@ -230,46 +263,63 @@ file_conversion_server <- function(input, output, session, rv) {
             selected_cols,
             drop = FALSE
           ])
-          #for_merging <- as.data.frame(subset(ref_file, select = input$col_targets))
         } else {
           for_merging <- input$typePop_meta
         }
         
-        # Unpack to determine the data type
-        unpacked <- unpack_input_file(input_file, output.dir)
-        files <- unpacked$data_files
-        ext <- tools::file_ext(files[[1]])
+        # Check extension
+        file_extension <- tools::file_ext(input_file)
         
-        if (ext == "csv") {
-          all.list <- list()
+        if (file_extension %in% c("zip", "tar")) {
+          # Unpack to determine the data type
+          unpacked <- unpack_input_file(input_file, output.dir)
+          files <- unpacked$data_files
+          ext <- tools::file_ext(files[[1]])
           
-          for (x in files) {
-            all.list[[x]] <- read.csv(x, check.names = FALSE, row.names = 1)
+          if (ext == "csv") {
+            all.list <- list()
+            
+            for (x in files) {
+              all.list[[x]] <- read.csv(x, check.names = FALSE, row.names = 1)
+            }
+            
+            merged <- dplyr::bind_rows(all.list)
+            merged <- data.frame(rownames(merged), merged)
+            result <- add_metadata(merged, for_merging)
+          } else {
+            result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
+            
+            # convert to vcf
+            vcf_file <- convert_from_plink2(result,
+                                            output_type = "vcf2",
+                                            output.dir = output.dir)
+            # vcf to csv and merge
+            csv_file <- convert_from_plink2(vcf_file, 
+                                            output_type = "csv2",
+                                            output.dir = output.dir,
+                                            ref = for_merging)
+            result <- csv_file
           }
           
-          merged <- dplyr::bind_rows(all.list)
-          merged <- data.frame(rownames(merged), merged)
-          result <- add_metadata(merged, for_merging)
         } else {
-          if (ext %in% c("vcf", "bcf", "gz")) {
-            merged_plink <- convert_merge_to_plink(files, output.dir = output.dir, plink_files = FALSE)
-          } else if (ext %in% c("bed", "bim", "fam")) {
-            unique_files <- unique(unlist(lapply(files, tools::file_path_sans_ext), use.names = FALSE))
-            unique_files <- as.list(unique_files)
-            merged_plink <- convert_merge_to_plink(unique_files, output.dir = output.dir, plink_files = TRUE)
+          # if single files
+          if (file_extension == "csv") {
+            csv_df <- load_csv_xlsx_files(input_file)
+            result <- add_metadata(csv_df, for_merging)
+          } else {
+            result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
+            
+            # convert to vcf
+            vcf_file <- convert_from_plink2(result,
+                                            output_type = "vcf2",
+                                            output.dir = output.dir)
+            # vcf to csv and merge
+            csv_file <- convert_from_plink2(vcf_file, 
+                                            output_type = "csv2",
+                                            output.dir = output.dir,
+                                            ref = for_merging)
+            result <- csv_file 
           }
-          
-          # convert to vcf
-          vcf_file <- convert_from_plink2(merged_plink$pgen_prefix,
-                                          output_type = "vcf2",
-                                          output.dir = output.dir)
-          # vcf to csv and merge
-          csv_file <- convert_from_plink2(vcf_file, 
-                                          output_type = "csv2",
-                                          output.dir = output.dir,
-                                          ref = for_merging)
-          
-          result <- csv_file
         }
 
         convertedCSV(result$with_meta)
@@ -392,18 +442,12 @@ file_conversion_server <- function(input, output, session, rv) {
     input_path <- file.path(temp_dir, input$uas_zip$name)
     file.copy(input$uas_zip$datapath, input_path, overwrite = TRUE)
 
-    ref_value <- NULL
-
-    if (!is.null(input$ref_file)) {
-      ref_value <- input$ref_file$datapath
-    }
-
     withProgress(message = "Converting file...", value = 0, {
       tryCatch(
         {
           widened.file <- widen_genotype_file(
             files = input_path,
-            population = ref_value,
+            #population = ref_value,
             output.dir = temp_dir
           )
           convertedUAS(widened.file)
@@ -608,6 +652,7 @@ file_conversion_server <- function(input, output, session, rv) {
   csv_revised <- reactiveVal(NULL)
   strconvert <- reactiveVal(NULL)
   str_file <- reactiveVal(NULL)
+  directory <- tempdir()
 
   observeEvent(input$csv2str, {
     disable("csv2str")
@@ -616,10 +661,10 @@ file_conversion_server <- function(input, output, session, rv) {
       tryCatch({
         req(input$tostrFile$datapath, input$systemFile)
         csv_file <- load_csv_xlsx_files(input$tostrFile$datapath)
+        csv_file <- clean_input_data(csv_file)
         genind <- convert_to_genind(csv_file, to_str = TRUE, popinfo = TRUE)
-        csv_revised(genind$new_file)
+        csv_revised(genind$csv_revised)
         strconvert(genind$fsnps_gen)
-        directory <- tempdir()
         str_path <- revise_structure_file(strconvert(), directory, system = input$systemFile)
         str_file(str_path)
       }, error = function(e) {
@@ -642,9 +687,8 @@ file_conversion_server <- function(input, output, session, rv) {
   output$strFile <- DT::renderDataTable(
     {
       req(str_file())
-      str_lines <- readLines(str_file(), n = 20)
-      str_df <- data.frame(Line = seq_along(str_lines), Content = str_lines)
-      str_df
+      str_file <- read.table(str_file(), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+      DT::datatable(str_file)
     },
     options = list(pageLength = 10, scrollX = TRUE)
   )
@@ -688,7 +732,7 @@ file_conversion_server <- function(input, output, session, rv) {
     rs_n = c("...", "...", "...", "...", "...")
   )
 
-  output$exampleForArlecore <- DT::renderDataTable(
+  output$exampleForArlecore_UI <- DT::renderDataTable(
     {
       req(exampleForArlecore)
       exampleForArlecore
@@ -698,8 +742,6 @@ file_conversion_server <- function(input, output, session, rv) {
       pageLength = 10
     )
   )
-
-  # ======== REVISE
 
   arleFile <- reactiveVal(NULL)
 
@@ -730,21 +772,15 @@ file_conversion_server <- function(input, output, session, rv) {
       output.prefix = "arp_file",
       data_type = "STANDARD"
     )
-
-
+    
     arleFile(arp_file)
 
     enable("convert2Arle")
   })
 
-  output$fstTableArlecore <- renderTable({
-    req(arlequinResults())
-    get_fst_results(arlequinResults()$raw)
-  })
-
   output$downloadArpFile <- downloadHandler(
     filename = function() {
-      "arl_run.ars"
+      "arp_file.arp"
     },
     content = function(file) {
       req(arleFile())

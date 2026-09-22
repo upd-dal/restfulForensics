@@ -290,15 +290,27 @@ snp_extraction_server <- function(input, output, session, rv) {
           req(input$concordanceFile1$datapath, input$concordanceFile2$datapath)
 
           phased_flag <- input$isPhased
-          file1_path <- input$concordanceFile1$datapath
-          file2_path <- input$concordanceFile2$datapath
-          result <- calc_concordance(file1_path, file2_path, phased = phased_flag)
+          
+          f1_ext <- tools::file_ext(input$concordanceFile1$name)
+          if (f1_ext == "vcf") {
+            file1 <- vcf_to_csv(input$concordanceFile1$datapath)
+            file1 <- file1$with_meta
+          } else if (f1_ext %in% c("csv", "xlsx")) {
+            file1 <- load_csv_xlsx_files(input$concordanceFile1$datapath)
+          }
+          
+          f2_ext <- tools::file_ext(input$concordanceFile2$name)
+          if (f2_ext == "vcf") {
+            file2 <- vcf_to_csv(input$concordanceFile2$datapath)
+            file2 <- file2$with_meta
+          } else if (f2_ext %in% c("csv", "xlsx")) {
+            file2 <- load_csv_xlsx_files(input$concordanceFile2$datapath)
+          }
+          
+          result <- calc_concordance(file1, file2, phased = phased_flag)
           plot <- plot_concordance(result)
-
-          enable("compareBtn")
-
-          concordanceResult(result)
-          concordancePlotPath(plot)
+          concordanceResult(plot$results)
+          concordancePlotPath(plot$plot)
           showNotification("Concordance analysis complete, rendering outputs.", type = "message", duration = 30)
           print(Sys.time())
         },
@@ -307,6 +319,8 @@ snp_extraction_server <- function(input, output, session, rv) {
         }
       )
     })
+    
+    enable("compareBtn")
   })
 
   output$concordanceResults <- DT::renderDataTable(

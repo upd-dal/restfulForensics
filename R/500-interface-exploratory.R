@@ -4,7 +4,7 @@ exploratory_tab <- function() {
     tabName = "PCAtab",
     fluidRow(
       box(
-        fileInput("pcaFile", "Upload SNP Data (in CSV or XLSX) for PCA", accept = c(".csv", ".txt", ".xlsx")),
+        fileInput("pcaFile", "Upload Data (CSV/XLSX) for PCA", accept = c(".csv", ".txt", ".xlsx")),
         checkboxInput("useDefaultColors", "Use Default Colors and Labels", TRUE),
         conditionalPanel(
           condition = "!input.useDefaultColors",
@@ -33,7 +33,13 @@ exploratory_tab <- function() {
                 target = "_blank"
               ), "for a given population"
             ),
-          p(strong("Expected output file:"), "PNG plots")
+          p(strong("Expected output file:"), "PNG plots"),
+          br(),
+          p(strong("Note (if analyzing many populations):")),
+          p("If the input contains many populations, not all legends will be immediately visible under the Plots tab.
+          Scroll through the legends to see other population labels. The 'Download PCA Plot' will produce a PNG file
+          with labels positioned at the center of the population cluster. If using the 'Download plot as png' via the camera button,
+          note that only a fixed number of populations will be included in the PNG file.")
         ),
         tabPanel(
           title = "Sample Input Format/s",
@@ -54,8 +60,10 @@ exploratory_tab <- function() {
         width = 12,
         tabPanel(
           title = "Plots",
-          plotly::plotlyOutput("pcaPlot") # ,
-          # downloadButton("downloadPCAPlot", "Download PCA Plot")
+          uiOutput("downloadPCAPlot_UI"),
+          div(style = "height: 70vh; overflow-y: auto;", 
+              plotly::plotlyOutput("pcaPlot", height = "100%") 
+          )
         ),
         tabPanel(
           title = "Bar Plot",

@@ -121,9 +121,9 @@ compute_af <- function(fsnps_gen) {
 #' @param alpha The alpha value for the threshold. Default is 0.05.
 #'
 #' @returns A list of HWE stats results.
-compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05) {
+compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05, chains = 100000) {
   # Hardy-Weinberg Equilibrium (List for export)
-  fsnps_hwe <- as.data.frame(round(pegas::hw.test(fsnps_gen, B = 1000), 6))
+  fsnps_hwe <- as.data.frame(round(pegas::hw.test(fsnps_gen, B = chains), 6))
   fsnps_hwe <- data.frame(rownames(fsnps_hwe), fsnps_hwe)
   fsnps_hwe <- dplyr::rename(fsnps_hwe, rsID = 1)
   rownames(fsnps_hwe) <- NULL
@@ -140,7 +140,7 @@ compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05) {
   # Monte Carlo: p value
   fsnps_hwe_mc <- data.frame(sapply(
     adegenet::seppop(fsnps_gen),
-    function(ls) pegas::hw.test(ls, B = 10000)[, 4]
+    function(ls) pegas::hw.test(ls, B = chains)[, 4]
   ))
   fsnps_hwe_mc <- t(data.matrix(fsnps_hwe_mc))
   fsnps_hwe_mc_df <- data.frame(t(fsnps_hwe_mc))
@@ -380,7 +380,42 @@ evaluate_file <- function(df, sample_size = 50, genotype = "^[A-Z]/[A-Z]$") {
 #' @param pop The total number of samples in the data. Required if employing five-event minimum allele frequency.
 #'
 #' @returns A list containing genotype frequency (overall and by population).
-calc_genotype_freq <- function(df, pop = NULL) {
+calc_observed_genotype_freq <- function(df) {
+  df <- dplyr::rename(df, pop = 2)
+  pops_df <- split(df, df$pop)
+  
+  result <- lapply(names(pops_df), function(x) {
+    pop_sub_df <- pops_df[[x]]
+    pop_sub_df <- pop_sub_df[, -c(1,2), drop = FALSE]
+    
+    # Loop through each marker
+    marker_results <- lapply(names(pop_sub_df), function(marker) {
+      gt <- trimws(as.character(pop_sub_df[[marker]]))
+      gt <- gt[!is.na(gt) & gt != "N" & gt != ""]
+      
+      if (length(gt) == 0) {
+        return(NULL)
+      }
+      
+      gt_counts <- table(gt)
+      
+      data.frame(
+        population = x,
+        marker = marker,
+        genotype = names(gt_counts),
+        count = as.integer(gt_counts),
+        n_genotyped = length(gt),
+        observed_freq = as.numeric(gt_counts)/length(gt),
+        row.names = NULL
+      )
+    })
+    bind_rows(marker_results)
+  })
+  names(result) <- names(pops_df)
+  return(result)
+}
+
+calc_expected_genotype_freq <- function(df, pop = NULL) {
   df <- dplyr::rename(df, markers = 1)
 
   df <- df %>%
@@ -429,22 +464,49 @@ calc_genotype_freq <- function(df, pop = NULL) {
         homozygous2 = dplyr::if_else(n_alleles == 1, 0, q^2)
       )
   }
+  return(geno_freqs2)
 
-  by_pop <- split(geno_freqs2, geno_freqs2$population)
-  by_pop <- lapply(by_pop, function(x) {
-    x <- x[, -2]
-  })
+#  by_pop <- split(geno_freqs2, geno_freqs2$population)
+#  by_pop <- lapply(by_pop, function(x) {
+#    x <- x[, -2]
+#  })
 
-  clean_names <- names(by_pop) %>%
-    stringr::str_replace_all("[._]", " ")
-  names(by_pop) <- clean_names
+#  clean_names <- names(by_pop) %>%
+#    stringr::str_replace_all("[._]", " ")
+#  names(by_pop) <- clean_names
 
-  return(list(
-    gt_complete = geno_freqs2,
-    gt_by_pop = by_pop
-  ))
+#  return(list(
+#    gt_complete = geno_freqs2,
+#    gt_by_pop = by_pop
+#  ))
 }
 
+standardize_names <- function(x) {
+  x <- gsub("[^[:alnum:]]+", " ", x)
+  x <- trimws(x)
+  x <- tolower(x)
+  x
+}
+
+af_to_long <- function(df) {
+  df %>%
+    dplyr::rename(markers = 1) %>%
+    dplyr::mutate(
+      allele = sub("^.*\\.", "", markers),
+      marker = sub("\\.[^.]*$", "", markers)
+    ) %>%
+    dplyr::select(-markers) %>%
+    tidyr::pivot_longer(
+      cols = -c(marker, allele),
+      names_to = "population",
+      values_to = "freq"
+    ) %>%
+    dplyr::mutate(
+      marker = standardize_names(marker),
+      allele = trimws(allele),
+      freq = as.numeric(freq)
+    )
+}
 
 #' Calculate forensic parameters for iisnps
 #'
@@ -453,66 +515,134 @@ calc_genotype_freq <- function(df, pop = NULL) {
 #' @param theta The coefficient of ancestry or inbreeding to adjust calculation of match probabilities. Required if profile is not NULL.
 #'
 #' @returns A list of dataframes containing results.
-calc_iisnps_params <- function(geno_freqs, profile = NULL, theta = 0) {
-  marker_metrics <- geno_freqs %>%
+calc_iisnps_params <- function(geno_freqs, af) {
+  
+  res <- lapply(geno_freqs, function(x) {
+    # split by marker
+    pops_marker <- split(x, x$marker)
+    
+    # calculate Gsqr
+    marker_res <- lapply(names(pops_marker), function(y) {
+      curr <- pops_marker[[y]]
+      Gsqr <- sum(curr$observed_freq^2, na.rm = TRUE)
+      alleles <- stringr::str_split_fixed(curr$genotype, "/", 2)
+      
+      curr <- curr %>% dplyr::mutate(
+        gt_type = ifelse(alleles[,1] == alleles[,2], "Homozygous", "Heterozygous")
+      )
+      
+      total <- unique(na.omit(curr$n_genotyped))[1]
+      
+      gt_res <- curr %>%
+        dplyr::group_by(gt_type) %>%
+        dplyr::summarise(
+          Count = sum(count, na.rm = TRUE),
+          .groups = "drop"
+        ) %>%
+        dplyr::mutate(Frequency = Count/total) %>%
+        dplyr::select(gt_type, Frequency) %>%
+        tidyr::pivot_wider(
+          names_from = gt_type,
+          values_from = Frequency,
+          values_fill = 0
+        )
+      
+      gt_res <-  gt_res %>% dplyr::mutate(Gsqr = Gsqr)
+      data.frame(y, gt_res) %>%
+        dplyr::rename(marker = 1)
+      
+    })
+    return(marker_res)
+  })
+  
+  marker_metrics <- lapply(res, function(x) {
+    x <- x %>%
+      purrr::list_flatten() %>%
+      purrr::list_flatten() %>%
+      bind_rows()
+
+    x <- dplyr::rename(x, RMP = 4)
+    x <- x %>% dplyr::mutate(
+      PD = 1 - RMP,
+      PE = (Heterozygous^2)*(1 - (2*(Heterozygous)*(Homozygous^2))),
+      TPI = 1/(2*Homozygous)
+      )
+  })
+  
+  pic <- af %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      RMP = homozygous1^2 + heterozygous^2 + homozygous2^2,
-      PD = 1 - RMP,
       PIC = 1 - (homozygous1 + homozygous2) - (2 * (homozygous1 * homozygous2)), # 2 * homozygous1 * homozygous2 * (1-2*homozygous1*homozygous2),
-      H = homozygous1 + homozygous2,
-      h = heterozygous,
-      PE = (h^2) * (1 - (2 * h * (H^2))),
-      TPI = 1 / (2 * H)
     ) %>%
-    dplyr::select(marker, population, RMP, PD, PIC, PE, TPI) %>%
     dplyr::ungroup()
+  
+  pic_pop <- split(pic, pic$population)
+  
+  # match 
+  metrics1 <- standardize_names(names(marker_metrics))
+  metrics2 <- standardize_names(names(pic_pop))
+  match_df <- match(metrics1, metrics2)
+  
+  metrics_updated <- lapply(seq_along(marker_metrics), function(x){
+    if (is.na(match_df[x])) {
+      return(marker_metrics[[x]])
+    }
+    
+    df1 <- marker_metrics[[x]]
+    df2 <- pic_pop[[match_df[x]]]
+    
+    df1 <- df1 %>% left_join(
+      df2 %>% dplyr::select(marker, PIC),
+      by = "marker"
+    )
+    return(df1)
+  })
+  names(metrics_updated) <- names(marker_metrics)
+  return(metrics_updated)
+}
 
-  if (!is.null(profile)) {
-    profile <- dplyr::rename(profile, marker = 1)
-
-    geno_theta <- geno_freqs %>%
-      dplyr::mutate(
-        homozygous1 = p^2 + p * (1 - p) * theta,
-        heterozygous = 2 * p * q * (1 - theta),
-        homozygous2 = q^2 + q * (1 - q) * theta
+calc_rmp <- function(profile, af_table, n_ref, theta = 0.01) {
+  profile <- profile %>% dplyr::mutate(
+    marker_std = standardize_names(marker),
+    genotype_std = clean_input_data(genotype)
+  )
+  freq_floor <- 5/(2*n_ref)
+  af_table <- af_table %>% 
+    dplyr::group_by(marker) %>%
+    dplyr::mutate(
+      freq_adj = pmax(freq, freq_floor),
+      freq_adj = freq_adj / sum(freq_adj)
+    ) %>%
+    dplyr::ungroup
+  
+  locus_res <- profile %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      allele1 = strsplit(genotype, "/", fixed = TRUE)[[1]][1],
+      allele2 = strsplit(genotype, "/", fixed = TRUE)[[1]][2],
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      
+      p = af_table$freq_adj[
+        match(paste(marker, allele1), paste(af_table$marker, af_table$allele))
+      ],
+      
+      q = af_table$freq_adj[
+        match(paste(marker, allele2), paste(af_table$marker, af_table$allele))
+      ],
+      
+      gen_prob = dplyr::case_when(
+        is.na(p) | is.na(q) ~ NA_real_,
+        allele1 == allele2 ~ p^2 + theta*p*(1-p),
+        TRUE ~ 2*p*q*(1-theta)
       )
-
-    rmp_table <- profile %>%
-      dplyr::left_join(geno_theta, by = "marker") %>%
-      dplyr::mutate(
-        g1 = stringr::str_split(genotype, "/", simplify = TRUE)[, 1], # second column of profile
-        g2 = stringr::str_split(genotype, "/", simplify = TRUE)[, 2],
-        genotype_freqs = dplyr::case_when(
-          g1 == allele1 & g2 == allele1 ~ homozygous1,
-          g1 == allele2 & g2 == allele2 ~ homozygous2,
-          g1 != g2 ~ heterozygous,
-          TRUE ~ NA_real_
-        )
-      )
-
-    rmp <- prod(rmp_table$genotype_freqs, na.rm = TRUE)
-
-    return(list(
-      RMP_profile = rmp,
-      marker_metrics = marker_metrics
-    ))
-  } else {
-    # breakdown
-    by_pop <- split(marker_metrics, marker_metrics[, 2])
-    by_pop <- lapply(by_pop, function(x) {
-      x <- x[, -2]
-    })
-
-    clean_names <- names(by_pop) %>%
-      stringr::str_replace_all("[._]", " ")
-    names(by_pop) <- clean_names
-
-    return(list(
-      overall = marker_metrics,
-      by_population = by_pop
-    ))
-  }
+    ) %>%
+    dplyr::ungroup()
+    rmp <- prod(locus_res$gen_prob)
+    list(locus_results = locus_res,
+         rmp = rmp)
 }
 
 #' Calculate the population breakdown of samples

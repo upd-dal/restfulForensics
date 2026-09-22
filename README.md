@@ -2,7 +2,7 @@
 <img src = "www/readme/fulllogo.png" width = "500" height = "400">
 </p>  
 
-# restful-forensics  
+# restful forensics  
 ```restful forensics``` is an open-source platform for forensic genetics research
 workflow and method validation. This tool is built as a Shiny app in R and
 incorporates commonly used packages, functions, and software for genetic data preparation,
@@ -18,8 +18,7 @@ University of the Philippines Diliman, Quezon City.
 2. [Features](#Features)  
 3. [Installation](#Installation) <br>
    a. [Prerequisites](#A-Prerequisites) <br>
-   b. [Dependency List](#B-Dependencies) <br>
-   c. [Installation Guide](#C-Installation-Guide) <br>
+   b. [Installation Guide](#C-Installation-Guide) <br>
 4. [Example Workflow](#Example-Workflow)  
 5. [Software Architecture](#Software-Architecture) 
 6. [Limitations](#Limitations) <br>
@@ -98,20 +97,41 @@ for sub/modules:
 
 
 ## Installation
+This is a Windows-based shiny application. 
 
 ### A. Prerequisites
 - [R (R version 4.6.1 and above)](https://cran.r-project.org/bin/windows/base/)
 - [Rtools (compatible with R >= 4.6.1)](https://cran.r-project.org/bin/windows/Rtools/)
 - (optional) Any Integrated Development Environment. Suggestion is to use [RStudio.](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads)
+- [Git](https://git-scm.com/)  
 
-### B. Dependencies
-The list of package dependencies are listed under "R/packages.R" and are installed upon running ```source("install.R")```
+### B. Installation Guide  
 
-### C. Installation Guide
-1 Clone the repository  
-```git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git --branch alpha-test```  
+1. Clone the repository  
+*Using Windows PowerShell*  
+- Ensure that Git is installed in your system. If not, download from the official (website)(https://git-scm.com/) and install.  
+- Within PowerShell, configure username and email:  
+```
+git config --global user.name "Your Name" 
+git config --global user.email "you@example.com"
+```  
+- Verify installation by doing ```git --version```  
+- Launch PowerShell with appropriate permissions (admin privileges if required)  
+- Clone the repository by performing: ```git clone https://github.com/upd-dal/restfulForensics```  
 
-2 Run the application  
+*Using RStudio IDE*  
+- Open RStudio  
+- Go to File > New Project > Version Control > Git  
+- Paste the URL into 'Repository URL': https://github.com/upd-dal/restfulForensics  
+- Set directory then click *Create Project*. RStudio clones and opens the project.  
+
+*Using R Terminal*  
+- Ensure that Git is installed in your system. Check by performing ```git --version```  
+- Open the R terminal (beside the Console) and run: ```git clone https://github.com/upd-dal/restfulForensics```  
+
+2. Launch the application  
+- Change directory in R to where the repository was copied  
+- Launch the application by copying and pasting the following commands to the console:  
 ```
 source("install.R")
 shiny::runApp()
@@ -119,12 +139,19 @@ shiny::runApp()
   
 ## Example Workflow
 The modules within restful forensics can be run independently or as part of a workflow. For certain marker panels,
-a sample workflow can be visualized in Fig 1.
-![Figure 1. Sample workflow for different forensic marker panels](docs/workflow.png)
+a sample workflow can be visualized as follows:
+![](docs/workflow.png)
+Figure 1. Sample workflow for different forensic marker panels.
 
-The restful forensics has been tested using data from the 1000 Genomes Project.
+The restful forensics has been tested using SNP data
+based on the [Kidd et al. (2014)](https://www.sciencedirect.com/science/article/pii/S1872497314000039?via%3Dihub)
+panel on biogeographical ancestry markers from the 1000 Genomes Project and Human Genome Diversity Projects' VCF files. 
+The barcoding section has been tested on 16S rRNA sequences from _Lactobacillus_ spp
+sourced from NCBI. 
+<br>
 Figure 2 shows a more detailed pipeline:
-![Figure 2. Pipelines applicable within restful forensics](docs/chart.png)
+![](docs/chart.png)
+Figure 2. Pipelines within restful forensics.
 
 ## Software Architecture
 As a shiny application, restful forensics is divided into the user interface (UI)
@@ -138,9 +165,9 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 ### Known Limitations
 | # | Module | Submodule | Limitation |
 | :---: | :--- | :--- | :---: |
-| 1 | File Conversion | To STRUCTURE File | No option to add extra information/columns, standard parameters are set based on strataG |
-| 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> |
-| 3 | Population Summary Statistics | Arlecore | <ul><li>Parameters for running arlecore are set with performing LD test the only provided additional option</li><li>Statistics calculated: Diversity and HWE metrics, Expected Heterozygosities, FST, Coancestry Coefficient, and Loci in LD</li></ul> |
+| 1 | File Conversion | To STRUCTURE File | No option to add extra information/columns, standard parameters are set based on strataG. However, output can be manually edited using any text editor. |
+| 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
+| 3 | Population Summary Statistics | Arlecore | Statistics calculated: Diversity and HWE metrics, Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD. |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
 | 5 | Forensic Parameters | Forensic Parameters | Calculation of Random Match Probability given a profile is untested |
 | 6 | DNA Barcoding | Multiple Sequence Alignment | Only global alignment can be performed |
@@ -152,9 +179,12 @@ Additional options to set main and extra parameters.
 2. *DNA Barcoding*
 Add option to perform local sequence alignment.
 
-3. _*Additional Feature: Incorporation of ADMIXTURE software*_
+3. _*Additional Feature: Incorporation of ADMIXTURE software*_  
 
-## Citation Guide
+## Citation Guide  
+To cite the application: DNA Analysis Laboratory. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. github.com  
 
-## License
+Manuscript in preparation.  
+
+## License  
 restful forensics operates under the GNU General Public License

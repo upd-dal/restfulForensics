@@ -92,7 +92,8 @@ load_csv_xlsx_files <- function(input) {
 #'
 #' @returns The genotype dataframe with sample ID.
 load_vcf_files <- function(vcf, output.dir = ".") {
-  if (tools::file_ext(vcf) == "vcf") {
+  vcf_ext <- tools::file_ext(vcf)
+  if (vcf_ext == "vcf") {
     vcf_object <- vcfR::read.vcfR(vcf, verbose = FALSE)
     genotypes <- vcfR::extract.gt(vcf_object, return.alleles = TRUE)
     columns <- as.data.frame(vcfR::getFIX(vcf_object))
@@ -102,10 +103,10 @@ load_vcf_files <- function(vcf, output.dir = ".") {
     final_df <- data.frame(t(raw_df)) %>%
       janitor::row_to_names(row_number = 1) %>%
       tibble::rownames_to_column(var = "Sample")
-  } else if (tools::file_ext(vcf) == ".gz") {
-    utils::untar(vcf, exdir = output.dir)
-
-    wb <- list.files(path = file.path(output.dir), pattern = ".vcf$", full.names = TRUE)
+  } else if (vcf_ext %in% c("tar", "zip")) {
+    vcf_zipped <- unpack_input_file(vcf, output.dir = output.dir)
+    wb <- vcf_zipped$data_files
+#    wb <- list.files(path = file.path(output.dir), pattern = ".vcf$", full.names = TRUE)
     dflist <- lapply(wb, function(x) {
       vcf_obj <- vcfR::read.vcfR(x, verbose = FALSE)
       genotypes <- vcfR::extract.gt(vcf_obj, return.alleles = TRUE)

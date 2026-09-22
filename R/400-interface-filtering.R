@@ -92,7 +92,7 @@ filtering_tab <- function() {
             tags$li("--hwe [value]"),
             tags$li("--indep-pairwise [value]"),
             tags$li("--king-cutoff [value]"),
-            tags$li("Other additional PLINK flags")
+            tags$li("Other additional PLINK flags such as '--within [phenotype_pop.txt] --loop-cats'")
           ),
           p(strong("Expected output/s:")),
           tags$ul(
@@ -106,7 +106,9 @@ filtering_tab <- function() {
               href = "https://www.cog-genomics.org/plink/2.0/",
               target = "_blank"
             )
-          )
+          ),
+          br(),
+          p("PLINK is used strictly for filtering variants/individuals. Analysis that produces files other than a VCF file will not be shown here.")
         ),
         tabPanel(
           title = "Download sample files",

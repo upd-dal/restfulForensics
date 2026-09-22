@@ -24,7 +24,8 @@ file_conversion_tab <- function() {
               radioButtons("inputType2_vcf", "Choose final file type",
                 choices = c(
                   "PLINK2 files (.psam/.pvar/.pgen)" = "plink2",
-                  "PLINK1.9 files (.bed/.bim/.fam)" = "plink1"
+                  "PLINK1.9 files (.bed/.bim/.fam)" = "plink1",
+                  "CSV file" = "csv2"
                 )
               )
             ),
@@ -35,7 +36,8 @@ file_conversion_tab <- function() {
                 choices = c(
                   "VCF file" = "vcf2",
                   "PLINK2 files (.psam/.pvar/.pgen)" = "plink2",
-                  "PLINK1.9 files (.bed/.bim/.fam)" = "plink1"
+                  "PLINK1.9 files (.bed/.bim/.fam)" = "plink1",
+                  "CSV file" = "csv2"
                 )
               )
             ),
@@ -47,7 +49,8 @@ file_conversion_tab <- function() {
               radioButtons("inputType2_plink", "Choose final file type",
                 choices = c(
                   "VCF file" = "vcf2",
-                  "PLINK2 files (.psam/.pvar/.pgen)" = "plink2"
+                  "PLINK2 files (.psam/.pvar/.pgen)" = "plink2",
+                  "CSV file" = "csv2"
                 )
               )
             ),
@@ -98,7 +101,12 @@ file_conversion_tab <- function() {
             tabPanel(
               title = "Download Results",
               uiOutput("downloadVCF_UI"),
-              uiOutput("downloadPLINK_UI")
+              uiOutput("downloadPLINK_UI"),
+              uiOutput("downloadtoCSV_UI")
+            ),
+            tabPanel(
+              title = "CSV table",
+              DT::dataTableOutput("toCSVtable")
             )
           )
         ),
@@ -200,9 +208,9 @@ file_conversion_tab <- function() {
               accept = c(".zip", ".tar")
             ),
             helpText("*Accepts compressed files containing CSV/XLSX files."),
-            fileInput("ref_file", "Optional Reference File (CSV or XLSX)",
-              accept = c(".csv", ".xlsx", ".zip", ".tar")
-            ),
+#            fileInput("ref_file", "Optional Reference File (CSV or XLSX)",
+#              accept = c(".csv", ".xlsx", ".zip", ".tar")
+#            ),
             actionButton("run_uas2csv", "Run Conversion")
           ),
           tabBox(
@@ -372,12 +380,14 @@ file_conversion_tab <- function() {
             title = "Results",
             width = 12,
             tabPanel(
-              title = "Preview and Download",
-              tableOutput("revisedCSV"),
-              tableOutput("strFile"),
-              br(),
-              uiOutput("downloadrevised_UI"),
+              title = "Preview .str file",
+              DT::DTOutput("strFile"),
               uiOutput("downloadSTRfile_UI")
+            ),
+            tabPanel(
+              title = "Revised Input file",
+              DT::DTOutput("revisedCSV"),
+              uiOutput("downloadrevised_UI")
             )
           )
         )
@@ -412,7 +422,7 @@ file_conversion_tab <- function() {
               h4("Convert genotype and population data (.xlsx/.csv) to Arlequin-compatible file"),
               p(strong("Input file/s:"), "File (.csv/.xlsx) containing marker and population data.
                                             Each row should represent multi-locus data for an individual sample."),
-              p(strong("Expected output file/s: .ars file")),
+              p(strong("Expected output file/s: .arp file")),
               hr(),
               p(tags$a("Arlequin",
                 href = "https://cmpg.unibe.ch/software/arlequin35/",
@@ -421,7 +431,7 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              DT::dataTableOutput("exampleForArlecore")
+              DT::dataTableOutput("exampleForArlecore_UI")
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -436,6 +446,7 @@ file_conversion_tab <- function() {
             title = "Results",
             width = 12,
             tabPanel(
+              title = "Download Results",
               uiOutput("downloadArpFile_UI")
             )
           )

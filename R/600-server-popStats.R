@@ -72,7 +72,7 @@ pop_stats_server <- function(input, output, session, rv) {
 
           ## HWE
           incProgress(0.8, detail = "Running HWE and FST calculations...")
-          hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = input$correctionModel, alpha = input$alphaValue)
+          hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = input$correctionModel, alpha = input$alphaValue, chains = input$markovHWE)
           hardyWeinberg(hardy_weinberg_stats)
 
           ## FST
@@ -349,11 +349,9 @@ pop_stats_server <- function(input, output, session, rv) {
 
       incProgress(0.6, detail = "Running arlecore...")
       # returns path of res folder
-      if (isTRUE(input$calcLD)) {
-        results <- run_arlequin(arp_file, ld = TRUE)
-      } else {
-        results <- run_arlequin(arp_file, ld = FALSE)
-      }
+      ld_value <- input$calcLD
+      hwe_value <- input$calcHWE
+      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
 
       incProgress(0.8, detail = "Loading report...")
       # get report file
@@ -380,10 +378,16 @@ pop_stats_server <- function(input, output, session, rv) {
       fst_matrix <- parse_sections_arlequin(doc, "PairFstMat", pairFstMatrix) # matrix of pairwise fst
       coancestry_coeff <- parse_sections_arlequin(doc, "coancestryCoefficients", coancestryCoeff) # pairwise of fst and reynolds
       pairwise_matrix <- parse_sections_arlequin(doc, "pairwiseDifferenceMatrix", pairwiseDiffMatrix)
-      population_diversity <- parse_pop_diversity(doc)
-      population_diversity$Locus <- rsids[[2]][
-        match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
-      ]
+
+      
+      if (isTRUE(input$calcHWE)) {
+        population_diversity <- parse_pop_diversity(doc)
+        population_diversity$Locus <- rsids[[2]][
+          match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
+        ]
+      } else {
+        population_diversity <- NULL
+      }
 
       if (isTRUE(input$calcLD)) {
         rsids_zero <- rsids
