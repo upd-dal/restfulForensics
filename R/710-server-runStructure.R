@@ -64,8 +64,7 @@ run_structure_analysis <- function(input, output, session, rv) {
                                     exec = structure_exec,
                                     delete.files = FALSE,
                                     label = "structureRun",
-                                    pop.prior = "usepopinfo",
-                                    popflag = 1
+                                    pop.prior = "usepopinfo"
         )
       } else {
         sr <- strataG::structureRun(df_gtype,
@@ -78,8 +77,7 @@ run_structure_analysis <- function(input, output, session, rv) {
                                     exec = structure_exec,
                                     delete.files = FALSE,
                                     label = "structureRun",
-                                    pop.prior = "usepopinfo",
-                                    popflag = 1
+                                    pop.prior = "usepopinfo"
         )
       }
       stray_dir <- file.path(getwd(), "structureRun.structureRun")
