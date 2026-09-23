@@ -7,7 +7,7 @@ forensic_params_tab <- function() {
         title = "Population Database",
         fluidRow(
           box(
-            fileInput("iisnpsFile", "Upload Reference File", accept = c(".csv", ".xlsx")),
+            fileInput("iisnpsFile", "Upload File", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
             helpText("See 'Sample Input File' for accepted formats. Frequency table and genotype files are accepted."),
 
             actionButton("calcIISNPs", "Calculate", icon = icon("calculator")),
@@ -24,7 +24,7 @@ forensic_params_tab <- function() {
                 tags$li("Power of Exclusion (PE)"),
                 tags$li("Typical Paternity Index (TPI)")
               ),
-              p(strong("Input file:"), "CSV or XLSX file in genotype format or as an allele frequency table"),
+              p(strong("Input file:"), "CSV or Excel file containing population and genotype information."),
               p(strong("Expected output file:"), "CSV file"),
               hr(),
               p(
@@ -85,7 +85,7 @@ forensic_params_tab <- function() {
             )
           )
         )
-      ), # end of first tab panel
+      ), 
       tabPanel(
         title = "Calculate RMP for a Profile",
         box(
@@ -97,9 +97,9 @@ forensic_params_tab <- function() {
             ),
           conditionalPanel(
             condition = "input.newPopDatabase",
-            fileInput("newPopDataFile", "Upload population reference database (XLSX/CSV)", accept = c(".xlsx", ".csv"))
+            fileInput("newPopDataFile", "Upload population reference database (XLSX/CSV)", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv"))
           ),
-          fileInput("fileProfile", "Upload Profile", accept = c(".csv", ".xlsx", ".txt")),
+          fileInput("fileProfile", "Upload Profile", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
           checkboxInput("floorCeiling", "Use 5/2n rule in calculating genotype frequency?", FALSE),
           helpText("Defining the total individuals/samples assumes that the population data uploaded is from a single population
                    with subpopulations; hence the use of theta."),
@@ -113,7 +113,15 @@ forensic_params_tab <- function() {
         ),
         tabBox(
           tabPanel(
-            title = "Instructions"
+            title = "Instructions",
+            p("Calculate the RMP value for a profile."),
+            p(strong("Input file:")),
+            tags$ul(
+              tags$li("(Reference database) CSV or Excel file containing allele frequency for a set of loci in a population"),
+              tags$li("(Reference database) Allele frequencies calculated from the 'Population Database' submodule"),
+              tags$li("Sample profile containing genotype information for the individual with one marker per row")
+            ),
+            p(strong("Expected output file:"), "Calculation results"),
           ),
           tabPanel(
             title = "Sample Input Format/s"
@@ -127,7 +135,16 @@ forensic_params_tab <- function() {
             title = "Results",
             width = 12,
             tabPanel(
-              title = "Calculations"
+              title = "Calculations",
+              tableOutput("rmp_summary")
+            ),
+            tabPanel(
+              title = "Locus",
+              tableOutput("locus_information")
+            ),
+            tabPanel(
+              title = "Profile Data",
+              tableOutput("profileData")
             )
           )
         )

@@ -282,10 +282,10 @@ dashboard_server <- function(input, output, session, rv) {
   output$popstatRef <- renderUI({
     p_lists <- list(
       h4("Calculate common population statistics using R-based packages"),
-      p(strong("Input file:"), "CSV or .xlsx file"),
+      p(strong("Input file:"), "CSV or Excel file"),
       p(strong("Expected output files:")),
       tags$ul(
-        tags$li(".xlsx file with all results"),
+        tags$li("Excel (.xlsx) file with all results"),
         tags$li("Heterozygosity Plot (.png)"),
         tags$li("Fst Plots (.png)")
       ),

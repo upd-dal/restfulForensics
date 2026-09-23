@@ -4,7 +4,7 @@ structure_runs <- function() {
     tabName = "StructureRun",
     fluidRow(
       box(
-        fileInput("structureFile", "Upload Input File (CSV/XLSX)", accept = c(".csv", ".xlsx")),
+        fileInput("structureFile", "Upload File", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
         helpText("Input file should be similar to the output of the 'Convert to CSV' tab under 'File Conversion'"),
         numericInput("kMin", "Min K", value = 2, min = 1),
         numericInput("kMax", "Max K", value = 5, min = 1),
@@ -34,7 +34,7 @@ structure_runs <- function() {
         tabPanel(
           title = "Instructions",
           h4("Run population structure analysis using STRUCTURE v2.3.4"),
-          p(strong("Input file:"), "CSV or XLSX file"),
+          p(strong("Input file:"), "CSV or Excel file"),
           p(strong("Expected output file:"), "Zipped qmatrices and individual files"),
           hr(),
           p(

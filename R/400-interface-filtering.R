@@ -10,7 +10,7 @@ filtering_tab <- function() {
         ),
         conditionalPanel(
           condition = "input.inputFileTypeFilter == 'VCF/VCF.GZ/BCF'",
-          fileInput("markerFileFilter", "Upload Genotype (VCF, VCF.GZ, or BCF File)", accept = c(".vcf", ".bcf", ".vcf.gz"))
+          fileInput("markerFileFilter", "Upload Genotype File", accept = c(".vcf", ".bcf", ".vcf.gz"))
         ),
         conditionalPanel(
           condition = "input.inputFileTypeFilter == 'PLINK'",
@@ -18,7 +18,7 @@ filtering_tab <- function() {
           fileInput("bimFileFilter", "PLINK BIM file", accept = c(".bim")),
           fileInput("famFileFilter", "PLINK FAM file", accept = c(".fam"))
         ),
-        fileInput("highlightRef", "Optional Reference file for highlighting (CSV/XLSX)", accept = c(".xlsx", ".csv")),
+        fileInput("highlightRef", "Optional Reference file for highlighting (CSV/Excel file)", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
         checkboxInput("enableDP", "Plot Depth of Coverage", value = TRUE),
         helpText("Depth of Coverage Plot only available if using a VCF file."),
         selectInput("colorPalette", "Color Palette", choices = rownames(RColorBrewer::brewer.pal.info), selected = "Set2"),

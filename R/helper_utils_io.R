@@ -75,13 +75,13 @@ load_csv_xlsx_files <- function(input) {
   }
 
   if (tools::file_ext(input) == "csv") {
-    return(utils::read.csv(input, check.names = FALSE))
-  } else if (tools::file_ext(input) == "xlsx") {
-    return(openxlsx::read.xlsx(input, check.names = FALSE))
+    return(read.csv(input, check.names = FALSE))
+  } else if (tools::file_ext(input) %in% c("xlsx", "xlsm", "xlsb", "xls")) {
+    return(readxl::read_excel(input))
   } else if (tools::file_ext(input) == "txt") {
     return(read.table(input, quote = "\"", comment.char = ""))
   } else {
-    stop("Input file should be in csv, txt, or xlsx format.")
+    stop("Input file should be in CSV, text, or Excel format.")
   }
 }
 

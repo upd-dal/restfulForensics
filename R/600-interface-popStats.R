@@ -9,7 +9,7 @@ popstats_tab <- function() {
           title = "R-based Calculations",
           fluidRow(
             box(
-              fileInput("popStatsFile", "Upload CSV or XLSX Dataset", accept = c(".xlsx", ".csv")),
+              fileInput("popStatsFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
               numericInput("markovHWE", "Set Markov Chains for HWE calculations", value = 1000, min = 1000),
               selectInput("correctionModel", "Select Correction Model", choices = c("Bonferroni" = "Bonferroni", "FDR" = "FDR")),
               numericInput("alphaValue", "Set Alpha Value", value = 0.05, min = 0.00, max = 1),
@@ -99,7 +99,7 @@ popstats_tab <- function() {
           title = "Arlecore",
           fluidRow(
             box(
-              fileInput("fileForArlecore", "Input file (CSV/XLSX)", accept = c("xlsx", "csv")),
+              fileInput("fileForArlecore", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv")),
               checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
               conditionalPanel(
                 condition = "input.calcLD",
@@ -124,9 +124,9 @@ popstats_tab <- function() {
               tabPanel(
                 title = "Instructions",
                 h4("Calculate common population statistics using Arlecore (terminal-based version of Arlequin)"),
-                p(strong("Input file/s:"), "CSV file containing marker and population data.
+                p(strong("Input file/s:"), "CSV/Excel file containing marker and population data.
                                               Each row should represent multi-locus data for an individual sample."),
-                p(strong("Expected output file/s:"), ".xlsx and .ars file"),
+                p(strong("Expected output file/s:"), "Excel (.xlsx) file and .ars file"),
                 hr(),
                 p(tags$a("Arlequin",
                   href = "https://cmpg.unibe.ch/software/arlequin35/",

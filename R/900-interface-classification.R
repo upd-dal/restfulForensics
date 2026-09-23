@@ -4,7 +4,7 @@ classification_tab <- function() {
     tabName = "Classification",
     fluidRow(
       box(
-        fileInput("forPredFile", "Upload CSV file", accept = c(".csv", ".xlsx")),
+        fileInput("forPredFile", "Upload file", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
         actionButton("runNaiveBayes", "Classify", icon = icon("align-justify")),
         uiOutput("downloadClassification_UI")
       ),
@@ -12,8 +12,8 @@ classification_tab <- function() {
         tabPanel(
           title = "Instructions",
           h4("Perform NaÏve Bayes classification"),
-          p(strong("Input file/s:"), "CSV file containing training data or merged training and test data."),
-          p(strong("Expected output file:"), "XLSX file"),
+          p(strong("Input file/s:"), "CSV/Excel file containing training data or merged training and test data."),
+          p(strong("Expected output file:"), "Excel (.xlsx) file"),
           hr(),
           p(
             "This performs a NaÏve Bayes classification and leave-one-out cross-validation

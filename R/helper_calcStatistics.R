@@ -601,36 +601,47 @@ calc_iisnps_params <- function(geno_freqs, af) {
   return(metrics_updated)
 }
 
-calc_rmp <- function(profile, af_table, n_ref, theta = 0.01) {
-  profile <- profile %>% dplyr::mutate(
-    marker_std = standardize_names(marker),
-    genotype_std = clean_input_data(genotype)
-  )
-  freq_floor <- 5/(2*n_ref)
-  af_table <- af_table %>% 
-    dplyr::group_by(marker) %>%
+prep_af_table <- function(af_table){
+  names(af_table) <- c("allele", "marker", "population", "freq")
+  af_table %>%
     dplyr::mutate(
-      freq_adj = pmax(freq, freq_floor),
-      freq_adj = freq_adj / sum(freq_adj)
-    ) %>%
-    dplyr::ungroup
+      allele = trimws(as.character(allele)),
+      marker_std = as.character(marker),
+      freq = as.numeric(freq)
+    )
+}
+
+calc_rmp <- function(profile, af_table, n_ref = 100, theta = 0.01) {
+  names(profile)[1:2] <- c("marker", "genotype")
+  
+  profile <- profile %>% dplyr::mutate(
+    marker_std = marker,
+    genotype_std = as.character(genotype)
+  )
+  
+  freq_floor <- 5/(2*n_ref)
+  
+  af_table <- dplyr::group_by(af_table, marker_std)
+  af_table <- dplyr::mutate(af_table, freq_adj = pmax(freq, freq_floor))
+  af_table <- dplyr::mutate(af_table, freq_adj = freq_adj/ sum(freq_adj))
+  af_table <- dplyr::ungroup(af_table)
+  
   
   locus_res <- profile %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      allele1 = strsplit(genotype, "/", fixed = TRUE)[[1]][1],
-      allele2 = strsplit(genotype, "/", fixed = TRUE)[[1]][2],
+      allele1 = strsplit(genotype_std, "/", fixed = TRUE)[[1]][1],
+      allele2 = strsplit(genotype_std, "/", fixed = TRUE)[[1]][2]
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
-      
       p = af_table$freq_adj[
-        match(paste(marker, allele1), paste(af_table$marker, af_table$allele))
+        match(paste(marker_std, allele1), paste(af_table$marker_std, af_table$allele))
       ],
       
       q = af_table$freq_adj[
-        match(paste(marker, allele2), paste(af_table$marker, af_table$allele))
+        match(paste(marker_std, allele2), paste(af_table$marker_std, af_table$allele))
       ],
       
       gen_prob = dplyr::case_when(
@@ -640,9 +651,12 @@ calc_rmp <- function(profile, af_table, n_ref, theta = 0.01) {
       )
     ) %>%
     dplyr::ungroup()
+  
     rmp <- prod(locus_res$gen_prob)
-    list(locus_results = locus_res,
-         rmp = rmp)
+    lr <- 1/rmp
+    return(list(locus_results = locus_res,
+         rmp = rmp,
+         lr = lr))
 }
 
 #' Calculate the population breakdown of samples

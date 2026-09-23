@@ -16,14 +16,23 @@ dashboard_tab <- function() {
                           for population structure analysis (i.e. STRUCTURE), forensic DNA
                           inference/classification using ancestry or phenotype-informative SNPs, and DNA
                           barcoding (i.e. multiple sequencing alignment).")
-      )
+      ),
+      tabBox(
+        title = "Citation",
+        side = "right",
+        width = 12,
+        h4("Cite the application:"),
+        h4("DNA Analysis Laboratory. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. github.com"),
+        br(),
+        h4("Manuscript pending.")
+      ),
     ),
     fluidRow(
       tabBox(
         title = "Overview of Features",
         width = 12,
         tabPanel(
-          "Workplan",
+          "Workflow",
           # Zoom features adapted from: https://forum.posit.co/t/zoom-in-zoom-out-in-r-shiny-while-working-with-images/183567
           div(style = "display:flex; justify-content: space-evenly; margin-bottom:10px;"),
           actionButton("smaller_workplan", "-"),

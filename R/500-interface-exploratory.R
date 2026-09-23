@@ -4,11 +4,11 @@ exploratory_tab <- function() {
     tabName = "PCAtab",
     fluidRow(
       box(
-        fileInput("pcaFile", "Upload Data (CSV/XLSX) for PCA", accept = c(".csv", ".txt", ".xlsx")),
+        fileInput("pcaFile", "Upload Genotype File", accept = c(".csv", ".txt", "xlsx", "xlsm", "xlsb", "xls")),
         checkboxInput("useDefaultColors", "Use Default Colors and Labels", TRUE),
         conditionalPanel(
           condition = "!input.useDefaultColors",
-          fileInput("pcaStyleFile", "Customize population colors and shapes.", accept = c(".csv", ".xlsx", ".txt")),
+          fileInput("pcaStyleFile", "Customize population colors and shapes.", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
           helpText("Columns should contain: [1] Population name, [2] Color (name or hex code), [3] Shapes"),
           p("The order of the colors would match the order of PCA labels")
         ),
@@ -23,9 +23,9 @@ exploratory_tab <- function() {
         tabPanel(
           title = "Instructions",
           h4("Run principal component analysis using the ade4 (Dray and Dufour, 2007) package in R"),
-          p(strong("Input file:"), "CSV or XLSX file and color labels (optional)"),
+          p(strong("Input file:"), "CSV or Excel file and color labels (optional)"),
           p(strong("Optional additional input file/s:"),
-            "If using custom visualizations, upload a file (.csv/.xlsx) with columns containing 
+            "If using custom visualizations, upload a file (CSV/Excel) with columns containing 
             [1] Unique population name/s that matches the input file,
             [2] Color for a given population (name or hex code), and
             [3] Desired point", tags$a("shapes",

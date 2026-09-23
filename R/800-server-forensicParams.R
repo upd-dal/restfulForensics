@@ -183,21 +183,66 @@ forensic_params_server <- function(input, output, session, rv) {
     profile <- load_csv_xlsx_files(input$fileProfile$datapath)
     if (isFALSE(input$newPopDatabase)) {
       req(afTable())
-      af_long <- af_long(afTable()) %>%
+      af_long <- af_to_long(afTable()) %>%
         dplyr::filter(population == input$rmp_population)
     } else {
       req(input$newPopDataFile)
       af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
     }
+    
+    af_long <- prep_af_table(af_long)
+    print(names(profile))
+    print(names(af_long))
+    
+    str(profile)
+    str(af_long)
     result <- calc_rmp(
       profile = profile,
       af_table = af_long,
       n_ref = input$totalPop,
-      theta = thetaValue
+      theta = input$thetaValue
     )
     rmpResult(result)
     enable("calcRMP")
     })
+  
+  output$rmp_summary <- renderTable({
+    req(rmpResult())
+    result <- rmpResult()
+    data.frame(
+      Metric = c(
+        "Random Match Probability (RMP)",
+        "Likelihood Ratio"
+      ),
+      Value = c(
+        format(result$rmp, scientific = TRUE, digits = 6),
+        format(result$lr, scientific = TRUE, digits = 6)
+      )
+    )
+  })
+  
+  output$locus_information <- renderTable({
+    req(rmpResult())
+    result <- rmpResult()
+    
+    result$locus_results %>%
+      dplyr::select(
+        marker_std,
+        genotype_std,
+        allele1,
+        allele2,
+        p,
+        q,
+        gen_prob
+      )
+  }, digits = 6)
+  
+  output$profileData <- renderTable({
+    req(rmpResult())
+    result <- rmpResult()
+    result$locus_results %>%
+      dplyr::select(marker, genotype, marker_std, genotype_std)
+  })
   
   output$rmp_population_UI <- renderUI({
     if (isFALSE(input$newPopDatabase)) {

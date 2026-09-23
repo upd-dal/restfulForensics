@@ -14,7 +14,7 @@ snp_extraction_tab <- function() {
             ),
             conditionalPanel(
               condition = "input.inputFileType == 'VCF/VCF.GZ/BCF'",
-              fileInput("markerFile", "Upload Genotype (VCF, VCF.GZ, or BCF File)", accept = c(".vcf", ".bcf", ".vcf.gz"))
+              fileInput("markerFile", "Upload Genotype File", accept = c(".vcf", ".bcf", ".vcf.gz"))
             ),
             conditionalPanel(
               condition = "input.inputFileType == 'PLINK'",
@@ -33,7 +33,7 @@ snp_extraction_tab <- function() {
               h4("Extract SNPs based on reference SNP cluster ID (rsID) or GRCh37/GRCh38 position"),
               p(strong("Input file/s:")),
               p("(1) VCF, BCF, or PLINK (.bed, .bim, .fam) files."),
-              p("(2) Markers/position list — type rsIDs manually, upload a list, or use a POS .txt/.csv/.xlsx file."),
+              p("(2) Markers/position list — type rsIDs manually, upload a list, or use a POS CSV/Excel/Text file."),
               p("Position list format:"),
               tags$ul(
                 tags$li("[1] (optional) rsID/marker name"),
@@ -86,8 +86,8 @@ snp_extraction_tab <- function() {
         title = "Concordance Analysis",
         fluidRow(
           box(
-            fileInput("concordanceFile1", "Upload File A", accept = c(".xlsx", ".csv", ".vcf")),
-            fileInput("concordanceFile2", "Upload File B", accept = c(".xlsx", ".csv", ".vcf")),
+            fileInput("concordanceFile1", "Upload File A", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv", ".vcf")),
+            fileInput("concordanceFile2", "Upload File B", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv", ".vcf")),
             checkboxInput("isPhased", "Phased genotypes", value = FALSE),
             actionButton("compareBtn", "Run Concordance Analysis", icon = icon("play"))
           ),
@@ -95,7 +95,7 @@ snp_extraction_tab <- function() {
             tabPanel(
               title = "Instructions",
               h4("Perform concordance analysis between files/datasets with overlapping samples"),
-              p(strong("Input file/s:"), "CSV or Excel (.xlsx) files with the same data format (i.e. same columns)."),
+              p(strong("Input file/s:"), "CSV/Excel/VCF files with the same samples. File A and B can either be a CSV, Excel, or VCF file"),
               p(strong("Parameter/s:"), "Indicate if using phased genotypes"),
               helpText("Markers will be directly compared and the order of the alleles is considered when matching for concordance."),
               p(strong("Expected output/s:")),
