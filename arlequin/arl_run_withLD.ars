@@ -143,14 +143,14 @@ MakeExactTestLD=1
 #MarkovChainDememorisationStepsLD controls the number of burnin steps at the
 #beginning of the Markov chain (when gametic phae is known)
 
-MarkovChainDememorisationStepsLD=10000
+MarkovChainDememorisationStepsLD=1000
 
 #MarkovChainStepsLD controls how many steps are to be performed in the Markov chain
 #after the burnin period, when the gametic phase is known, or it is the number of permutations
 #to be performed to test the p-value of the likelihood-ratio test when the gametic phase
 #is unknown
 
-MarkovChainStepsLD=10000
+MarkovChainStepsLD=1000
 
 #PrecisionOnPValueLD controls the precision required for the 
 #p-value of the LD exact test (OBSOLETE SETTING)

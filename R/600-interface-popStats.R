@@ -176,7 +176,7 @@ popstats_tab <- function() {
                 ),
                 tabPanel(
                   title = "Loci in LD",
-                  DT::DTOutput("ld_tables")
+                  uiOutput("ld_tables")
                 )
               )
             )

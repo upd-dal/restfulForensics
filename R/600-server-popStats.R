@@ -351,6 +351,8 @@ pop_stats_server <- function(input, output, session, rv) {
       # returns path of res folder
       ld_value <- input$calcLD
       hwe_value <- input$calcHWE
+      print(ld_value)
+      print(hwe_value)
       results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
 
       incProgress(0.8, detail = "Loading report...")
@@ -393,10 +395,13 @@ pop_stats_server <- function(input, output, session, rv) {
         rsids_zero <- rsids
         rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
         ld_vals <- parse_ld(doc)
+        print("LD parsing")
+        print(str(ld_vals))
+        print(dim(ld_vals))
+        print(head(ld_vals))
         ld_vals$Locus1 <- rsids_zero[[2]][
           match(ld_vals$Locus1, rsids_zero[[1]])
         ]
-
         ld_vals$Locus2 <- rsids_zero[[2]][
           match(ld_vals$Locus2, rsids_zero[[1]])
         ]
