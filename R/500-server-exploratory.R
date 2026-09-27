@@ -45,6 +45,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
     withProgress(message = "Running PCA...", {
       tryCatch(
         {
+          incProgress(0.2, detail = "Loading input file...")
           df <- load_csv_xlsx_files(input$pcaFile$datapath)
           cleaned <- clean_input_data(df)
 
@@ -57,7 +58,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
           GenindData(fsnps_gen)
 
           label_file <- NULL
-
+          incProgress(0.4, detail = "Checking colors and labels...")
           if (!input$useDefaultColors) {
             req(input$pcaStyleFile)
             label_file <- input$pcaStyleFile$datapath
@@ -79,11 +80,13 @@ exploratory_analysis_server <- function(input, output, session, rv) {
             Populations(NULL)
             SelectedPops(NULL)
           }
-
+          
+          incProgress(0.6, detail = "Calculating principal components...")
           pca_results1 <- compute_pca(fsnps_gen, popinfo = with_popinfo)
           PCAResults(pca_results1)
 
           enable("runPCA")
+          showNotification("Calculation complete!", type = "message")
         },
         error = function(e) {
           showNotification(paste("PCA Error:", e$message), type = "error")

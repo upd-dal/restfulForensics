@@ -3,32 +3,32 @@
 #' @param input The input as a dataframe.
 #'
 #' @returns A dataframe containing information from the input file.
-clean_input_data <- function(file) {
+validate_gt_df <- function(df) {
   # Get first value of the third column, assumption is genotype
-  val <- file[1, 3]
-  # check if it contains two letters
+  val <- df[1, 3]
   is_a_char <- stringr::str_count(val, "[A-Za-z]") == 2
-
+  
   if (isFALSE(is_a_char)) {
-    stop("Unsupported file format: Genotype should be present by the third column. Only biallelic markers are accepted.")
+    stop("Unsupported format: Genotype should be present by the third column. Only biallelic markers are accepted.")
   }
+}
 
+clean_input_data <- function(file) {
+  val <- file[1, 3]
   if (isTRUE(grepl("/", val))) {
     file <- as.data.frame(file)
-    file[is.na(file)] <- "N"
   } else if (isTRUE(grepl("|", val))) {
     file <- lapply(file, function(x) gsub("|", "/", x, fixed = TRUE))
     file <- as.data.frame(file)
-    file[is.na(file)] <- "N"
   } else {
     file[, 3:ncol(file)] <- lapply(file[, 3:ncol(file), drop = FALSE], function(x) {
       x <- as.character(x)
       x <- sub("^([A-Za-z])([A-Za-z])$", "\\1/\\2", x)
       x
     })
-    file[is.na(file)] <- "N"
   }
-
+  
+  file[is.na(file)] <- "N"
   file <- file %>%
     mutate(across(everything(), as.character)) %>%
     mutate(across(everything(), ~ case_when(
@@ -84,7 +84,6 @@ convert_to_genind <- function(file, to_str = FALSE, popinfo = TRUE) {
     ind_only <- as.data.frame(file[, 1])
     ind_only$num <- rownames(ind_only)
     
-    # New file
     Label <- file$Ind
     STR_label <- ind_only$num
     Pop <- file$Pop
@@ -441,6 +440,9 @@ vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
 #' @param df The dataframe containing sample and genotype information.
 #' @param metadata The dataframe containing the sample and population information. Sample name should match the samples with genotype information.
 add_metadata <- function(df, metadata) {
+  validate_gt_file(df)
+  df <- clean_input_data(df)
+  
   # check if single population
   if (is.character(metadata) && length(metadata) == 1) {
     df$Pop <- metadata
@@ -453,6 +455,10 @@ add_metadata <- function(df, metadata) {
     ref_data <- data.frame(metadata)
     ref_data <- dplyr::rename(ref_data, Sample = 1)
     final_df <- dplyr::rename(df, Sample = 1)
+    
+    # normalize sample sections
+    ref_data$Sample <- gsub("[^a-z0-9]", "", tolower(as.character(ref_data$Sample)))
+    final_df$Sample <- gsub("[^a-z0-9]", "", tolower(as.character(final_df$Sample)))
     
     samples_vcf <- final_df$Sample
     samples_ref <- ref_data$Sample
@@ -488,7 +494,13 @@ to_binary <- function(df, markers = marker.file) {
   data <- df[, -c(1, 2)]
   data <- data.frame(t(data))
   row_name <- data.frame(rownames(data))
-  data <- lapply(data, function(x) gsub("/", "", x, fixed = TRUE))
+  
+  data <- lapply(data, function(x) {
+    x <- gsub("/", "", x, fixed = TRUE)
+    x[x=="N"] <- ""
+    x
+    })
+  
   data <- as.data.frame(data)
   revised_data <- data.frame(row_name, data)
   revised_data <- dplyr::rename(revised_data, ID = 1)
@@ -510,12 +522,14 @@ to_binary <- function(df, markers = marker.file) {
     mutate(across(
       ends_with("_id"),
       ~ case_when(
+        .x == "" ~ "",
+        .x == "N" ~ "",
         .x == df_marker$REF ~ 0,
-        .x == df_marker$ALT ~ 2
+        .x == df_marker$ALT ~ 2,
+        TRUE ~ 1
       )
     ))
 
-  df_marker[is.na(df_marker)] <- 1
   final_df <- df_marker[, -c(1, 2, 3)]
   final_df <- data.frame(t(final_df))
   return(final_df)
@@ -530,6 +544,10 @@ to_binary <- function(df, markers = marker.file) {
 #' @returns A gentibble object.
 csv_to_gentibble <- function(file, loci.meta = loci.meta) {
   df <- load_csv_xlsx_files(file)
+  validate_gt_df(df)
+  df <- clean_input_data(df)
+  df <- as.data.frame(df)
+  
   meta <- df[, 1:2]
   meta <- dplyr::rename(meta, id = 1, population = 2)
 
@@ -578,20 +596,13 @@ widen_genotype_file <- function(files = files,
 
   # check file extension
   f_ext <- tools::file_ext(data_list[1])
-
-  if (f_ext == "xlsx") {
+  
+  if (f_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
     for (x in data_list) {
-      all.list[[x]] <- readxl::read_excel(x,
-        sheet = 1,
-        col_names = TRUE
-      )
-    }
-  } else if (f_ext == "csv") {
-    for (x in data_list) {
-      all.list[[x]] <- read.csv(x, check.names = FALSE, row.names = 1)
+      all.list[[x]] <- load_csv_xlsx_files(x)
     }
   } else {
-    stop("Zippes files in unsupported format. Ensure they are CSV/XLSX files.")
+    stop("Zipped files should contain CSV or Excel files")
   }
 
   new_colnames <- c("Sample", "ID", "Allele")
@@ -624,22 +635,6 @@ widen_genotype_file <- function(files = files,
   rownames(corrected) <- NULL
   
   return(corrected)
-
-#  if (is.null(population)) {
-#    return(corrected)
-#  } else {
-#    pop_data <- load_csv_xlsx_files(population)
-#    pop_data <- dplyr::rename(pop_data, Sample = 1, Population = 2)
-#    matched <- corrected %>% dplyr::left_join(pop_data, by = "Sample")
-#    data_length <- as.integer(ncol(corrected) - 1)
-#    data_matched <- matched[, 2:data_length]
-#    meta_begin <- as.integer(ncol(corrected) + 1)
-#    meta <- matched[, meta_begin:ncol(matched)]
-
-#    final_df <- dplyr::bind_cols(matched$Sample, meta, data_matched)
-#    names(final_df)[names(final_df) == "matched$Sample"] <- "Sample"
-#    return(final_df)
-#  }
 }
 
 #' Convert dataframe to structure file
@@ -682,7 +677,7 @@ to_snipper <- function(input,
   if (is.data.frame(input)) {
     input.file <- input
   } else {
-    stop("Not a dataframe.")
+    stop("Input file is not a dataframe.")
   }
 
   tosnipper <- lapply(
@@ -691,17 +686,13 @@ to_snipper <- function(input,
       gsub(pattern = "/", replacement = "", x = x, fixed = TRUE)
     }
   )
-
-  tosnipper <- as.data.frame(tosnipper)
+  
+  tosnipper <- clean_input_data(as.data.frame(tosnipper))
+  tosnipper <- dplyr::rename(tosnipper, Sample = 1)
+  reference <- dplyr::rename(reference, Sample = 1)
 
   if (class(tosnipper$Sample) != "character") {
     tosnipper$Sample <- as.character(tosnipper$Sample)
-  }
-
-  if (is.data.frame(references)) {
-    reference <- references
-  } else {
-    stop("Not a dataframe.")
   }
 
   if (class(reference$Sample) != "character") {
@@ -823,7 +814,6 @@ build_arp_per_population <- function(df,
                                      data_type = "STANDARD") {
   workdir <- tempfile("arlequin_")
   dir.create(workdir)
-  # workdir <- "."
   out_path <- file.path(workdir, paste0(output.prefix, ".arp"))
 
   if (file.exists(out_path)) {

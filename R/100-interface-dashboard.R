@@ -6,16 +6,14 @@ dashboard_tab <- function() {
         title = "Introduction",
         side = "right",
         width = 12,
-        h4("restful forensics (Reproducible and Efficient Sequence Toolkit) is a toolkit dedicated for
-            the forensic analysis of single nucleotide polymorphisms (SNPs) and DNA barcodes. It compiles
-                          reference population datasets extracted from publicly available databases
-                          for direct evaluation of forensic marker panels. It allows the user to
-                          analyze their dataset with compiled reference datasets, perform exploratory
-                          data analysis (i.e. principal component analysis), and calculate population
-                          summary statistics and forensic parameters. This version also contains modules
-                          for population structure analysis (i.e. STRUCTURE), forensic DNA
-                          inference/classification using ancestry or phenotype-informative SNPs, and DNA
-                          barcoding (i.e. multiple sequencing alignment).")
+        h4("restful forensics (Reproducible and Efficient Sequence Toolkit) is a toolkit dedicated for the 
+           forensic analysis of single nucleotide polymorphisms (SNPs) and DNA barcodes. It compiles reference 
+           population datasets extracted from publicly available databases for direct evaluation of forensic marker panels. 
+           It allows the user to analyze their dataset with compiled reference datasets, perform exploratory data analysis 
+           (i.e., principal component analysis), and calculate population summary statistics and forensic parameters. 
+           This version also contains modules for population structure analysis (i.e., STRUCTURE), 
+           forensic DNA inference/classification using ancestry- or phenotype-informative SNPs, and 
+           DNA barcoding (i.e., multiple sequence alignment).")
       ),
       tabBox(
         title = "Citation",

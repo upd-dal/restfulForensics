@@ -379,6 +379,10 @@ parse_ld <- function(doc) {
       results[[length(results) + 1]] <- population_ld
     }
   }
+  
+  if (length(results) == 0) {
+    return(NULL)
+  }
 
   do.call(rbind, results)
 }

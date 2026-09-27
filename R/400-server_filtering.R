@@ -40,7 +40,9 @@ filtering_server <- function(input, output, session, rv) {
     palette <- if (!is.null(input$colorPalette)) input$colorPalette else NULL
     ext <- tools::file_ext(input$markerFileFilter$name)
 
-    if (tolower(ext) == "vcf" && input$enableDP) {
+  withProgress(message = "Ongoing...", {
+    incProgress(0.2, detail = "Loading input file...")
+  if (tolower(ext) == "vcf" && input$enableDP) {
       dp <- depth_from_vcf(
         vcf = vcf_path,
         output.dir = temp_dir,
@@ -60,7 +62,7 @@ filtering_server <- function(input, output, session, rv) {
     } else {
       "plink"
     }
-
+    incProgress(0.4, detail = "Preparing file for filtering...")
     # convert
     pgen_prefix <- file.path(temp_dir, "convert_to_plink2")
     if (input_type %in% c("vcf", "bcf")) {
@@ -70,8 +72,9 @@ filtering_server <- function(input, output, session, rv) {
       convert_to_plink2(bed_prefix, original_name = NULL, isplink = TRUE, name = pgen_prefix)
     }
 
+    incProgress(0.6, detail = "Filtering...")
     # for plink filtering
-    plink_cmds <- c(shQuote(plink2_path), "--pfile", shQuote(pgen_prefix), "--recode", "vcf", "bgz", "--out", file.path(temp_dir, "filtered"))
+    plink_cmds <- c(shQuote(plink2_path), "--pfile", shQuote(pgen_prefix), "--recode", "vcf", "--out", file.path(temp_dir, "filtered"))
 
     if (input$filterIndiv) {
       plink_cmds <- c(plink_cmds, "--mind", input$mindThresh)
@@ -112,14 +115,15 @@ filtering_server <- function(input, output, session, rv) {
 
     system(paste(plink_cmds, collapse = " "))
 
-    filtered_path <- file.path(temp_dir, "filtered.vcf.gz")
+    filtered_path <- file.path(temp_dir, "filtered.vcf")
     if (file.exists(filtered_path)) {
       filtered_plink_file(filtered_path)
     }
-
+})
     output$plinkCommandPreview <- renderText({
       paste("plink", paste(plink_cmds, collapse = " "))
     })
+    
   }) # end of observe events
 
   output$depthMarkerPlot <- renderImage(
@@ -140,7 +144,7 @@ filtering_server <- function(input, output, session, rv) {
 
   output$downloadFilteredFile <- downloadHandler(
     filename = function() {
-      "filtered.vcf.gz"
+      "filtered.vcf"
     },
     content = function(file) {
       req(filtered_plink_file())

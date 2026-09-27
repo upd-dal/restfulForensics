@@ -245,8 +245,10 @@ file_conversion_server <- function(input, output, session, rv) {
   observeEvent(input$addMetadata, {
     disable("addMetadata")
 
-    tryCatch(
+    withProgress(message = "Conversion ongoing...", {
+      tryCatch(
       {
+        incProgress(0.2, detail = "Reading input file...")
         input_file <- input$genotypeFile$datapath
 
         if (!is.null(input$refMetadata)) {
@@ -270,6 +272,7 @@ file_conversion_server <- function(input, output, session, rv) {
         # Check extension
         file_extension <- tools::file_ext(input_file)
         
+        incProgress(0.4, detail = "Checking format and merging...")
         if (file_extension %in% c("zip", "tar")) {
           # Unpack to determine the data type
           unpacked <- unpack_input_file(input_file, output.dir)
@@ -338,7 +341,7 @@ file_conversion_server <- function(input, output, session, rv) {
       error = function(e) {
         showNotification(paste("Error:", e$message), type = "error")
       }
-    )
+    )})
     enable("addMetadata")
   })
 
@@ -447,7 +450,6 @@ file_conversion_server <- function(input, output, session, rv) {
         {
           widened.file <- widen_genotype_file(
             files = input_path,
-            #population = ref_value,
             output.dir = temp_dir
           )
           convertedUAS(widened.file)
@@ -752,6 +754,9 @@ file_conversion_server <- function(input, output, session, rv) {
   observeEvent(input$convert2Arle, {
     disable("convert2Arle")
 
+    withProgress(message = "Conversion ongoing...", {
+      
+    incProgress(0.2, detail = "Loading input file...")
     for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
     for_arp <- clean_input_data(for_arp)
 
@@ -763,8 +768,11 @@ file_conversion_server <- function(input, output, session, rv) {
       )))
     for_arp <- as.data.frame(for_arp)
 
+    incProgress(0.4, detail = "Creating .arp file...")
     # create the arp file
-    arp_file <- build_arp_per_population(for_arp,
+    tryCatch(
+      {
+      arp_file <- build_arp_per_population(for_arp,
       genotypic_data = as.numeric(input$genotypicData),
       gametic_phase = as.numeric(input$gameticPhase),
       recessive_data = as.numeric(input$recessiveData),
@@ -774,6 +782,14 @@ file_conversion_server <- function(input, output, session, rv) {
     )
     
     arleFile(arp_file)
+    showNotification("Conversion complete!", type = "message")
+    }, 
+    error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+    )
+    
+    })
 
     enable("convert2Arle")
   })

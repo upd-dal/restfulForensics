@@ -86,6 +86,7 @@ pop_stats_server <- function(input, output, session, rv) {
           print(Sys.time())
 
           enable("runPopStats")
+          showNotification("Calculation complete!", type = "message")
         },
         error = function(e) {
           showNotification(paste("Population stats error:", e$message), type = "error")
@@ -844,7 +845,7 @@ pop_stats_server <- function(input, output, session, rv) {
   output$download_arp_result <- downloadHandler(
     filename = function() {
       timestamp <- format(Sys.time(), "%Y%m%d_%H%M")
-      paste0("arp_file", timestamp, ".arp")
+      paste0("arp_file", timestamp, ".xml")
     },
     content = function(file) {
       req(arlequinResult())
@@ -854,13 +855,9 @@ pop_stats_server <- function(input, output, session, rv) {
 
   output$download_arlecore_results_UI <- renderUI({
     req(
-      arlequinPopLabels(),
       arlequinHeterozygosity(),
-      arlequinFstMatrix(),
-      arlequinCoancestry(),
-      arlequinPairwise(),
-      arlequinPopDiversity(),
-      arlequinResult()
+      arlequinResult(),
+      arlequinFile()
     )
     tagList(
       downloadButton("download_arlecore_results", "Download Results (.xlsx)"),

@@ -34,7 +34,18 @@ classification_server <- function(input, output, session, rv) {
     disable("runNaiveBayes")
     req(input$forPredFile)
 
-    result <- calculate_naive_bayes(input$forPredFile$datapath)
+    withProgress(message = "Ongoing: ", {
+      
+      incProgress(0.2, detail = "Loading and calculating...")
+      tryCatch(
+      {
+        result <- calculate_naive_bayes(input$forPredFile$datapath)
+        showNotification("Calculation complete!", type = "message")
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    })
+    
+    incProgress(0.4, detail = "Processing results...")
     stats <- as.data.frame(result$predStat)
     stats <- data.frame(rowname(stats), stats)
     other_stat <- t(as.data.frame(result$otherStat))
@@ -44,6 +55,7 @@ classification_server <- function(input, output, session, rv) {
     predStat(stats)
     predModel(other_stat)
     PredictionList(result$preds)
+    })
     enable("runNaiveBayes")
   })
 

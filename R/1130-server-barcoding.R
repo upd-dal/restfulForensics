@@ -17,7 +17,8 @@ barcoding_server <- function(input, output, session, rv) {
     req(input$refBarcoding)
     req(input$queBarcoding)
 
-    ref_seq <- alignment_to_dnabin(input$refBarcoding$datapath)
+    tryCatch({
+      ref_seq <- alignment_to_dnabin(input$refBarcoding$datapath)
     que_seq <- alignment_to_dnabin(input$queBarcoding$datapath)
 
     refseq(ref_seq)
@@ -70,6 +71,12 @@ barcoding_server <- function(input, output, session, rv) {
     }
 
     resultIdentity(result)
+    showNotification("Calculation complete!", type = "message")
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+      )
+    
     enable("identifySpecies")
   })
 
@@ -120,10 +127,6 @@ barcoding_server <- function(input, output, session, rv) {
     Sys.sleep(1.5)
 
     kmer_File <- alignment_to_dnabin(input$optimizeKmerRef$datapath)
-    # kmer_File <- ape::read.dna(
-    #   input$optimizeKmerRef$datapath,
-    #   format = "fasta"
-    # )
 
     tmp_file <- tempfile(fileext = ".png")
     png(tmp_file, width = 1200, height = 800)

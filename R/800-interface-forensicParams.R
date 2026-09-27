@@ -27,10 +27,18 @@ forensic_params_tab <- function() {
               p(strong("Input file:"), "CSV or Excel file containing population and genotype information."),
               p(strong("Expected output file:"), "CSV file"),
               hr(),
+              p(" Statistical calculations for identity-informative SNPs generally utilize 
+                the same formulae and follow the same interpretation guidelines as those used 
+                with autosomal STRs, such as the use of likelihood ratios and random match probability",
+                tags$a("(SWGDAM, 2024)",
+                       href = "https://www.swgdam.org/_files/ugd/4344b0_5f5c69552b4340b0afb9af08caffb00f.pdf",
+                       target = "_blank"
+                )
+                ),
               p(
                 "Guidelines on statistical calculations for casework: ",
                 tags$a("Guidelines (for STR):",
-                  href = "https://dfs.dc.gov/sites/default/files/dc/sites/dfs/page_content/attachments/FBS22%20-%20STR%20Statistical%20Calculations%20Guidelines.pdf",
+                  href = "https://www.taylorfrancis.com/books/edit/10.4324/9781315371115/forensic-dna-evidence-interpretation-john-buckleton-jo-anne-bright-duncan-taylor",
                   target = "_blank"
                 )
               ),
@@ -46,11 +54,7 @@ forensic_params_tab <- function() {
               title = "Sample Input File",
               h4("Acceptable file inputs: genotype files or an allele frequency table:"),
               p("Genotype file"),
-              DT::dataTableOutput("referenceData_UI"),
-              p("Allele frequency table"),
-              DT::dataTableOutput("afSample_UI"),
-              h4("Sample profile to match"),
-              DT::dataTableOutput("profileSample_UI")
+              DT::dataTableOutput("referenceData_UI")
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -97,7 +101,7 @@ forensic_params_tab <- function() {
             ),
           conditionalPanel(
             condition = "input.newPopDatabase",
-            fileInput("newPopDataFile", "Upload population reference database (XLSX/CSV)", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv"))
+            fileInput("newPopDataFile", "Upload population reference database", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv"))
           ),
           fileInput("fileProfile", "Upload Profile", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
           checkboxInput("floorCeiling", "Use 5/2n rule in calculating genotype frequency?", FALSE),
@@ -124,7 +128,11 @@ forensic_params_tab <- function() {
             p(strong("Expected output file:"), "Calculation results"),
           ),
           tabPanel(
-            title = "Sample Input Format/s"
+            title = "Sample Input Format/s",
+            p("Sample profile"),
+            DT::dataTableOutput("sampleProfile_UI"),
+            p("Sample allele frequency table"),
+            DT::dataTableOutput("forensicParamInput_UI")
           ),
           tabPanel(
             title = "Download Sample Files",

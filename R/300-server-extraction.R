@@ -170,8 +170,10 @@ snp_extraction_server <- function(input, output, session, rv) {
     disable("extractBtn")
     temp_dir <- tempdir()
 
-    tryCatch(
+    withProgress(message = "Extraction ongoing...", {
+      tryCatch(
       {
+        incProgress(0.2, detail = "Preparing input file...")
         pgen_prefix <- file.path(temp_dir, "input_pgen")
         print(input$markerFile$name)
         print(input$markerFile$datapath)
@@ -192,7 +194,7 @@ snp_extraction_server <- function(input, output, session, rv) {
         }
 
         merged_name <- "extracted_markers"
-
+        incProgress(0.4, detail = "Evaluating data for extraction...")
         if (rsID_available() && input$markerType == "rsID") {
           snps_list <- tempfile(fileext = ".txt")
           if (input$rsIDInputType == "manual") {
@@ -253,7 +255,8 @@ snp_extraction_server <- function(input, output, session, rv) {
       finally = {
         enable("extractBtn")
       }
-    )
+    ) # end of trycatch
+      })
   })
 
   output$downloadVCF <- downloadHandler(
@@ -291,6 +294,7 @@ snp_extraction_server <- function(input, output, session, rv) {
 
           phased_flag <- input$isPhased
           
+          incProgress(0.2, detail = "Loading input files...")
           f1_ext <- tools::file_ext(input$concordanceFile1$name)
           if (f1_ext == "vcf") {
             file1 <- vcf_to_csv(input$concordanceFile1$datapath)
@@ -307,7 +311,9 @@ snp_extraction_server <- function(input, output, session, rv) {
             file2 <- load_csv_xlsx_files(input$concordanceFile2$datapath)
           }
           
+          incProgress(0.4, detail = "Calculating concordance...")
           result <- calc_concordance(file1, file2, phased = phased_flag)
+          incProgress(0.6, detail = "Plotting concordance...")
           plot <- plot_concordance(result)
           concordanceResult(plot$results)
           concordancePlotPath(plot$plot)

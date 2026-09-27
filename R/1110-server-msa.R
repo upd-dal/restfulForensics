@@ -2,20 +2,24 @@ msa_server <- function(input, output, session, rv) {
   # ============ MULTIPLE SEQUENCE ALIGNMENT ==============#
 
   fasta_data <- reactiveVal(NULL)
-  # alignment_msa <- reactiveVal(NULL)
   alignment_scores <- reactiveVal(NULL)
-  # alignment_adjusted <- reactiveVal(NULL)
-  # alignment_staggered <- reactiveVal(NULL)
   directory <- tempdir()
 
   observeEvent(input$runMSA, {
     req(input$fastaFile)
-    fasta <- read_fasta(input$fastaFile$datapath, directory)
+    
+    tryCatch({
+      fasta <- read_fasta(input$fastaFile$datapath, directory)
     fasta_data(fasta)
 
     aligned <- calc_msa(fasta,
       algorithm = input$substitutionMatrix
     )
+    showNotification("Alignment complete!", type = "message")
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+      )
 
     rv$alignmentMSA <- aligned$alignment
     rv$alignmentAdjusted <- aligned$adjusted

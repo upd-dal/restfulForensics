@@ -8,46 +8,11 @@ forensic_params_server <- function(input, output, session, rv) {
     rs102 = c("G/G", "C/C", "G/C", "G/G", "..."),
     rs_n = c("...", "...", "...", "...", "...")
   )
-
-  afSample <- data.frame(
-    markers = c("rs101.A", "rs101.T", "rs102.C", "rs102.G", "..."),
-    POP1 = c("0.18518", "0.81481", ".77777", "0.22222", "..."),
-    POP2 = c("0.89285", "0.10714", "0.89285", "0.10714", "..."),
-    POP3 = c("0.15789", "0.84210", "0.87894", "0.12105", "..."),
-    POPn = c("...", "...", "...", "...", "...")
-  )
-
-  profileSample <- data.frame(
-    markers = c("rs101", "rs102", "rs103", "rs104", "..."),
-    profile = c("A/T", "G/C", "G/A", "T/T", "...")
-  )
   
   output$referenceData_UI <- DT::renderDataTable(
     {
       req(referenceData)
       referenceData
-    },
-    options = list(
-      scrollX = TRUE,
-      pageLength = 5
-    )
-  )
-
-  output$afSample_UI <- DT::renderDataTable(
-    {
-      req(afSample)
-      afSample
-    },
-    options = list(
-      scrollX = TRUE,
-      pageLength = 5
-    )
-  )
-
-  output$profileSample_UI <- DT::renderDataTable(
-    {
-      req(profileSample)
-      profileSample
     },
     options = list(
       scrollX = TRUE,
@@ -67,19 +32,30 @@ forensic_params_server <- function(input, output, session, rv) {
     shinyjs::disable("calcIISNPs")
     req(input$iisnpsFile)
 
+    withProgress(message = "Ongoing: ", {
+      
+    incProgress(0.2, detail = "Loading input file...")
     fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
     cleaned_data <- clean_input_data(fileUploaded)
+    tryCatch(
+      {
     genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
+    
+    incProgress(0.4, detail = "Calculating frequencies...")
     af_table <- compute_af(genind_input)
     af_expected <- calc_expected_genotype_freq(af_table)
     
     gt_freqs <- calc_observed_genotype_freq(cleaned_data) # returns list of per population gt
+    
+    incProgress(0.6, detail = "Calculating parameters...")
     params_res <- calc_iisnps_params(gt_freqs, af_expected)
-    print(params_res)
-    print(class(params_res))
-    genoFreq(gt_freqs) # list of df per population containing the observed freq
-    forenParams(params_res) # list of df per population containing the forensic param metrices
+    genoFreq(gt_freqs)
+    forenParams(params_res)
     afTable(af_table)
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    })
+    })
     shinyjs::enable("calcIISNPs")
   })
 
@@ -176,26 +152,48 @@ forensic_params_server <- function(input, output, session, rv) {
     )
   )
   
+  sampleProfile <- data.frame(
+    markers = c("rs101", "rs102", "rs103", "rs104", "..."),
+    genotype = c("A/A	", "G/T", "A/T", "C/G", "...")
+  )
+  
+  output$sampleProfile_UI <- DT::renderDataTable(
+    {
+      req(sampleProfile)
+      sampleProfile
+    },
+    options = list(
+      scrollX = TRUE,
+      pageLength = 5
+    )
+  )
+  
   rmpResult <- reactiveVal(NULL)
   
   observeEvent(input$calcRMP, {
     disable("calcRMP")
+    
+    withProgress(message = "Ongoing: ", {
+      
+    incProgress(0.2, detail = "Loading input file...")
     profile <- load_csv_xlsx_files(input$fileProfile$datapath)
-    if (isFALSE(input$newPopDatabase)) {
+    profile <- clean_input_data(profile)
+    
+    tryCatch({
+      
+      incProgress(0.4, detail = "Loading reference database...")
+      if (isFALSE(input$newPopDatabase)) {
       req(afTable())
       af_long <- af_to_long(afTable()) %>%
         dplyr::filter(population == input$rmp_population)
     } else {
       req(input$newPopDataFile)
       af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
+      af_long <- af_to_long(af_long)
     }
     
     af_long <- prep_af_table(af_long)
-    print(names(profile))
-    print(names(af_long))
-    
-    str(profile)
-    str(af_long)
+    incProgress(0.6, detail = "Calculating RMP..")
     result <- calc_rmp(
       profile = profile,
       af_table = af_long,
@@ -203,7 +201,15 @@ forensic_params_server <- function(input, output, session, rv) {
       theta = input$thetaValue
     )
     rmpResult(result)
+    showNotification("Calculation complete!", type = "message")
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    })
+    
     enable("calcRMP")
+    })
+    
+    
     })
   
   output$rmp_summary <- renderTable({

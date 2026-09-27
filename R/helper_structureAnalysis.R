@@ -98,16 +98,46 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
   ))
   
   ## Loop through dataset to extract genotypes
+  #=========================== revised in restful forensics 
   for (L in loci) {
-    #=========================== revised by forcing 'thesedata' as a matrix in restful forensics 
-    thesedata <- as.matrix(data$tab[, grep(paste("^", L, "\\.", sep = ""), dimnames(data$tab)[[2]])])# dataotypes by locus
-    al <- 1:dim(thesedata)[2] # numbered alleles
+    cols <- grep(paste0("^", L, "\\."), colnames(data$tab))
+    
+    if (length(cols) == 0){
+      warning("No allele columns found for locus:", L)
+      next
+    }
+    
+    thesedata <- as.matrix(data$tab[, cols, drop = FALSE])
+    
+    al <- seq_len(ncol(thesedata))
     for (s in 1:ind) {
-      if (all(!is.na(thesedata[s, ]))) {
-        tabrows <- (1:dim(df)[1])[df[[1]] == indNames(data)[s]] # index of rows in output to write to
-        tabrows <- tabrows[1:sum(thesedata[s, ])] # subset if this is lower ploidy than max ploidy
-        df[tabrows, L] <- rep(al, times = thesedata[s, ])
+      if (all(is.na(thesedata[s,]))) {
+        next
       }
+      
+      tabrows <- which(df[[1]] == adegenet::indNames(data)[s])
+      allele_counts <- thesedata[s, ]
+      
+      if (any(is.na(allele_counts))) {
+        next
+      }
+      
+      n_alleles <- sum(allele_counts)
+      
+      if (n_alleles == 0) {
+        next
+      }
+      
+      n_alleles <- min(n_alleles, length(tabrows))
+      tabrows <- tabrows[seq_len(n_alleles)]
+      genotype <- rep(al, times = allele_counts)
+      
+      if (length(genotype) != length(tabrows)) {
+        warning("Genotype length mismatch at locus ", L, ", individual", adegenet::indNames(data)[s])
+        next
+      }
+      df[tabrows, L] <- genotype
+      
     }
   }
   
