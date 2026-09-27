@@ -1,0 +1,17 @@
+# R history
+.Rproj.user
+.Rhistory
+.Rapp.history
+
+# RStudio files
+.Rproj.user/
+
+# R session data
+.RData
+.RDataTmp
+
+# R package docs
+.Rbuildignore
+
+.Ruserdata
+inst/doc

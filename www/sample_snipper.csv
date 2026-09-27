@@ -1,0 +1,94 @@
+Sample,Population description,Superpopulation name,rs10497191,rs1079597,rs11652805,rs1229984,rs12439433,rs12498138,rs12913832,rs1426654,rs1462906,rs1572018,rs16891982,rs174570,rs17642714,rs1800414,rs1834619
+GS000014408-ASM,Georgia,Southwest Asia,C/C,T/C,C/C,T/C,A/A,G/G,A/G,A/A,C/C,T/C,G/G,C/C,A/A,T/T,G/G
+GS000014409-ASM,Georgia,Southwest Asia,C/T,T/C,C/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/G,C/C,A/A,T/T,G/G
+GS000014410-ASM,Georgia,Southwest Asia,C/T,C/C,T/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/G,C/C,A/A,T/T,G/G
+X0_S_Abkhasian.1.DG,Georgia,Southwest Asia,C/C,C/C,C/T,C/C,A/A,G/G,A/A,A/A,C/C,C/T,G/G,C/C,A/T,T/T,G/G
+X0_S_Abkhasian.2.DG,Georgia,Southwest Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/T,C/T,G/G,C/C,A/A,T/T,G/G
+GA000856,India,South Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/A,G/G,C/T,T/T,C/C,C/C,A/A,T/T,A/G
+GA000857,India,South Asia,C/T,C/T,T/T,C/C,A/A,G/G,A/A,G/G,C/C,C/C,G/C,C/C,A/T,T/T,G/G
+GA000858,India,South Asia,C/C,C/T,T/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,G/C,C/C,A/T,T/T,G/G
+GA000859,India,South Asia,C/C,C/T,T/T,C/C,A/A,G/G,A/A,G/G,C/C,C/T,C/C,C/C,A/A,T/T,G/G
+GA000860,India,South Asia,C/T,C/T,T/T,C/C,A/A,G/G,A/A,A/G,C/C,T/T,C/C,C/C,A/A,T/T,G/G
+GA000861,India,South Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,C/C,C/C,A/A,T/T,A/G
+GA000862,India,South Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,C/C,C/C,A/A,T/T,A/G
+GA000863,India,South Asia,C/C,C/C,C/T,C/C,A/A,G/G,A/A,A/G,C/C,C/C,C/C,C/C,A/A,T/T,A/A
+GA000864,India,South Asia,C/T,C/C,T/T,C/C,A/A,G/G,A/A,G/G,C/C,C/C,C/C,C/C,A/A,C/T,A/G
+GA000865,India,South Asia,C/C,C/T,C/T,C/C,A/A,G/G,A/A,G/G,C/C,C/C,C/C,C/C,A/A,T/T,A/G
+GA000866,India,South Asia,C/C,C/T,T/T,C/C,A/A,A/G,A/A,A/G,C/C,C/T,C/C,C/C,A/A,T/T,A/A
+HGDP01385,Russia,Southwest Asia,C/C,C/T,T/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/C,C/C,A/T,T/T,G/G
+HGDP01396,Russia,Southwest Asia,C/T,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/C,G/C,C/C,A/A,T/T,A/G
+HGDP01383,Russia,Southwest Asia,C/T,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/C,G/C,C/C,A/A,T/T,G/G
+HGDP01404,Russia,Southwest Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HGDP01384,Russia,Southwest Asia,C/C,C/C,T/T,C/T,A/A,G/G,A/G,A/A,C/C,C/C,G/G,C/T,A/A,T/T,G/G
+HGDP01388,Russia,Southwest Asia,C/T,C/T,T/T,C/C,A/G,G/G,A/G,A/A,C/C,C/C,G/C,C/T,A/A,T/T,G/G
+HGDP01400,Russia,Southwest Asia,C/C,C/T,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/C,C/C,A/A,T/T,G/G
+HGDP01398,Russia,Southwest Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HGDP01382,Russia,Southwest Asia,C/C,C/C,N,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/G,C/C,A/A,T/T,G/G
+HGDP01397,Russia,Southwest Asia,C/C,C/C,T/T,C/T,A/A,G/G,A/G,A/A,C/C,C/C,G/C,C/C,T/T,T/T,G/G
+HGDP01386,Russia,Southwest Asia,C/C,C/C,T/T,C/T,A/A,G/G,A/A,A/A,C/C,T/T,G/C,C/C,A/T,T/T,G/G
+HGDP01403,Russia,Southwest Asia,C/C,C/C,C/T,C/C,A/A,G/G,A/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HGDP01399,Russia,Southwest Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/A,A/A,C/C,C/T,G/G,C/C,A/T,T/T,G/G
+HGDP01387,Russia,Southwest Asia,C/C,C/C,C/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,C/C,C/C,A/T,C/T,G/G
+X0_S_Adygei.1.DG,Russia,Southwest Asia,C/C,C/C,T/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/G,C/T,A/A,T/T,G/G
+X0_S_Adygei.2.DG,Russia,Southwest Asia,C/C,C/C,C/T,T/T,A/A,G/G,A/G,A/A,C/C,C/C,G/C,C/C,A/A,T/T,G/G
+GA000532,Philippines,Southeast Asia,C/C,C/C,C/T,C/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,T/T,A/A,T/T,A/G
+GA000533,Philippines,Southeast Asia,C/C,C/T,T/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,T/T,A/G
+GA000534,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,C/T,A/G
+GA000535,Philippines,Southeast Asia,C/C,C/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,T/T,G/G
+GA000536,Philippines,Southeast Asia,C/C,C/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,C/T,A/A,C/T,A/G
+GA000537,Philippines,Southeast Asia,C/C,T/T,C/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,T/T,A/G
+GA000538,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,T/T,A/A,T/T,G/G
+GA000539,Philippines,Southeast Asia,C/T,T/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,T/T,G/G
+GA000540,Philippines,Southeast Asia,C/C,C/C,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,C/C,A/A,T/T,G/G
+GA000541,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,T/T,A/A
+GA000542,Philippines,Southeast Asia,C/C,C/T,T/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,C/C,C/T,A/A,T/T,G/G
+GA000543,Philippines,Southeast Asia,C/C,C/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,T/T,A/G
+GA000544,Philippines,Southeast Asia,C/C,C/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,T/T,A/G
+GA000545,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,T/T,A/G
+GA000546,Philippines,Southeast Asia,C/C,C/C,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,T/T,A/A,T/T,A/G
+GA000547,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,C/T,A/G
+GA000548,Philippines,Southeast Asia,C/C,C/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,T/T,A/G
+GA000549,Philippines,Southeast Asia,C/C,C/T,T/T,C/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,T/T,A/A,C/T,G/G
+GA000550,Philippines,Southeast Asia,C/C,C/T,C/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,G/C,C/T,A/A,C/T,A/A
+GA000551,Philippines,Southeast Asia,C/C,C/T,C/C,C/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,C/T,A/A,T/T,G/G
+GA000552,Philippines,Southeast Asia,C/C,T/T,C/C,C/T,A/A,A/G,A/A,G/G,C/C,C/T,C/C,T/T,A/T,T/T,A/A
+NA19625,United States of America,Admixed & NE Africa,C/T,C/T,C/T,C/C,A/A,A/G,A/G,G/G,C/T,C/T,G/C,C/T,A/A,T/T,G/G
+NA19700,United States of America,Admixed & NE Africa,T/T,C/C,C/C,C/C,A/A,G/G,A/A,G/G,C/T,C/T,C/C,C/C,A/A,T/T,G/G
+NA19701,United States of America,Admixed & NE Africa,T/T,T/T,C/T,C/C,A/A,G/G,A/A,G/G,C/T,T/T,G/C,C/C,A/A,T/T,G/G
+NA19703,United States of America,Admixed & NE Africa,T/T,C/C,C/T,C/C,A/A,G/G,A/G,A/G,T/T,T/T,C/C,C/C,A/T,T/T,G/G
+NA19704,United States of America,Admixed & NE Africa,C/T,C/T,C/T,C/C,A/A,G/G,A/A,A/G,T/T,C/T,G/C,C/C,A/A,T/T,G/G
+NA19707,United States of America,Admixed & NE Africa,T/T,C/C,C/C,C/C,A/A,G/G,A/G,G/G,T/T,T/T,C/C,C/C,A/A,T/T,G/G
+NA19711,United States of America,Admixed & NE Africa,C/T,C/T,C/C,C/C,A/A,G/G,A/A,G/G,T/T,T/T,C/C,C/C,A/A,T/T,G/G
+NA19712,United States of America,Admixed & NE Africa,T/T,C/C,C/C,C/C,A/A,G/G,A/A,G/G,T/T,T/T,C/C,C/C,A/A,T/T,G/G
+NA19713,United States of America,Admixed & NE Africa,T/T,C/C,C/T,C/C,A/A,G/G,A/A,G/G,T/T,T/T,G/G,C/C,A/A,T/T,G/G
+NA19818,United States of America,Admixed & NE Africa,C/C,C/C,C/C,C/C,A/A,G/G,A/A,A/G,C/C,T/T,G/C,C/C,A/A,T/T,G/G
+NA19819,United States of America,Admixed & NE Africa,T/T,C/C,C/T,C/C,A/A,G/G,A/A,G/G,T/T,C/T,C/C,C/C,A/T,T/T,G/G
+NA19834,United States of America,Admixed & NE Africa,C/T,C/C,C/C,C/C,A/A,G/G,A/A,G/G,T/T,C/T,C/C,C/C,A/A,T/T,G/G
+NA19835,United States of America,Admixed & NE Africa,C/T,C/C,C/C,C/C,A/A,G/G,A/A,G/G,T/T,T/T,C/C,C/C,A/A,T/T,G/G
+NA19900,United States of America,Admixed & NE Africa,T/T,C/T,C/C,C/C,A/A,G/G,A/A,A/G,T/T,T/T,G/C,C/C,A/A,T/T,G/G
+HG00106,England,Europe,C/C,C/T,T/T,C/C,A/G,G/G,G/G,A/A,C/C,C/C,G/G,C/C,A/A,T/T,G/G
+HG00107,England,Europe,C/C,C/T,T/T,C/C,A/A,A/G,A/G,A/A,C/C,C/T,G/G,C/C,A/T,T/T,G/G
+HG00108,England,Europe,C/T,C/C,C/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/G,C/T,A/A,T/T,A/G
+HG00109,England,Europe,C/C,C/C,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/G,C/T,A/A,T/T,A/G
+HG00110,England,Europe,C/C,C/C,T/T,C/C,A/A,A/G,G/G,A/A,C/C,C/C,G/G,C/C,A/T,T/T,G/G
+HG00111,England,Europe,C/C,C/C,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/G,C/C,A/T,T/T,G/G
+HG00112,England,Europe,C/C,C/C,T/T,C/C,A/A,A/G,G/G,A/A,C/C,C/C,G/G,C/T,A/T,T/T,G/G
+HG00113,England,Europe,C/C,C/C,C/T,C/C,A/A,G/G,A/A,A/A,C/C,C/C,G/G,C/T,A/T,T/T,G/G
+HG00114,England,Europe,C/T,C/C,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/G,C/T,A/A,T/T,A/A
+HG00115,England,Europe,C/C,C/T,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HG00116,England,Europe,C/C,C/T,T/T,C/C,A/A,G/G,G/G,A/A,C/C,T/T,G/G,C/T,A/A,T/T,G/G
+HG00117,England,Europe,C/C,C/C,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/C,C/C,A/A,T/T,G/G
+HG00118,England,Europe,C/C,C/C,T/T,C/C,A/A,A/G,G/G,A/A,C/C,C/C,G/G,C/T,A/A,T/T,G/G
+HG00119,England,Europe,C/T,C/C,T/T,C/C,A/A,G/G,A/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HG00121,England,Europe,C/C,C/T,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/C,G/G,C/C,A/T,T/T,A/G
+HG00122,England,Europe,C/C,C/C,T/T,C/C,A/A,G/G,G/G,A/A,C/C,C/T,G/G,C/C,A/A,T/T,G/G
+HG01806,China,East Asia,C/C,C/C,C/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,C/T,A/A,C/C,A/G
+HG01807,China,East Asia,C/T,C/C,C/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,C/C,A/A
+HG01808,China,East Asia,C/C,C/T,C/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,C/T,A/A,C/T,A/G
+HG01809,China,East Asia,C/T,T/T,C/C,C/T,A/A,A/G,A/A,G/G,C/C,T/T,C/C,T/T,A/A,C/T,A/A
+HG01810,China,East Asia,C/T,C/T,C/T,C/C,A/A,G/G,A/A,G/G,C/C,T/T,C/C,C/C,A/A,T/T,A/A
+HG01811,China,East Asia,C/T,C/T,C/C,T/T,A/A,G/G,A/A,G/G,C/C,T/T,C/C,C/C,A/A,C/C,A/A
+HG01812,China,East Asia,C/T,C/C,C/T,T/T,A/A,A/G,A/A,G/G,C/C,T/T,C/C,C/T,A/A,T/T,A/A
+HG01813,China,East Asia,C/C,C/C,T/T,T/T,A/A,G/G,A/A,G/G,C/C,C/T,C/C,T/T,A/A,C/C,A/A
+HG01815,China,East Asia,C/C,T/T,C/T,C/T,A/G,G/G,A/A,G/G,C/C,T/T,C/C,C/T,A/A,C/T,A/G
+HG01816,China,East Asia,C/T,T/T,T/T,T/T,A/A,G/G,A/A,G/G,C/C,C/C,C/C,T/T,A/A,C/T,A/G

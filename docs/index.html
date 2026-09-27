@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="Documentation for restful forensics">
+      <meta name="author" content="Leda Celeste Samin and Nelvie Fatima Jane Soliven">
+      <link rel="stylesheet" type = "text/css" href="style.css">
+      <script>
+         window.MathJax = {
+            tex: {
+               inlineMath: [["$", "$"], ["\\(", "\\)"]],
+               displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+            }
+         };
+      </script>
+      <script type="text/javascript" id="MathJax-script" async
+         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+         
+      <link rel="icon" type="image/png" href="logo.png">
+      <title>restful forensics</title>
+   </head>
+   
+   <body>
+      <nav class="sidebar">
+         <h2>Documentation</h2>
+         <ul class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('introduction'); return false;">I Introduction</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('installation'); return false;">II Installation</a>
+               <ul>
+                  <li><a href="#" onclick="showSection('installation', 'prerequisites'); return false;">Prerequisites</a></li>
+                  <li><a href="#" onclick="showSection('installation', 'dependency'); return false;">Dependencies</a></li>
+                  <li><a href="#" onclick="showSection('installation', 'installationguide'); return false;">Installation Guide</a></li>
+               </ul>
+            </li>
+            <li>
+               <a href="#" class="nav-link" onclick="showPage('features'); return false;">III Features/Usage</a> <!-- Parent-->
+               <ul>
+                  <!-- File conversion module -->
+                  <li>
+                     <a href="#" onclick="showPage('fileconversion'); return false;">1 File Conversion</a>
+                     <ul>
+                        <li><a href="#" onclick="showSection('fileconversion', 'installationguide'); return false;">1.1 Convert Files</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'addmeta'); return false;">1.2 Add Metadata</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'widensnp'); return false;">1.3 Widen SNP calls</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'tosnipper'); return false;">1.4 To SNIPPER file</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'tostructure'); return false;">1.5 To STRUCTURE file</a></li>
+                        <li><a href="#" onclick="showSection('fileconversion', 'toarlequin'); return false;">1.6 To Arlequin file</a></li>
+                     </ul>
+                  </li>
+                  <!-- SNP Data Extraction module -->
+                  <li>
+                     <a href="#" onclick="showPage('dataextraction'); return false;">2 SNP Data Extraction</a>
+                     <ul>
+                        <li><a href="#" onclick="showSection('dataextraction', 'extractiontab'); return false;">2.1 SNP Extraction</a></li>
+                        <li><a href="#" onclick="showSection('dataextraction', 'concordancetab'); return false;">2.2 Concordance Analysis</a></li>
+                     </ul>
+                  </li>
+                  <!-- Filtering module -->
+                  <li><a href="#" onclick="showPage('filtering'); return false;">3 Filtering</a></li>
+                  <!-- Exploratory analysis module -->
+                  <li><a href="#" onclick="showPage('exploratory'); return false;">4 Exploratory Analysis</a></li>
+                  <!-- Population summary statistics module -->
+                  <li>
+                     <a href="#" onclick="showPage('popsummarystat'); return false;">5 Population Summary Statistics</a>
+                     <ul>
+                         <li><a href="#" onclick="showSection('popsummarystat', 'rbasedpopstat'); return false;">5.1 R-based Calculations</a></li>
+                        <li><a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">5.2 Arlecore</a></li>
+                     </ul>
+                  </li>
+                  <!-- Population structure analysis module -->
+                  <li>
+                     <a href="#" onclick="showPage('popstructure'); return false;">6 Population Structure Analysis</a>
+                     <ul>
+                         <li><a href="#" onclick="showSection('popstructure', 'runstructure'); return false;">6.1 Run STRUCTURE v2.3.4</a></li>
+                        <li><a href="#" onclick="showSection('popstructure', 'plotstructure'); return false;">6.2 Plot STRUCTURE results</a></li>
+                     </ul>
+                  </li>
+                  <!-- Forensic Parameters module -->
+                  <li><a href="#" onclick="showPage('forensicparams'); return false;">7 Forensic Parameters</a></li>
+                  <!-- Forensic Inferencec module -->
+                  <li><a href="#" onclick="showPage('forensicinference'); return false;">8 Forensic DNA Inference</a></li>
+                  <!-- DNA Barcoding module -->
+                  <li>
+                     <a href="#" onclick="showPage('dnabarcoding'); return false;">9 DNA Barcoding</a>
+                     <ul>
+                         <li><a href="#" onclick="showSection('dnabarcoding', 'msa'); return false;">9.1 Multiple Sequence Alignment</a></li>
+                        <li><a href="#" onclick="showSection('dnabarcoding', 'phylogenetictree'); return false;">9.2 Phylogenetic Tree Analysis</a></li>
+                        <li><a href="#" onclick="showSection('dnabarcoding', 'barcoding'); return false;">9.3 Barcoding</a>
+                        <ul>
+                           <li><a href="#speciesidentification">9.3.1 Species Identification</a></li>
+                           <li><a href="#optimizekmer">9.3.2 Optimize kmer values</a></li>
+                           <li><a href="#barcodinggap">9.3.3 Calculate Barcoding Gap</a></li>
+                           <li><a href="#evaluatebarcodes">9.3.4 Evaluate Barcodes</a></li>
+                           <li><a href="#calcspeciesmembership">9.3.5 Calculate Species Membership Value</a></li>
+                        </ul>
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
+            </li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('workflow'); return false;">IV Workflows</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('limitations'); return false;">V Limitations</a>
+               <ul>
+                  <li><a href="#knownlimitations" onclick="showSection('limitations', 'knownlimitations'); return false;">Known Limitations</a></li>
+                  <li><a href="#enhancements" onclick="showSection('limitations', 'enhancements'); return false;">Planned Enhancements</a></li>
+               </ul>
+            </li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('citation'); return false;">VI Citation</a></li>
+         </ul>
+      </nav>
+      
+      <main class="main-content">
+         <header class="main-header">
+            <h1 class="header-title">restful forensics</h1>
+            <img src="institution_logos.png" alt="Logos" class="header-img">
+         </header>
+         
+         <section id="introduction" class="page active">
+            <h1 class="section-title">I Introduction</h1>
+            <p><b>restful forensics</b> is an open-source Windows-based platform for 
+            forensic genetics research workflow and method validation. This tool 
+            is built as a Shiny app in R and incorporates commonly used packages, 
+            functions, and software for genetic data preparation, pre-processing, 
+            and exploratory data analysis.</p>
+            <br>
+            <p>restful forensics is developed at the Natural Sciences Research Institute, 
+            University of the Philippines Diliman, Quezon City.</p>
+            
+            <div class="page-navigation">
+               <span></span>
+               <a href="#" onclick="showPage('installation'); return false;">Next →</a>
+            </div>
+         </section>
+         
+         <section id="installation" class="page">
+            <h1 class="section-title">II Installation</h1>
+            
+            <section id="prerequisites" class="section">
+               <h2 class="section-title">Prerequisites</h2>
+               <ul>
+                  <li><p><a href="https://cran.r-project.org/bin/windows/base/">R</a> 
+                  (at least version 4.6.1)</p></li>
+                  <li><p><a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a> 
+                     (should be compatible with R versions above 4.5.0)</p></li>
+                  <li><p>Integrated Development Environment such as  
+                  <a href="https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads">RStudio</a></p></li>
+               </ul>
+            </section>
+            
+            <section id="dependency" class="section">
+               <h2 class="section-title">Dependency List</h2>
+                <p>The package dependencies are listed in 
+                <code>R/packages.R</code> and installed/loaded upon running 
+                <code>source("install.R")</code></p>
+            </section>
+           
+           <section id="installationguide" class="section">
+              <h2 class="section-title">Installation Guide</h2>
+                  <p>Clone the github repository by performing 
+                  <code>git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git</code> 
+                  in the RStudio terminal. If using Windows command prompt terminal, 
+                  ensure that git is installed in the system. To install git, follow these 
+                  <a href="https://git-scm.com/install/">instructions</a>.
+                  </p>
+                  <p>After cloning the repository, download the dependencies by entering 
+                  <code>source("install.R")</code> within the console and run restful forensics
+                  using <code>shiny::runApp()</code>.
+                  </p>
+                  <pre><code>
+                     git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git
+                     source("install.R")
+                     shiny::runApp()
+                  </code></pre>
+           </section>
+           
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('introduction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('features'); return false;">Next →</a>
+            </div>
+           
+         </section>
+         
+         <!-- Features section -->
+         <section id="features" class="page">
+            <h1 class="section-title">III Features/Usage</h1>
+            <p>This section dives into the modules and submodules of restful forensics. 
+            It describes the purpose of the submodule, links relevant supplementary files,
+            and defines the expected input/output files as well as the parameters (if applicable.)</p>
+            <p>
+               restful forensics is structured such that each submodule has its own tab detailing the 
+               instructions for use, sample format/s required as input or as a supplementary, and sample file/s.
+            </p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('fileconversion'); return false;">Next →</a>
+            </div>
+         <!-- End of Features section -->
+         </section>
+         
+         <!-- File Conversion module -->
+         <section id="fileconversion" class="page">
+            <h2 class="section-title">1 File Conversion</h2>
+            
+            <section id="convertfiles" class="section">
+            <h3 class="section-title">1.1 Convert Files</h3>
+            <p>This submodule converts genetic files to commonly parsed data structures,
+            namely VCF and PLINK files. It also uniquely offers the conversion of a standard 
+            CSV to VCF with the upload of a supplementary file.</p>
+            <p>The maximum file size accepted is 5GB. It is recommended to split files with 
+            sizes larger than 5GB into multiple smaller files.
+            </p>
+                  <img src="convert-files.png" alt="Figure 1. File Interconversion Options">
+               
+                  <p><strong>Input file</strong>: VCF, BCF, or PLINK (bed/bim/fam) files. 
+                  Zipped VCF or BCF files are also accepted.</p>
+                  <p>If converting a CSV/Excel file with sample, population, and genotype 
+                  information to VCF, an additional file is required. The additional 
+                  file should contain marker information with the following columns:
+                  <ul>
+                     <li><p>[1] rsID or marker name</p></li>
+                     <li><p>[2] chromosome number (integer only, eg. '1' instead of 'chr1'</p></li>
+                     <li><p>[3] base pair position, should match the build of the data (GRCh37 or GRCh38)</p></li>
+                     <li><p>[4] genetic distance</p></li>
+                     <li><p>[5] reference allele</p></li>
+                     <li><p>[6] alternate allele</p></li>
+                  </ul>
+                  </p> 
+                  <p><strong>Expected output file</strong>: VCF or PLINK-associated files.</p>
+            <p>The <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210x.70204">tidypopgen</a> R package
+                  is used for the CSV/Excel to VCF conversion while <a href="https://pubmed.ncbi.nlm.nih.gov/25722852/">PLINK 2.0</a> 
+                  is used for the rest.</p>
+         </section>
+         
+         <section id="addmeta" class="section">
+            <h3 class="section-title">1.2 Add Metadata</h3>
+            <p>This submodule merges sample and genotype information with user-defined metadata columns.
+            Population information is generally required for downstream analysis. Users can also merge other
+            information, population- or sample-based, to serve as a larger database on hand.</p>
+            <p>The sample names in the input file should match the samples names in the 
+            metadata file for successful matching. If samples come from different populations, 
+            there is an additional option to calculate the number of individuals per pouplation.
+            </p>
+            <p><strong>Input file</strong>:
+            <ul>
+               <li><p>Genotype data in PLINK 1.9/2.0, VCF (or vcf.gz), BCF, CSV/Excel (genotype) file formats. 
+               Zipped VCF/BCF files are accepted.</p></li>
+               <li><p>Metadata of the samples</p></li>
+            </ul>
+            </p>
+            <p><strong>Expected output file/s</strong>: CSV file containing sample, metadata, 
+            and genotype information
+            <ul>
+               <li><p>CSV file containing sample, metadata, and genotype information</p></li>
+               <li><p>CSV file containing the number of samples per population (if samples 
+               belong to >1 population)</p></li>
+               <li><p>Text file containing the list of samples from the genotype file with 
+               no match in the metadata</p></li>
+            </ul>
+            </p>
+            <p>For missing samples, double check if the sample IDs are the same for the 
+            genotype file and the metadata file.</p>
+         </section>
+         
+         <section id="widensnp" class="section">
+            <h3 class="section-title">1.3 Widen SNP calls</h3>
+            <p>This submodule converts zipped CSV/Excel files containing long SNP data 
+            calls into a wide format. A single CSV/Excel file is expected to contain samples 
+            from a specific population where columns [1] contain sample ID, [2] marker ID 
+            or rsIDs, and [3] haplotype. Given diploid samples, two rows are expected for a
+            single individual per SNP/marker.
+            </p>
+            <p><strong>Input file</strong>: Compressed file (.zip/.tar)</p>
+            <p><strong>Expected output file</strong>: Single CSV file</p>
+         </section>
+         
+         <section id="tosnipper" class="section">
+            <h3 class="section-title">1.4 To SNIPPER file</h3>
+            <p>This submodule converts a genotype file with sample and two levels of 
+            population information (population and superpopulation) 
+            to a SNIPPER compatible file for individual classification using 
+            ancestry-informative markers.
+            </p>
+            <p>The <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER</a>
+            app suite is a web portal for classification of individuals into phenotypes and 
+            biogeographical ancestry. It is developed and hosted by Universidade de Santiago 
+            de Compostella and also has a built-in file generation option with SNIPPER 4.</p>
+            <p><strong>Input file</strong>: CSV/Excel file with sample identification and two 
+            levels of population assignment, eg. Philippines (country-specific assignment) 
+            and Southeast Asia (higher pop assignment). If input file only contains sample 
+            and genotype information, an additional file containing population metadata
+            is required.
+            </p>
+            <p><strong>Expected output file</strong>: Excel (.xlsx) file compatible with 
+            SNIPPER 3.5 for ancestry-based individual classification</p>
+         </section>
+         
+         <section id="tostructure" class="section">
+            <h3 class="section-title">1.5 To STRUCTURE file</h3>
+            <p>This submodule converts a genotype file with sample and population information 
+            to a standard STRUCTURE-compatible input file. The STRUCTURE software has label 
+            requirements that is internally handled during conversion by the app.
+            </p>
+            <p>
+               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE</a> 
+               is a free software used for investigating population structure using multi-locus 
+               genotype data (Stephen and Donnelly, 2000; Falush et al., 2003; Falush et al., 2007; 
+               Hubisz et al., 2009).
+            </p>
+            <p><strong>Input file</strong>: CSV/Excel file with marker and population data</p>
+            <p><strong>Parameters/Options</strong>: Choose between 'Linux' or 'Windows' since the 
+            format of the STRUCTURE input file depends on the operating system where the STRUCTURE 
+            software is installed</p>
+            <p><strong>Expected output file</strong>: Structure (.str) file and the revised labels</p>
+            <p>
+               There is also a dedicated module within restful forensics that <a href="#runstructure">runs STRUCTURE</a>
+                automatically using the CSV/Excel file containing genotype and population data directly. 
+            </p>
+         </section>
+         
+         <section id="toarlequin" class="section">
+            <h3 class="section-title">1.6 To Arlequin file</h3>
+            <p>This submodule converts a genotype file with sample and population information to a 
+            standard Arlequin-compatible input file.</p>
+            <p>
+               <a href="https://cmpg.unibe.ch/software/arlequin35/">Arlequin</a> is a free software 
+               package for population genetic analysis, calculating intra-population and inter-population 
+               metrics (Excoffier & Lischer, 2010).
+            </p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+            <p><strong>Parameters</strong>:
+             <ul>
+               <li><p>(True/False) Genotypic/Haplotypic data</p></li>
+               <li><p>(True/False) Known Gametic Phase</p></li>
+               <li><p>(True/False) Co-dominant data</p></li>
+               <li><p>(Character) Symbol separating alleles. Default is '/'.</p></li>
+            </ul>
+            </p>
+            <p><strong>Expected output file</strong>: Arlequin (.arp) file</p>
+            <p>
+               There is a dedicated module within restful forensics that runs the terminal version of Arlequin, 
+               <a href="#arlecore">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
+            </p>
+         </section>   
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('features'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dataextraction'); return false;">Next →</a>
+            </div>
+         <!-- End of file conv section -->
+         </section>
+         
+         <!-- SNP Data Extraction module -->
+         <section id="dataextraction" class="page">
+            <h2 class="section-title">2 SNP Data Extraction</h2>
+            
+            <section id="extractiontab" class="section">
+               <h3 class="section-title">2.1 SNP Extraction</h3>
+               <p>This submodule extracts markers by their reference SNP cluster ID (rsID) 
+               or base pair position from large genetic sequences generated using
+               whole genome or next generation sequencing. The assumption is that only select markers
+               or regions in a genetic sequence will be used for forensic analysis and should be subsetted prior.
+               </p>
+               <p>restful forensics first validates whether rsIDs are present in the input file before proceeding with the extraction. 
+               If rsIDs are present in the file, users have the option to extract markers by either rsIDs 
+               or their GRCh37/38 base pair position. Otherwise, extraction can only be done using bp positions.
+               If there are no rsIDs and markers are extracted using their bp position, there is an additional 
+               option for restful forensics to add rsIDs on the output file. All steps will be performed
+               using PLINK 2.0.
+               </p>
+               <p><strong>Input file</strong>:
+               <ul>
+                  <li><p>Data files (.vcf, .vcf.gz, .bcf, or plink files)</p></li>
+                  <li><p>(If rsIDs are present) Marker names/rsIDs can be typed manually or uploaded 
+                  as a CSV/Excel file</p></li>
+                  <li><p>(If no rsIDs) A file with the following columns: [1] rsID/marker name, 
+                  [2] chromosome number, and [3] base pair position</p></li>
+               </ul>
+               </p>
+               <p><strong>Expected output file</strong>: VCF file</p>
+               <p> The maximum file size accepted is 5GB. It is recommended to split files with sizes 
+               larger than 5GB into multiple smaller files or process on a per chromosome basis.</p>
+            </section>
+            
+            <section id="concordancetab" class="section">
+               <h3 class="section-title">2.2 Concordance Analysis</h3>
+               <p>This submodule performs concordance analysis between files or datasets with overlapping samples,
+               usually profiles generated using different sequencing technologies. Performing a concordance
+               analysis is a step towards validating the sequenced results.
+               </p>
+               <p><strong>Input file</strong>: Two files either in CSV/Excel/VCF format (does not need to be the same) and at 
+               least one column with similar contents (eg. sample IDs)</p>
+               <p><strong>Parameter/Option</strong>: Phased genotypes. Check if TRUE. 
+               Markers will be directly compared and the order of alleles is considered during matching.</p>
+               <p><strong>Expected outputs</strong>:
+               <ul>
+                  <li><p>Concordance table (.xlsx file)</p></li>
+                  <li><p>Concordance plot (.png file)</p></li>
+               </ul>
+               </p>
+            </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('features'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('filtering'); return false;">Next →</a>
+            </div>
+         <!-- End of SNP Data Extraction Module -->
+         </section>
+         
+         
+         
+         <section id="filtering" class="page">
+            <h2 class="section-title">3 Filtering</h2>
+            <p>
+               This module filters individuals and variants using standard filtering options available in
+               PLINK 2.0. If the input is a VCF file, there is an option to generate a depth of coverage plot using the 
+               <a href=" https://CRAN.R-project.org/package=vcfR">vcfR R package</a>.
+            </p>
+            <p>Similar with the extraction tab, this module assumes that the input is a relatively large genetic sequence
+            generated by whole genome or next generation technologies. To avoid including low quality data in the analysis 
+            that may skew the results, filtering or exclusion of individuals and/or variants should be performed. There 
+            are also assumptions in certain analysis methods that should be considered in finalizing the data. For example, 
+            there are methods that assumes loci are in Hardy-Weinberg equilibrium.
+            </p>
+            <p><strong>Input file</strong>: Data files (.vcf, .vcf.gz, .bcf, or plink files)</p>
+            <p><strong>Standard Parameters</strong>:
+            <ul>
+               <li><p>'--mind' to filter individuals based on their missing genotype rate</p></li>
+               <li><p>'--geno' to filter variants based on their missing genotype rate</p></li>
+               <li><p>'--qual-threshold' to exclude variants below the quality score threshold</p></li>
+               <li><p>'--hwe' to exclude variants deviating from the hwe threshold</p></li>
+               <li><p>'--indep-pairwise' to prune variants in approx. linkage equilibrium</p></li>
+               <li><p>'--king-cutoff' to exclude a member of a pair with a certain level of inferred relationship</p></li>
+            </ul>
+            At least one filtering option should be set. Additional PLINK flags can also be manually 
+            typed with restful forensics supporting the upload of at most two supplemental files 
+            that will be matched to the first two typed flags. See 
+            <a href="https://www.cog-genomics.org/plink/2.0/">PLINK 2.0 Documentation</a> for more options.
+            </p>
+            <p><strong>Expected outputs</strong>:
+            <ul>
+               <li><p>VCF file</p></li>
+               <li><p>Depth of Coverage plot (.png file)</p></li>
+            </ul>
+            </p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('dataextraction'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('exploratory'); return false;">Next →</a>
+            </div>
+         </section>
+         
+         <section id="exploratory" class="page">
+            <h2 class="section-title">4 Exploratory Analysis</h2>
+            <p>
+               This module performs exploratory analysis by running principal component analysis using the 
+               <a href="https://CRAN.R-project.org/package=ade4">ade4 R package</a>. This method 
+               extracts information and detects patterns based on the marker panel used.</p>
+               
+            <p>Population information is required. The analysis will still be performed even when all samples
+               belong to the same population. To change the principal components on the x and y axis, 
+               change the values on the "PC Axis X/Y" and click <code>Run PCA Analysis</code>. 
+               Populations can be highlighted by ticking their associated checkboxes and can even be used as reference for
+               for the recalculation of the principal components.
+            </p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+            <p><strong>Standard Parameters</strong>: If using custom colors and labels, a file (CSV/Excel) should
+            be provided with the columns as follows: [1] population name, [2] color (name or hex code), and [3] 
+            <a href="https://ggplot2.tidyverse.org/reference/scale_shape.html">shape</a>. 
+            The principal component for the x-axis and y-axis can also be set.
+            </p>
+            <p><strong>Expected outputs</strong>: PCA plots (.png file)</p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('filtering'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popsummarystat'); return false;">Next →</a>
+            </div>   
+         </section>
+         
+         <!-- Population Summary Statistics module -->
+         <section id="popsummarystat" class="page">
+            <h2 class="section-title">5 Population Summary Statistics</h2>
+            
+            <section id="rbasedpopstat" class="section">
+               <h3 class="section-title">5.1 R-based Calculations</h3>
+               <p>This submodule calculates common population statistics using R-based packages. 
+               The included statistics are private alleles, mean allelic richness, heterozygosities, 
+               inbreeding coefficient, allele frequencies, and HWE and FST calculations. The R packages used are 
+               <a href="https://CRAN.R-project.org/package=poppr">poppr</a>,
+               <a href="https://CRAN.R-project.org/package=hierfstat">hierfstat</a>, and
+               <a href="https://CRAN.R-project.org/package=adegenet">adegenet</a>.
+               </p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+               <p><strong>Expected output file</strong>:
+               <ul>
+                  <li><p>All resulting tables (.xlsx file)</p></li>
+                  <li><p>PNG plots (heterozygosity and FST plots)</p></li>
+               </ul>
+               </p>
+            </section>
+            
+            <section id="arlecore" class="section">
+               <h3 class="section-title">5.2 Arlecore</h3>
+               <p>This submodule calculates common population statistics using Arlecore v3.5.2, the console version
+               of the <a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
+               There is only a fixed set of calculations in Arlecore included in this module: Diversity and HWE, 
+               expected heterozygosities, FST matrix, coancestry coefficient, and loci in linkage disequilibrium.
+               </p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+               <p><strong>Parameter/Option</strong>: Check if to perform linkage disequilibrium test. Default is False.</p>
+               <p><strong>Expected outputs</strong>:
+               <ul>
+                  <li><p>Arlequin input file (.arp file)</p></li>
+                  <li><p>All resulting tables (.xlsx file)</p></li>
+                  <li><p>PNG plots (heterozygosity, FST matrix, and Coancestry coefficient matrix)</p></li>
+               </ul>
+               </p>
+               <p>The zipped arlecore v3.5.2 package includes R functions for parsing sections from the resulting file.
+               Select R functions were reused and adapted for compatibility with a more recent R version. 
+               The functions reused are coancestryCoeff.R, fStat_Pvalues_Func.R, pairFstMatrix.R, pairwiseDiffMatrix.R,
+               sumExpectedHeterozygosity.R, sumNumAllelesFunction.R, and sumThetaHFunction.R. 
+               The mentioned scripts can be found within the R folder as helper functions.
+               </p>
+            </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('exploratory'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('popstructure'); return false;">Next →</a>
+            </div>  
+         <!-- End of Population Summary Statistics Module -->
+         </section>
+         
+         <!-- Population Structure Analysis module -->
+         <section id="popstructure" class="page">
+            <h2 class="section-title">6 Population Structure Analysis</h2>
+            
+            <section id="runstructure" class="section">
+               <h3 class="section-title">6.1 Run STRUCTURE v2.3.4</h3>
+               <p>This submodule analyzes genetic data and investigates population genetic structure using the
+               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE v2.3.4</a> software 
+               integrated in R by the <a href="https://github.com/EricArcher/strataG/tree/master/R">strataG</a> R
+               package.
+               </p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+               <p><strong>Parameter/Options</strong>: The adjustable parameters are limited and fixed to the standard 
+               K range, replicates per K, burn-in, and MCMC reps after burnin. Users can set whether to use admixture 
+               or no admixture model, set the alpha value, and use of the correlated frequencies model.
+               </p>
+               <p><strong>Expected output files</strong>:
+               <ul>
+                  <li><p>Input (.str) file</p></li>
+                  <li><p>Structure files</p></li>
+                  <li><p>Zipped Q matrices</p></li>
+                  <li><p>Individual (.ind) files</p></li>
+               </ul>
+               </p>
+               <p>
+                  The STRUCTURE files, qmatrices, and/or indiv files can be used directly for other programs such
+                  as <a href="https://github.com/ramachandran-lab/pong">pong</a> and 
+                  <a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a>. 
+                  restful forensics also integrates the CLUMPP program under the 
+                  <a href="#plotstructure">Plot Structure tab</a>.
+               </p>
+            </section>
+            
+            <section id="plotstructure" class="section">
+               <h3 class="section-title">6.2 Plot STRUCTURE results</h3>
+               <p>This submodule directly accepts the structure result files as an uploaded zipped file or 
+               use the results from the
+               <a href="#runstructure">Run Structure tab</a> for plotting using the CLUMPP program.
+               </p>
+               <p><strong>Input file</strong>: Zipped file containing structure results or use generated 
+               output from Run Structure tab</p>
+               <p><strong>Parameter/Option</strong>: 
+               <ul>
+                  <li><p>Target K value or the K value to be plotted</p></li>
+                  <li><p>Algorithm to be used for aligning clusters</p></li>
+                  <li><p>Pairwise matrix similarity statistic to be used</p></li>
+                  <li><p>Order of runs to be tested. If 'all', test all possible input orders of runs while
+                  'ran.order' tests only a specified number of random inputs</p></li>
+                  <li><p>If using 'ran.order', the number of input orders of runs for testing should be specified.</p></li>
+                  <li><p>Option to permute the clusters according to the cluster order.</p></li>
+               </ul>
+               </p>
+               <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
+            </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('popsummarystat'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicparams'); return false;">Next →</a>
+            </div>
+         <!-- End of Population Structure Analysis Module -->
+         </section>
+         
+         <section id="forensicparams" class="page">
+            <h2 class="section-title">7 Forensic Parameters</h2>
+            <p>
+               This module calculates standard forensic parameters for individual identification 
+               using markers such as individual identity SNPs and are statistics which are commonly 
+               used for STR data. These are based on the standard 
+               <a href="https://agouy.github.io/straf_book/forensic-parameters.html">guides</a> for calculation and 
+               <a href="https://dfs.dc.gov/sites/default/files/dc/sites/dfs/page_content/attachments/FBS22%20-%20STR%20Statistical%20Calculations%20Guidelines.pdf">interpretations</a>,
+               but adjusted to be specific for SNPs as performed by 
+               <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1686077/">Botstein et al (1980)</a> and 
+               <a href="https://www.nature.com/articles/s41598-025-33012-8">Kim et al. (2025)</a>.
+            </p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information or 
+            an allele frequency table where the first column contains the marker and allele information 
+            (eg. rs101.A) while the succeeding columns are the frequencies per population.</p>
+            <p><strong>Parameters/Options</strong>: 
+            <ul>
+               <li><p>Use 5/2n rule in the calculation of genotype frequencies</p></li>
+               <li><p>Upload an individual's marker profile for identification</p></li>
+            </ul>
+            </p>
+            <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file. The information
+            per sheet is as follows:
+            <ul>
+               <li><p>Overall results with all markers and populations</p></li>
+               <li><p>Individual sheets containing the forensic parameters per population</p></li>
+               <li><p>Genotype frequencies of all populations</p></li>
+               <li><p>Individual sheets containing the genotype frequencies per population</p></li>
+            </ul>
+            </p>
+            <br>
+            <p style="background-color: lightblue;">restful forensics calculates these parameters 
+            for SNPs, but there are multiple tools and software specific for STR data.</p>
+            <br>
+            <h4 class="section-title">Genotype frequency</h4>
+            <p>If the input contains allele profiles per sample instead of genotype frequencies, 
+            restful forensics will then calculate genotype frequencies per population. It first evaluates
+            whether the profile per marker are homozygous or heterozygous and sets the values of p and q.
+            The genotype frequencies are then calculated where:
+            <ul>
+               <li><p>Homozygous: $p^2$ and/or $q^2$</p></li>
+               <li><p>Heterozygous: $2pq$</p></li>
+            </ul>
+            </p>
+            <p>This calculation returns the genotype frequencies for each marker per population</p>
+            <br>
+            <h4 class="section-title">Random Match Probability</h4>
+            <p>
+               The random match probability (RMP), also known as matching probability or probability of match, 
+               estimates the probability of observing two identical genotypes in a population. 
+               It is calculated by adding the squared frequencies per loci:
+               $$RMP=\sum_{i}^n(P_{i})^2$$ or in plainer terms: $RMP=p^2 + 2pq + q^2$ for each loci.
+            </p>
+            <br>
+            <h4 class="section-title">Power of Discrimination</h4>
+            <p>
+               The power of discrimination (PD) is the probability that two random individuals will
+               have different profiles given a set of loci.
+               $$PD=1-PM$$
+            </p>
+            <br>
+            <h4 class="section-title">Polymorphism Information Content</h4>
+            <p>
+               The polymorphism information content (PIC) is the measure of a marker's ability 
+               to detect polymorphisms among individuals in a population
+               <a href="https://www.sciencedirect.com/science/article/pii/S0378111919308340">(Serrote et al., 2020)</a>.
+               The higher PIC value, the more effective the genetic marker is at discriminating between
+               two unrelated individuals. This measure is calculated using:
+               $$ PIC=1-\sum_{i=1}^n p_i^2 - \sum_{i=1}^{n-1}\sum_{j=i+1}^n 2p_i^2p_j^2 $$
+               where $p_i$ and $p_j$ are frequencies of alleles $i$ and $j$.
+               This is interpreted as:
+               $$PIC=1-(p^2+q^2) - 2*(p^2*q^2)$$
+            </p>
+            <br>
+            <h4 class="section-title">Power of Exclusion</h4>
+            <p>
+               The power of exclusion (PE) is the "fraction of individuals having a DNA profile that
+               is different from that of a selected individual in a typical paternity case" 
+               <a href="https://www.promega.com/-/media/files/resources/profiles-in-dna/103/statistical-analysis-of-str-data.pdf">
+                  (Huston, 1998)
+               </a>.
+               $$ PE=h^2(1-2hH^2) $$
+               where $h$ is the proportion of heterozygous individuals, calculated using $h=2pq$,
+               and $H$ of homozygous individuals, $H=p^2+q^2$.
+            </p>
+            <br>
+            <h4 class="section-title">Typical Paternity Index</h4>
+            <p>
+               The typical paternity index (TPI) is an odds ratio that estimates how likely an 
+               individual is the biological father compared to a random individual.
+               $$ TPI=\frac{1}{2H}$$
+               where $H$ is the proportion of homozygous individuals, $H=p^2+q^2$.
+            </p>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('popstructure'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('forensicinference'); return false;">Next →</a>
+            </div>
+         </section>
+         
+         <section id="forensicinference" class="page">
+            <h2 class="section-title">8 Forensic DNA Inference</h2>
+            <p>
+               This module performs a NaÏve Bayes classification and leave-one-out cross-validation of individuals
+               with SNP data (ancestry or phenotype-informative) using the 
+               <a href="https://CRAN.R-project.org/package=e1071">e1071</a> and 
+               <a href="https://CRAN.R-project.org/package=caret">caret</a> R packages. It can be used for rapid
+               assessment of marker sets and training datasets. However, for a more comprehensive forensic DNA 
+               inference of an individual, it is recommended to use this submodule in conjunction with 
+               <a href="#exploratory">PCA</a>, <a href="#runstructure">STRUCTURE</a>, and 
+               <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER</a>.
+            </p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+            <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('dnabarcoding'); return false;">Next →</a>
+            </div>
+         </section>
+         
+         <!-- DNA Barcoding module -->
+         <section id="dnabarcoding" class="page">
+            <h2 class="section-title">9 DNA Barcoding</h2>
+            
+            <section id="msa" class="section">
+               <h3 class="section-title">9.1 Multiple Sequence Alignment</h3>
+               <p>This submodule performs global multiple sequence alignment on DNA sequences using the 
+               <a href="https://www.bioconductor.org/packages/release/bioc/html/msa.html">msa</a> R package.
+               </p>
+               <p><strong>Input file</strong>: Zipped FASTA files</p>
+               <p><strong>Parameters</strong>: Option to use ClustalW, ClustalOmega, or MUSCLE</p>
+               <p><strong>Expected output</strong>:
+               <ul>
+                  <li><p>PDF of alignment</p></li>
+                  <li><p>FASTA file of the alignment</p></li>
+                  The alignment is adjusted using the
+                  <a href="https://bioconductor.org/packages/release/bioc/html/DECIPHER.html">DECIPHER</a> R package 
+                  and are provided as an additional option for download. The output can also be used directly as input 
+                  for the <a href="#phylogenetictree">Phylogenetic Tree Analysis</a> tab.
+               </ul>
+            </section>
+            
+            <section id="phylogenetictree" class="section">
+               <h3 class="section-title">9.2 Phylogenetic Tree Analysis</h3>
+               <p>This submodule constructs a phylogenetic tree based on a multiple sequence alignment.
+               </p>
+               <p><strong>Input file</strong>: MSA file or MSA result from the 
+               <a href="#msa">MSA tab</a>.</p>
+               <p><strong>Parameters</strong>: The parameters required depend on the method chosen for tree construction.
+               <ul>
+                  <li><p>Neighbor-Joining: substitution models, seed value, and outgroup (optional)</p></li>
+                  <li><p>UPGMA: substitution models, seed value, and outgroup (optional)</p></li>
+                  <li><p>Parsimony:  seed value and outgroup (optional)</p></li>
+                  <li><p>Maximum Likelihood: bootstrap value, seed value, and outgroup (optional)</p></li>
+               </ul>
+               </p>
+               <p><strong>Expected output file</strong>: Phylogenetic tree (.png file)</p>
+            </section>
+            
+            <section id="barcoding" class="section">
+               <h3 class="section-title">9.3 Barcoding</h3>
+               <p>This section uses the
+               <a href="https://CRAN.R-project.org/package=BarcodingR">BarcodingR</a> R package
+               for all the calculations.
+               </p>
+               
+               <section id="speciesidentification" class="section">
+                  <h4 class="section-title">9.3.1 Species Identification</h4>
+                  <p>This submodule performs species identification using protein-coding barcodes using
+                  different methods.
+                  </p>
+                  <p><strong>Input files</strong>: Aligned query and reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas)</p>
+                  <p><strong>Parameters/Options</strong>: Method for training model and/or infer species membership</p>
+                  <p><strong>Expected output</strong>: Table of results</p>
+               </section>
+               
+               <section id="optimizekmer" class="section">
+                  <h4 class="section-title">9.3.2 Optimize kmer values</h4>
+                  <p>This submodule calculates the optimal kmer length for maximal species identification success rate.</p>
+                  <p><strong>Input file</strong>: Aligned reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas, .mase, .phylip)</p>
+                  <p><strong>Parameter/Option</strong>: Maximum Kmer value</p>
+                  <p><strong>Expected output</strong>: PNG plot</p>
+               </section>
+            
+               <section id="barcodinggap" class="section">
+                  <h4 class="section-title">9.3.3 Calculate Barcoding Gap</h4>
+                  <p>This submodule calculates the DNA barcoding gap.</p>
+                  <p><strong>Input file</strong>:  Aligned reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas, .mase, .phylip)</p>
+                  <p><strong>Parameter/Option</strong>: Distance for the calculation of the gap</p>
+                  <p><strong>Expected output</strong>: A table of summary statistics of genetic distance</p>
+               </section>
+               
+               <section id="evaluatebarcodes" class="section">
+                  <h4 class="section-title">9.3.4 Evaluate Barcodes</h4>
+                  <p>This submodule evaluates two barcodes using the species identification success rate criteria.</p>
+                  <p><strong>Input file</strong>: Two DNA barcode sequences</p>
+                  <p><strong>Parameter/Option</strong>: Kmer length for barcodes 1 and 2</p>
+                  <p><strong>Expected output</strong>: Table listing the p values</p>
+               </section>
+               
+               <section id="calcspeciesmembership" class="section">
+                  <h4 class="section-title">9.3.5 Calculate Species Membership Value</h4>
+                  <p>This module calculates the TDR value for a set of query and reference species. 
+                  TDR or Two-Dimensional Non-Parametric Resampling is a statistical method that evaluates uncertainties
+                  in multi-variable or structure datasets and is a robust method in assessing species membership 
+                  <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0050831"> (Jin et al., 2012)</a>
+                  Values range from [0,1] where 0 indicates extremely weak species membership and values close to 1 
+                  indicate strong species membership.</p>
+                  <p><strong>Input files</strong>: DNA sequences from a single query species and set of reference samples</p>
+                  <p><strong>Parameter/Options</strong>: Bootstrap values for the query and reference samples</p>
+                  <p><strong>Expected output</strong>: Numeric value representing the TDR values for each query against the species</p>
+               </section>
+               
+            </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('forensicinference'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('workflow'); return false;">Next →</a>
+            </div>
+         <!-- End of DNA Barcoding Module -->
+         </section>
+         
+         
+         <section id="workflow" class="page">
+            <h1 class="section-title">IV Workflows</h1>
+            <p>
+                The features in restful forensics are modularized and can be
+                used independently or together following a certain workflow (Fig. 2).
+            </p>
+            <img src="workflow.png" alt="Figure 2. Sample workflow for different forensic marker panels" class="responsive-img">
+            <p>
+               restful forensics have been tested using data from the 1000 Genomes Project and Human Genome Diversity Project. 
+               Quality control was performed on the per chromosome VCF files using the <a href="#filtering">filtering</a> 
+               module before extracting markers using the <a href="extractiontab">SNP Data Extraction</a> submodule.
+               This process is represented in Fig. 3 with the dotted arrows indicating a two-way interaction. 
+               Extraction results were then zipped together for subsequent processing.
+            </p>
+            <img src="chart.png" alt="Figure 3. restful forensics workflows" class="responsive-img">
+            <p>
+               Population data were matched and merged with samples using the <a href="#addmeta">"Add Metadata"</a> submodule.
+               While the analysis modules within restful forensics require a genotype file with a single-level population assignment,
+               the Add Metadata submodule provides the option to merge multiple columns/information (Fig. 4).
+            </p>
+            <img src="metadata.jpg" alt="Figure 4. Add Metadata submodule parameters from restful forensics" class="responsive-img">
+            <p>
+               Following Fig. 2 and Fig. 3, the genotype file with population information is used as input
+               for exploratory analysis (Fig. 5). Note that the module will not run without a population column.
+            </p>
+            <img src="pca.jpg" alt="Figure 5. Sample results using the Exploratory Analysis module from restful forensics" class="responsive-img">
+            <p>
+               For the calculation of population summary statistics, there is an option to use R-based packages or the terminal-version 
+               of Arlequin called Arlecore. For the example (Fig. 6), the <a href="#arlecore">arlecore</a> submodule was used.
+            </p>
+            <img src="arlecore.jpg" alt="Figure 6. Sample results using the Arlecore submodule from restful forensics" class="responsive-img">
+            <p>
+               The same genotype and population file is used as input to run population structure analysis and directly
+               visualized using CLUMPP (Fig. 7).
+            </p>
+            <img src="structure_plot.jpg" alt="Figure 7. Sample results using the Plot STRUCTURE results submodule from restful forensics" class="responsive-img">
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('dnabarcoding'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('limitations'); return false;">Next →</a>
+            </div>
+         </section>
+   
+         <section id="limitations" class="page">
+            <h1 class="section-title">V Limitations</h1>
+            
+            <section id="knownlimitations" class="section">
+               <h2 class="section-title">Known Limitations</h2>
+               <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Module</th>
+                     <th>Submodule</th>
+                     <th>Limitation</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>File Conversion</td>
+                     <td>To STRUCTURE File</td>
+                     <td>No option to add extra information/columns. Parameters are set based on the strataG package.</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>File Conversion</td>
+                     <td>To Arlequin File</td>
+                     <td>
+                        <ul>
+                           <li>Datatype is automatically set to "Standard"</li>
+                           <li>No option to specify genetic/group structure</li>
+                        </ul>
+                     </td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Population Summary Statistics</td>
+                     <td>Arlecore</td>
+                     <td>
+                        <ul>
+                           <li>Parameters for running arlecore are set with performing LD test the only provided additional option</li>
+                           <li>Statistics calculated: Diversity and HWE metrics, Expected Heterozygosities, FST, Coancestry Coefficient, and Loci in LD</li>
+                        </ul>
+                     </td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Population Structure Analysis</td>
+                     <td>Run STRUCTURE v2.3.4</td>
+                     <td>Same limited parameters as set in the strataG R package</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Forensic Paramaters</td>
+                     <td>Forensic Paramaters</td>
+                     <td>Calculation of Random Match Probability given a profile is untested</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>DNA Barcoding</td>
+                     <td>Multiple Sequence Alignment</td>
+                     <td>Only global alignment can be performed</td>
+                  </tr>
+                  </tbody>
+               </table>
+            </section>
+            
+            <section id="enhancements" class="section">
+               <h2 class="section-title">Planned Enhancements</h2>
+               <ol>
+                  <li><strong>File Conversion: To Structure File</strong> - Additional options to set in the main and extra parameter file</li>
+                  <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
+                  <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
+               </ol>
+            </section>
+            
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('workflow'); return false;">← Previous</a>
+               <a href="#" onclick="showPage('citation'); return false;">Next →</a>
+            </div>
+            
+         </section>
+         
+         
+         <section id="citation" class="page">
+            <h1 class="section-title">VI Citation</h1>
+            <div class="page-navigation">
+               <a href="#" onclick="showPage('limitations'); return false;">← Previous</a>
+            </div>
+         </section>
+         
+      </main>
+      <script src="page.js"></script>
+   </body>
+
+
+      
