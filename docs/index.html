@@ -215,7 +215,7 @@
                
                   <p><strong>Input file</strong>: VCF, BCF, or PLINK (bed/bim/fam) files. 
                   Zipped VCF or BCF files are also accepted.</p>
-                  <p>If converting a CSV file with sample, population, and genotype 
+                  <p>If converting a CSV/Excel file with sample, population, and genotype 
                   information to VCF, an additional file is required. The additional 
                   file should contain marker information with the following columns:
                   <ul>
@@ -229,7 +229,7 @@
                   </p> 
                   <p><strong>Expected output file</strong>: VCF or PLINK-associated files.</p>
             <p>The <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210x.70204">tidypopgen</a> R package
-                  is used for the CSV to VCF conversion while <a href="https://pubmed.ncbi.nlm.nih.gov/25722852/">PLINK 2.0</a> 
+                  is used for the CSV/Excel to VCF conversion while <a href="https://pubmed.ncbi.nlm.nih.gov/25722852/">PLINK 2.0</a> 
                   is used for the rest.</p>
          </section>
          
@@ -244,7 +244,7 @@
             </p>
             <p><strong>Input file</strong>:
             <ul>
-               <li><p>Genotype data in PLINK 1.9/2.0, VCF (or vcf.gz), BCF, CSV (genotype) file formats. 
+               <li><p>Genotype data in PLINK 1.9/2.0, VCF (or vcf.gz), BCF, CSV/Excel (genotype) file formats. 
                Zipped VCF/BCF files are accepted.</p></li>
                <li><p>Metadata of the samples</p></li>
             </ul>
@@ -265,8 +265,8 @@
          
          <section id="widensnp" class="section">
             <h3 class="section-title">1.3 Widen SNP calls</h3>
-            <p>This submodule converts zipped .xlsx or .csv files containing long SNP data 
-            calls into a wide format. A single .xlsx/.csv file is expected to contain samples 
+            <p>This submodule converts zipped CSV/Excel files containing long SNP data 
+            calls into a wide format. A single CSV/Excel file is expected to contain samples 
             from a specific population where columns [1] contain sample ID, [2] marker ID 
             or rsIDs, and [3] haplotype. Given diploid samples, two rows are expected for a
             single individual per SNP/marker.
@@ -286,7 +286,7 @@
             app suite is a web portal for classification of individuals into phenotypes and 
             biogeographical ancestry. It is developed and hosted by Universidade de Santiago 
             de Compostella and also has a built-in file generation option with SNIPPER 4.</p>
-            <p><strong>Input file</strong>: CSV/XLSX file with sample identification and two 
+            <p><strong>Input file</strong>: CSV/Excel file with sample identification and two 
             levels of population assignment, eg. Philippines (country-specific assignment) 
             and Southeast Asia (higher pop assignment). If input file only contains sample 
             and genotype information, an additional file containing population metadata
@@ -308,14 +308,14 @@
                genotype data (Stephen and Donnelly, 2000; Falush et al., 2003; Falush et al., 2007; 
                Hubisz et al., 2009).
             </p>
-            <p><strong>Input file</strong>: CSV/XLSX file with marker and population data</p>
+            <p><strong>Input file</strong>: CSV/Excel file with marker and population data</p>
             <p><strong>Parameters/Options</strong>: Choose between 'Linux' or 'Windows' since the 
             format of the STRUCTURE input file depends on the operating system where the STRUCTURE 
             software is installed</p>
             <p><strong>Expected output file</strong>: Structure (.str) file and the revised labels</p>
             <p>
                There is also a dedicated module within restful forensics that <a href="#runstructure">runs STRUCTURE</a>
-                automatically using the CSV/XLSX file containing genotype and population data directly. 
+                automatically using the CSV/Excel file containing genotype and population data directly. 
             </p>
          </section>
          
@@ -328,7 +328,7 @@
                package for population genetic analysis, calculating intra-population and inter-population 
                metrics (Excoffier & Lischer, 2010).
             </p>
-            <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
             <p><strong>Parameters</strong>:
              <ul>
                <li><p>(True/False) Genotypic/Haplotypic data</p></li>
@@ -340,7 +340,7 @@
             <p><strong>Expected output file</strong>: Arlequin (.arp) file</p>
             <p>
                There is a dedicated module within restful forensics that runs the terminal version of Arlequin, 
-               <a href="#arlecore">Arlecore</a> and uses the standard CSV/XLSX file with genotype and population data.
+               <a href="#arlecore">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
             </p>
          </section>   
             
@@ -373,7 +373,7 @@
                <ul>
                   <li><p>Data files (.vcf, .vcf.gz, .bcf, or plink files)</p></li>
                   <li><p>(If rsIDs are present) Marker names/rsIDs can be typed manually or uploaded 
-                  as a .txt/.csv/.xlsx file</p></li>
+                  as a CSV/Excel file</p></li>
                   <li><p>(If no rsIDs) A file with the following columns: [1] rsID/marker name, 
                   [2] chromosome number, and [3] base pair position</p></li>
                </ul>
@@ -389,7 +389,7 @@
                usually profiles generated using different sequencing technologies. Performing a concordance
                analysis is a step towards validating the sequenced results.
                </p>
-               <p><strong>Input file</strong>: Two files (.csv or .xlsx) with the same formatting and at 
+               <p><strong>Input file</strong>: Two files either in CSV/Excel/VCF format (does not need to be the same) and at 
                least one column with similar contents (eg. sample IDs)</p>
                <p><strong>Parameter/Option</strong>: Phased genotypes. Check if TRUE. 
                Markers will be directly compared and the order of alleles is considered during matching.</p>
@@ -464,8 +464,8 @@
                Populations can be highlighted by ticking their associated checkboxes and can even be used as reference for
                for the recalculation of the principal components.
             </p>
-            <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
-            <p><strong>Standard Parameters</strong>: If using custom colors and labels, a file (.csv/.xlsx) should
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
+            <p><strong>Standard Parameters</strong>: If using custom colors and labels, a file (CSV/Excel) should
             be provided with the columns as follows: [1] population name, [2] color (name or hex code), and [3] 
             <a href="https://ggplot2.tidyverse.org/reference/scale_shape.html">shape</a>. 
             The principal component for the x-axis and y-axis can also be set.
@@ -491,7 +491,7 @@
                <a href="https://CRAN.R-project.org/package=hierfstat">hierfstat</a>, and
                <a href="https://CRAN.R-project.org/package=adegenet">adegenet</a>.
                </p>
-               <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
                <p><strong>Expected output file</strong>:
                <ul>
                   <li><p>All resulting tables (.xlsx file)</p></li>
@@ -507,7 +507,7 @@
                There is only a fixed set of calculations in Arlecore included in this module: Diversity and HWE, 
                expected heterozygosities, FST matrix, coancestry coefficient, and loci in linkage disequilibrium.
                </p>
-               <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
                <p><strong>Parameter/Option</strong>: Check if to perform linkage disequilibrium test. Default is False.</p>
                <p><strong>Expected outputs</strong>:
                <ul>
@@ -542,7 +542,7 @@
                integrated in R by the <a href="https://github.com/EricArcher/strataG/tree/master/R">strataG</a> R
                package.
                </p>
-               <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
+               <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
                <p><strong>Parameter/Options</strong>: The adjustable parameters are limited and fixed to the standard 
                K range, replicates per K, burn-in, and MCMC reps after burnin. Users can set whether to use admixture 
                or no admixture model, set the alpha value, and use of the correlated frequencies model.
@@ -605,7 +605,7 @@
                <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1686077/">Botstein et al (1980)</a> and 
                <a href="https://www.nature.com/articles/s41598-025-33012-8">Kim et al. (2025)</a>.
             </p>
-            <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information or 
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information or 
             an allele frequency table where the first column contains the marker and allele information 
             (eg. rs101.A) while the succeeding columns are the frequencies per population.</p>
             <p><strong>Parameters/Options</strong>: 
@@ -705,7 +705,7 @@
                <a href="#exploratory">PCA</a>, <a href="#runstructure">STRUCTURE</a>, and 
                <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER</a>.
             </p>
-            <p><strong>Input file</strong>: CSV/XLSX file containing genotype and population information</p>
+            <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
             <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
             <div class="page-navigation">
                <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>

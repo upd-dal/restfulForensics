@@ -45,16 +45,16 @@ for sub/modules:
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | Convert Files | Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files | VCF, BCF, PLINK files | VCF or PLINK files | PLINK 2.0 |
 | 2 | Add Metadata | Merge genotype data with metadata based on shared keywords (sample IDs) | VCF, BCF, PLINK, CSV file/s | CSV files | |
-| 3 | Widen SNP calls | Convert long-formatted SNP calls to a wide format | Compressed file (.zip/.tar) containing .csv or .xlsx files | CSV file | |
-| 4 | To SNIPPER file | Convert .csv or .xlsx files into a SNIPPER-compatible file for individual classification using ancestry-informative markers | CSV/XLSX file | Excel (.xlsx) file | |
-| 5 | To STRUCTURE file | Converts .csv or .xlsx files to a STRUCTURE v2.3.4-compatible file | CSV/XLSX file | Structure (.str) file | |
-| 6 | To Arlequin file | Converts .csv or .xlsx files to an Arlequin-compatible file | CSV/XLSX file | Arlequin (.arp) file | |
+| 3 | Widen SNP calls | Convert long-formatted SNP calls to a wide format | Compressed file (.zip/.tar) containing CSV/Excel files | CSV file | |
+| 4 | To SNIPPER file | Convert CSV/Excel files into a SNIPPER-compatible file for individual classification using ancestry-informative markers | CSV/XLSX file | Excel (.xlsx) file | |
+| 5 | To STRUCTURE file | Converts CSV/Excel file to a STRUCTURE v2.3.4-compatible file | CSV/Excel file | Structure (.str) file | |
+| 6 | To Arlequin file | Converts CSV/Excel file to an Arlequin-compatible file | CSV/Excel file | Arlequin (.arp) file | |
 
 *Module 2: SNP Data Extraction*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | SNP Data Extraction | Extract specific SNP calls from genome-wide data (VCF or PLINK associated files) based on rsID or position | VCF, BCF, PLINK files | VCF file | PLINK 2.0 |
-| 2 | Concordance Analysis | Check concordance of calls between datasets with overlapping samples | Two .csv and/or .xlsx files | Excel (.xlsx) and PNG file | |
+| 2 | Concordance Analysis | Check concordance of calls between datasets with overlapping samples | CSV/Excel/VCF files | Excel (.xlsx) and PNG file | |
 
 *Module 3: Filtering*
 | # | Feature | Description | Input file/s | Output | Related Tools |
@@ -64,29 +64,29 @@ for sub/modules:
 *Module 4: Exploratory Analysis*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Exploratory Analysis | Perform Principal Components Analysis using multivariate SNP data | CSV/XLSX file | PNG plots | Ade4 |
+| 1 | Exploratory Analysis | Perform Principal Components Analysis using multivariate SNP data | CSV/Excel file | PNG plots | Ade4 |
 
 *Module 5: Population Summary Statistics*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | R-based Calculations | Calculate common population statistics using R-based packages | CSV/XLSX file | Excel (.xlsx) and PNG files | _poppr_, _hierfstat_, and _adegenet_ |
-| 2 | Arlecore | Calculate common population statistics using Arlecore, the terminal-based version of Arlequin | Excel (.xlsx) and PNG files | Arlecore |
+| 1 | R-based Calculations | Calculate common population statistics using R-based packages | CSV/Excel file | Excel (.xlsx) and PNG files | _poppr_, _hierfstat_, and _adegenet_ |
+| 2 | Arlecore | Calculate common population statistics using Arlecore, the terminal-based version of Arlequin | CSV/Excel | Excel (.xlsx) and PNG files | Arlecore |
 
 *Module 6: Population Structure Analysis*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Run STRUCTURE v2.3.4 | Perform population structure analysis | CSV/XLSX file | Structure (.str) file, STRUCTURE results, Q matrices, and .ind files | STRUCTURE v2.3.4 and _strataG_ |
-| 2 | Plot STRUCTURE results | Visualize STRUCTURE results | CSV/XLSX file | Structure plot (.png and .pdf) | CLUMPP and _strataG_ |
+| 1 | Run STRUCTURE v2.3.4 | Perform population structure analysis | CSV/Excel file | Structure (.str) file, STRUCTURE results, Q matrices, and .ind files | STRUCTURE v2.3.4 and _strataG_ |
+| 2 | Plot STRUCTURE results | Visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and _strataG_ |
 
 *Module 7: Forensic Parameters*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic Parameters | Calculate forensic parameters specific for individual identity SNPs | CSV/XLSX file | Excel (.xlsx) file | |
+| 1 | Forensic Parameters | Calculate forensic parameters specific for individual identity SNPs | CSV/Excel file | Excel (.xlsx) file | |
 
 *Module 8: Forensic DNA Inference*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic DNA Inference | Perform NaÏve Bayes classification to evaluate classification performance of markers | CSV/XLSX file | Excel (.xlsx) file | _caret_ and _e1071_ |
+| 1 | Forensic DNA Inference | Perform NaÏve Bayes classification to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | _caret_ and _e1071_ |
 
 *Module 9: DNA Barcoding*
 | # | Feature | Description | Input file/s | Output | Related Tools |
