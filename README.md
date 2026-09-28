@@ -167,7 +167,7 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | :---: | :--- | :--- | :---: |
 | 1 | File Conversion | To STRUCTURE File | No option to add extra information/columns, standard parameters are set based on strataG. However, output can be manually edited using any text editor. |
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
-| 3 | Population Summary Statistics | Arlecore | Statistics calculated: Diversity and HWE metrics, Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD. |
+| 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
 | 5 | Forensic Parameters | Forensic Parameters | Calculation of Random Match Probability given a profile is untested |
 | 6 | DNA Barcoding | Multiple Sequence Alignment | Only global alignment can be performed |
@@ -176,10 +176,13 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 1. *File Conversion: To STRUCTURE File*
 Additional options to set main and extra parameters.
 
-2. *DNA Barcoding*
+2. *Population Summary Statistics: Arlecore*
+Plot adjustments to accommodate >10 populations.
+
+3. *DNA Barcoding*
 Add option to perform local sequence alignment.
 
-3. _*Additional Feature: Incorporation of ADMIXTURE software*_  
+4. _*Additional Feature: Incorporation of ADMIXTURE software*_  
 
 ## Citation Guide  
 To cite the application: DNA Analysis Laboratory. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. github.com  
@@ -187,4 +190,14 @@ To cite the application: DNA Analysis Laboratory. (2025). restfulForensics (Vers
 Manuscript in preparation.  
 
 ## License  
-restful forensics operates under the GNU General Public License
+restful forensics operates under the GNU General Public License v3.0  
+
+<br>
+This is based on the preliminary work on ancestry marker analysis at the DNA Analysis Laboratory,
+Natural Sciences Research Institute, University of the Philippines Diliman.  <br>
+Primary Developer: Leda Celeste Samin (DAL-NSRI-UPD)  <br>
+Project Leader: Nelvie Fatima Jane Soliven (DAL-NSRI-UPD)  <br>
+Contributors and Collaborators:  <br>
+Melvin Ambrocio Matias (Institute of Biology - UPD)  <br>
+Jazelyn Salvador (DAL-NSRI-UPD)  <br>
+Maria Corazon De Ungria (DAL-NSRI-UPD)  

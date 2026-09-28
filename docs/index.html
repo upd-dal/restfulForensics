@@ -211,7 +211,7 @@
             <p>The maximum file size accepted is 5GB. It is recommended to split files with 
             sizes larger than 5GB into multiple smaller files.
             </p>
-                  <img src="convert-files.png" alt="Figure 1. File Interconversion Options">
+                  <img src="convert-files.png" alt="Figure 1. File Interconversion Options" class="responsive-img">
                
                   <p><strong>Input file</strong>: VCF, BCF, or PLINK (bed/bim/fam) files. 
                   Zipped VCF or BCF files are also accepted.</p>
@@ -516,6 +516,8 @@
                   <li><p>PNG plots (heterozygosity, FST matrix, and Coancestry coefficient matrix)</p></li>
                </ul>
                </p>
+               <p><strong>Required Download:</strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
+               Download 'arlequin_win.zip' and copy the 64bit executable to the 'arlequin' folder of restful forensics.</p>
                <p>The zipped arlecore v3.5.2 package includes R functions for parsing sections from the resulting file.
                Select R functions were reused and adapted for compatibility with a more recent R version. 
                The functions reused are coancestryCoeff.R, fStat_Pvalues_Func.R, pairFstMatrix.R, pairwiseDiffMatrix.R,
@@ -555,6 +557,8 @@
                   <li><p>Individual (.ind) files</p></li>
                </ul>
                </p>
+               <p><strong>Required Download:</strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
+               Download the Windows package (without the front end) and copy the executable to the root/folder of restful forensics.</p>
                <p>
                   The STRUCTURE files, qmatrices, and/or indiv files can be used directly for other programs such
                   as <a href="https://github.com/ramachandran-lab/pong">pong</a> and 
@@ -584,6 +588,9 @@
                </ul>
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
+               <p><strong>Required Download:</strong><a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a> executable.
+               Download the Windows version and copy the executable to the root/folder of restful forensics.</p>
+               <p>
             </section>
             
             <div class="page-navigation">
@@ -877,7 +884,8 @@
                   <tr>
                      <td>File Conversion</td>
                      <td>To STRUCTURE File</td>
-                     <td>No option to add extra information/columns. Parameters are set based on the strataG package.</td>
+                     <td>No option to add extra information/columns, standard parameters are set based on strataG. 
+                     However, output can be manually edited using any text editor.</td>
                   </tr>
                   
                   <tr>
@@ -885,9 +893,10 @@
                      <td>To Arlequin File</td>
                      <td>
                         <ul>
-                           <li>Datatype is automatically set to "Standard"</li>
-                           <li>No option to specify genetic/group structure</li>
+                           <li>Datatype is automatically set to "Standard".</li>
+                           <li>No option to specify genetic/group structure.</li>
                         </ul>
+                        However, output can be manually edited using any text editor.
                      </td>
                   </tr>
                   
@@ -896,8 +905,9 @@
                      <td>Arlecore</td>
                      <td>
                         <ul>
-                           <li>Parameters for running arlecore are set with performing LD test the only provided additional option</li>
-                           <li>Statistics calculated: Diversity and HWE metrics, Expected Heterozygosities, FST, Coancestry Coefficient, and Loci in LD</li>
+                           <li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. 
+                           There is also an option to calculate loci in LD and the Diversity and HWE metrics</li>
+                           <li>Crowded labels on plots with >10 populations</li>
                         </ul>
                      </td>
                   </tr>
@@ -927,6 +937,7 @@
                <h2 class="section-title">Planned Enhancements</h2>
                <ol>
                   <li><strong>File Conversion: To Structure File</strong> - Additional options to set in the main and extra parameter file</li>
+                  <li><strong>Population Summary Statistics: Arlecore</strong> - Plot adjustments to accommodate >10 populations</li>
                   <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
                   <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
                </ol>
