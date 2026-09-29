@@ -104,7 +104,7 @@ This is a Windows-based shiny application.
 - [Rtools (compatible with R >= 4.6.1)](https://cran.r-project.org/bin/windows/Rtools/)
 - (optional) Any Integrated Development Environment. Suggestion is to use [RStudio.](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads)
 - [Git](https://git-scm.com/)  
-For complete functionalities:
+**For complete functionalities:**
 - Windows (without front end) implementation of [STRUCTURE v2.3.4](https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html)
 - [Arlecore](https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html)
 - Windows implementation of [CLUMPP](https://rosenberglab.stanford.edu/clumppDownload.html)
@@ -112,6 +112,7 @@ For complete functionalities:
 ### B. Installation Guide  
 
 1. Clone the repository  
+  
 *Using Windows PowerShell*  
 - Ensure that Git is installed in your system. If not, download from the official (website)(https://git-scm.com/) and install.  
 - Within PowerShell, configure username and email:  
