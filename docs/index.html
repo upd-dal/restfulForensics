@@ -29,7 +29,6 @@
             <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('installation'); return false;">II Installation</a>
                <ul>
                   <li><a href="#" onclick="showSection('installation', 'prerequisites'); return false;">Prerequisites</a></li>
-                  <li><a href="#" onclick="showSection('installation', 'dependency'); return false;">Dependencies</a></li>
                   <li><a href="#" onclick="showSection('installation', 'installationguide'); return false;">Installation Guide</a></li>
                </ul>
             </li>
@@ -145,33 +144,57 @@
                      (should be compatible with R versions above 4.5.0)</p></li>
                   <li><p>Integrated Development Environment such as  
                   <a href="https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads">RStudio</a></p></li>
+                  <li><p><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">
+                     STRUCTURE v2.3.4 (Windows without front end)</a></p></li>
+                  <li><p><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">
+                     Arlecore (terminal-based version of Arlequin v3.5.2.2)</a></p></li>
+                  <li><p><a href="https://rosenberglab.stanford.edu/clumppDownload.html">
+                     CLUMPP (Windows)</a></p></li>
                </ul>
-            </section>
-            
-            <section id="dependency" class="section">
-               <h2 class="section-title">Dependency List</h2>
-                <p>The package dependencies are listed in 
-                <code>R/packages.R</code> and installed/loaded upon running 
-                <code>source("install.R")</code></p>
             </section>
            
            <section id="installationguide" class="section">
               <h2 class="section-title">Installation Guide</h2>
-                  <p>Clone the github repository by performing 
-                  <code>git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git</code> 
-                  in the RStudio terminal. If using Windows command prompt terminal, 
-                  ensure that git is installed in the system. To install git, follow these 
-                  <a href="https://git-scm.com/install/">instructions</a>.
-                  </p>
-                  <p>After cloning the repository, download the dependencies by entering 
-                  <code>source("install.R")</code> within the console and run restful forensics
-                  using <code>shiny::runApp()</code>.
-                  </p>
-                  <pre><code>
-                     git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git
+                  <p>1. Clone the repository</p>
+                  <p><b><i>Using Windows PowerShell</i></b></p>
+                  <ul>
+                     <li><p>Ensure that Git is installed in your system. If not, download from the official
+                     <a href="https://git-scm.com/">website</a> and install.</p></li>
+                     <li><p>Within PowerShell, configure username and email:
+                     <pre><code>
+                     git config --global user.name "Your Name" 
+                     git config --global user.email "you@example.com"
+                     </code></pre>
+                     </p></li>
+                     <li><p>Verify installation by doing <code>git --version</code>.</p></li>
+                     <li><p>Launch PowerShell with appropriate permissions (admin privileges if required).</p></li>
+                     <li><p>Clone the repository by performing: <code>git clone https://github.com/upd-dal/restfulForensics</code></p></li>
+                  </ul>
+                  
+                  <p><b><i>Using RStudio IDE</i></b></p>
+                  <ul>
+                     <li><p>Open RStudio.</p></li>
+                     <li><p>Go to File > New Project > Version Control > Git.</p></li>
+                     <li><p>Paste the URL into 'Repository URL': <code>https://github.com/upd-dal/restfulForensics</code></p></li>
+                     <li><p>Set directory then click *Create Project*. RStudio clones and opens the project.</p></li>
+                  </ul>
+                  
+                  <p><b><i>Using R Terminal</i></b></p>
+                  <ul>
+                     <li>Ensure that Git is installed in your system. Check by performing <code>git --version</code>.</li>
+                     <li>Open the R terminal (beside the Console) and run: <code>git clone https://github.com/upd-dal/restfulForensics</code></li>
+                  </ul>
+                  
+                  <p>2. Launch the application</p>
+                  <ul>
+                     <li><p>Change directory in R to where the repository was copied.</p></li>
+                     <li><p>Launch the application by copying and pasting the following commands to the console:
+                     <pre><code>
                      source("install.R")
                      shiny::runApp()
-                  </code></pre>
+                     </code></pre>
+                     </p></li>
+                  </ul>
            </section>
            
             <div class="page-navigation">
@@ -517,7 +540,7 @@
                </ul>
                </p>
                <p><strong>Required Download:</strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
-               Download 'arlequin_win.zip' and copy the 64bit executable to the 'arlequin' folder of restful forensics.</p>
+               Download 'arlequin_win.zip' and copy the 64bit executable to the root/folder of restful forensics.</p>
                <p>The zipped arlecore v3.5.2 package includes R functions for parsing sections from the resulting file.
                Select R functions were reused and adapted for compatibility with a more recent R version. 
                The functions reused are coancestryCoeff.R, fStat_Pvalues_Func.R, pairFstMatrix.R, pairwiseDiffMatrix.R,
@@ -558,7 +581,7 @@
                </ul>
                </p>
                <p><strong>Required Download:</strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
-               Download the Windows package (without the front end) and copy the executable to the structure folder of restful forensics.</p>
+               Download the Windows package (without the front end) and copy the executable to the root/folder of restful forensics.</p>
                <p>
                   The STRUCTURE files, qmatrices, and/or indiv files can be used directly for other programs such
                   as <a href="https://github.com/ramachandran-lab/pong">pong</a> and 

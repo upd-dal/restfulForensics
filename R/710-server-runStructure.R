@@ -1,7 +1,7 @@
 run_structure_analysis <- function(input, output, session, rv) {
   
   structure_exec <- normalizePath(
-    "./structure/structure.exe",
+    "structure.exe",
     mustWork = TRUE
   )
   

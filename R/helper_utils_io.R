@@ -16,7 +16,7 @@ get_plink_path <- function() {
 #'
 #' @returns The file path for the 64-bit arlecore executable
 get_arlecore_path <- function() {
-  normalizePath("./arlequin/arlecore64.exe",
+  normalizePath("./arlecore64.exe",
     winslash = "\\",
     mustWork = TRUE
   )

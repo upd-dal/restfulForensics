@@ -283,6 +283,18 @@ file_conversion_tab <- function() {
                   href = "https://mathgene.usc.es/snipper4/papers.php",
                   target = "_blank"
                 )
+              ),
+              br(),
+              p(
+                "The input file can be used as input for ",
+                tags$a("training set design",
+                       href = "https://mathgene.usc.es/snipper4/trainingsetdesign.php",
+                       target = "_blank"
+                ), " and/or AIM classification of ",
+                tags$a("multiple individuals",
+                       href = "https://mathgene.usc.es/snipper4/analysismultipleprofiles.php",
+                       target = "_blank"
+                ), " under SNIPPER v4."
               )
             ),
             tabPanel(
