@@ -34,3 +34,13 @@ function showSection(pageId, sectionId) {
       });
    }, 0);
 }
+
+
+function scrollClass(event, className) {
+   event.preventDefault(); 
+   const element = document.querySelector('.' + className);
+   
+   if (element){
+      element.scrollIntoView({ behavior: 'smooth'});
+   }
+}

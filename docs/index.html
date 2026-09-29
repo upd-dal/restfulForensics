@@ -305,7 +305,7 @@
             to a SNIPPER compatible file for individual classification using 
             ancestry-informative markers.
             </p>
-            <p>The <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER</a>
+            <p>The <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER v4</a>
             app suite is a web portal for classification of individuals into phenotypes and 
             biogeographical ancestry. It is developed and hosted by Universidade de Santiago 
             de Compostella and also has a built-in file generation option with SNIPPER 4.</p>
@@ -316,7 +316,8 @@
             is required.
             </p>
             <p><strong>Expected output file</strong>: Excel (.xlsx) file compatible with 
-            SNIPPER 3.5 for ancestry-based individual classification</p>
+            SNIPPER v4 for ancestry-based individual classification</p>
+            
          </section>
          
          <section id="tostructure" class="section">
@@ -326,7 +327,7 @@
             requirements that is internally handled during conversion by the app.
             </p>
             <p>
-               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE</a> 
+               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE v2.3.4</a> 
                is a free software used for investigating population structure using multi-locus 
                genotype data (Stephen and Donnelly, 2000; Falush et al., 2003; Falush et al., 2007; 
                Hubisz et al., 2009).
@@ -347,7 +348,7 @@
             <p>This submodule converts a genotype file with sample and population information to a 
             standard Arlequin-compatible input file.</p>
             <p>
-               <a href="https://cmpg.unibe.ch/software/arlequin35/">Arlequin</a> is a free software 
+               <a href="https://cmpg.unibe.ch/software/arlequin35/">Arlequin v3.5.2.2</a> is a free software 
                package for population genetic analysis, calculating intra-population and inter-population 
                metrics (Excoffier & Lischer, 2010).
             </p>
@@ -363,7 +364,7 @@
             <p><strong>Expected output file</strong>: Arlequin (.arp) file</p>
             <p>
                There is a dedicated module within restful forensics that runs the terminal version of Arlequin, 
-               <a href="#arlecore">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
+               <a href="#" onclick="scrollClass(event, 'arlecore')">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
             </p>
          </section>   
             
@@ -539,7 +540,7 @@
                   <li><p>PNG plots (heterozygosity, FST matrix, and Coancestry coefficient matrix)</p></li>
                </ul>
                </p>
-               <p><strong>Required Download:</strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
+               <p><strong>Required Download: </strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
                Download 'arlequin_win.zip' and copy the 64bit executable to the root/folder of restful forensics.</p>
                <p>The zipped arlecore v3.5.2 package includes R functions for parsing sections from the resulting file.
                Select R functions were reused and adapted for compatibility with a more recent R version. 
@@ -562,7 +563,7 @@
             
             <section id="runstructure" class="section">
                <h3 class="section-title">6.1 Run STRUCTURE v2.3.4</h3>
-               <p>This submodule analyzes genetic data and investigates population genetic structure using the
+               <p>This submodule analyzes genetic data and investigates population genetic structure using the 
                <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE v2.3.4</a> software 
                integrated in R by the <a href="https://github.com/EricArcher/strataG/tree/master/R">strataG</a> R
                package.
@@ -580,7 +581,7 @@
                   <li><p>Individual (.ind) files</p></li>
                </ul>
                </p>
-               <p><strong>Required Download:</strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
+               <p><strong>Required Download: </strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
                Download the Windows package (without the front end) and copy the executable to the root/folder of restful forensics.</p>
                <p>
                   The STRUCTURE files, qmatrices, and/or indiv files can be used directly for other programs such
@@ -611,7 +612,7 @@
                </ul>
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
-               <p><strong>Required Download:</strong><a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a> executable.
+               <p><strong>Required Download: </strong><a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a> executable.
                Download the Windows version and copy the executable to the root/folder of restful forensics.</p>
                <p>
             </section>
