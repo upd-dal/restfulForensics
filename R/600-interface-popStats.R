@@ -13,6 +13,7 @@ popstats_tab <- function() {
               numericInput("markovHWE", "Set Markov Chains for HWE calculations", value = 1000, min = 1000),
               selectInput("correctionModel", "Select Correction Model", choices = c("Bonferroni" = "Bonferroni", "FDR" = "FDR")),
               numericInput("alphaValue", "Set Alpha Value", value = 0.05, min = 0.00, max = 1),
+              checkboxInput("incLabels", "Show FST values in Heatmap", value = FALSE),
               actionButton("runPopStats", "Analyze", icon = icon("magnifying-glass-chart")),
               uiOutput("downloadStatsXLSX_UI")
             ),
@@ -99,7 +100,16 @@ popstats_tab <- function() {
           title = "Arlecore",
           fluidRow(
             box(
-              fileInput("fileForArlecore", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv")),
+              radioButtons("inputArlecore", "Choose input type", choices = c("Genotype File" = "gtFile",
+                                                                             "ARP file (.arp)" = "arpFile")),
+              conditionalPanel(
+                condition = "input.inputArlecore == 'gtFile'",
+                fileInput("fileForArlecoreGT", "Upload Genotype File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv"))
+              ),
+              conditionalPanel(
+                condition = "input.inputArlecore == 'arpFile'",
+                fileInput("fileForArlecoreARP", "Upload .arp File", accept = "arp")
+              ),
               checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
               conditionalPanel(
                 condition = "input.calcLD",

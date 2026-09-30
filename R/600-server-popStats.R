@@ -83,7 +83,6 @@ pop_stats_server <- function(input, output, session, rv) {
           fstData(fst_data)
 
           showNotification("Rendering outputs, this might take some time...", type = "message", duration = 30)
-          print(Sys.time())
 
           enable("runPopStats")
           showNotification("Calculation complete!", type = "message")
@@ -211,7 +210,8 @@ pop_stats_server <- function(input, output, session, rv) {
 
       plot_path <- plot_fst(
         fst_df = fstData(),
-        out_dir = tempdir()
+        out_dir = tempdir(),
+        show_values = input$incLabels
       )
       list(
         src = plot_path,
@@ -247,7 +247,8 @@ pop_stats_server <- function(input, output, session, rv) {
     content = function(file) {
       plot_path <- plot_fst(
         fst_df = fstData(),
-        out_dir = tempdir()
+        out_dir = tempdir(),
+        show_values = input$incLabels
       )
       file.copy(plot_path, file)
     }
@@ -314,46 +315,49 @@ pop_stats_server <- function(input, output, session, rv) {
   locusData <- reactiveVal(NULL)
 
   observe({
-    shinyjs::toggleState("runArlecore", !is.null(input$fileForArlecore))
+    shinyjs::toggleState("runArlecore", !is.null(input$fileForArlecoreGT) || !is.null(input$fileForArlecoreARP))
   })
 
   observeEvent(input$runArlecore, {
     disable("runArlecore")
 
     withProgress(message = "Analysis ongoing...", {
+      
       incProgress(0.2, detail = "Loading input file...")
-      for_arp <- load_csv_xlsx_files(input$fileForArlecore$datapath)
-      for_arp <- clean_input_data(for_arp)
-
-      rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
-      rsids <- data.frame(rownames(rsids), rsids)
-      locusData(rsids)
-
-      # All null values are "N", set to ""
-      for_arp <- for_arp %>%
-        mutate(across(everything(), ~ case_when(
-          . == "N" ~ "",
-          TRUE ~ .x
-        )))
-      for_arp <- as.data.frame(for_arp)
-
-      incProgress(0.4, detail = "Creating input file...")
-      arp_file <- build_arp_per_population(for_arp,
-        genotypic_data = as.numeric(input$genotypicData),
-        gametic_phase = as.numeric(input$gameticPhase),
-        recessive_data = as.numeric(input$recessiveData),
-        locus_sep = input$locusSep,
-        output.prefix = "arp_file",
-        data_type = "STANDARD"
-      )
+      if (!is.null(input$fileForArlecoreGT)) {
+        for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
+        for_arp <- clean_input_data(for_arp)
+        
+        rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
+        rsids <- data.frame(rownames(rsids), rsids)
+        locusData(rsids)
+        
+        # All null values are "N", set to ""
+        for_arp <- for_arp %>%
+          mutate(across(everything(), ~ case_when(
+            . == "N" ~ "",
+            TRUE ~ .x
+          )))
+        for_arp <- as.data.frame(for_arp)
+        
+        arp_file <- build_arp_per_population(for_arp,
+                                             genotypic_data = as.numeric(input$genotypicData),
+                                             gametic_phase = as.numeric(input$gameticPhase),
+                                             recessive_data = as.numeric(input$recessiveData),
+                                             locus_sep = input$locusSep,
+                                             output.prefix = "arp_file",
+                                             data_type = "STANDARD"
+        )
+      } else if (!is.null(input$fileForArlecoreARP)) {
+        arp_file <- input$fileForArlecoreARP$datapath
+      }
+      
       arlequinFile(arp_file)
 
-      incProgress(0.6, detail = "Running arlecore...")
+      incProgress(0.4, detail = "Running arlecore...")
       # returns path of res folder
       ld_value <- input$calcLD
       hwe_value <- input$calcHWE
-      print(ld_value)
-      print(hwe_value)
       results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
 
       incProgress(0.8, detail = "Loading report...")
@@ -396,10 +400,6 @@ pop_stats_server <- function(input, output, session, rv) {
         rsids_zero <- rsids
         rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
         ld_vals <- parse_ld(doc)
-        print("LD parsing")
-        print(str(ld_vals))
-        print(dim(ld_vals))
-        print(head(ld_vals))
         ld_vals$Locus1 <- rsids_zero[[2]][
           match(ld_vals$Locus1, rsids_zero[[1]])
         ]
@@ -420,9 +420,8 @@ pop_stats_server <- function(input, output, session, rv) {
     })
 
     enable("runArlecore")
-  }) # end of observe event
+  })
 
-  # separate the tables
   output$population_tables <- renderUI({
     req(arlequinPopDiversity())
     populations <- unique(arlequinPopDiversity()$Population)
@@ -537,13 +536,14 @@ pop_stats_server <- function(input, output, session, rv) {
       names_to = "Population",
       values_to = "Heterozygosity"
     )
+    colors_palette <- grDevices::colorRampPalette(RColorBr)
     fig <- plotly::plot_ly(
       data = data_long,
       x = ~Locus,
       y = ~Heterozygosity,
       type = "bar",
       color = ~Population,
-      colors = "Set2",
+      colors = "Viridis",
       text = ~Population
     ) %>%
       plotly::layout(

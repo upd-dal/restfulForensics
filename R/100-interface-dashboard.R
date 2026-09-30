@@ -20,7 +20,7 @@ dashboard_tab <- function() {
         side = "right",
         width = 12,
         h4("Cite the application:"),
-        h4("DNA Analysis Laboratory. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics"),
+        h4("Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics"),
         br(),
         h4("Manuscript pending.")
       ),

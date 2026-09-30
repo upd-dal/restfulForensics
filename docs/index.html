@@ -215,6 +215,9 @@
                instructions for use, sample format/s required as input or as a supplementary, and sample file/s.
             </p>
             
+            <h3 class="section-title">Summary</h3>
+            
+            
             <div class="page-navigation">
                <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
                <a href="#" onclick="showPage('fileconversion'); return false;">Next →</a>
@@ -854,30 +857,42 @@
                 used independently or together following a certain workflow (Fig. 2).
             </p>
             <img src="workflow.png" alt="Figure 2. Sample workflow for different forensic marker panels" class="responsive-img">
+            <br>
             <p>
                restful forensics have been tested using data from the 1000 Genomes Project and Human Genome Diversity Project. 
-               Quality control was performed on the per chromosome VCF files using the <a href="#filtering">filtering</a> 
-               module before extracting markers using the <a href="extractiontab">SNP Data Extraction</a> submodule.
+               Quality control was performed on the per chromosome VCF files using the 
+               <a href="#" onclick="showPage('filtering'); return false;">Filtering</a>
+               module before extracting markers using the 
+               <a href="#" onclick="showPage('extractiontab'); return false;">SNP Data Extraction</a>
+               submodule.
                This process is represented in Fig. 3 with the dotted arrows indicating a two-way interaction. 
                Extraction results were then zipped together for subsequent processing.
             </p>
             <img src="chart.png" alt="Figure 3. restful forensics workflows" class="responsive-img">
+            <br>
             <p>
-               Population data were matched and merged with samples using the <a href="#addmeta">"Add Metadata"</a> submodule.
+               Population data were matched and merged with samples using the 
+               <a href="#" onclick="showPage('addmeta'); return false;">Add Metadata</a>
+               submodule.
                While the analysis modules within restful forensics require a genotype file with a single-level population assignment,
                the Add Metadata submodule provides the option to merge multiple columns/information (Fig. 4).
             </p>
             <img src="metadata.jpg" alt="Figure 4. Add Metadata submodule parameters from restful forensics" class="responsive-img">
+            <br>
             <p>
                Following Fig. 2 and Fig. 3, the genotype file with population information is used as input
                for exploratory analysis (Fig. 5). Note that the module will not run without a population column.
             </p>
             <img src="pca.jpg" alt="Figure 5. Sample results using the Exploratory Analysis module from restful forensics" class="responsive-img">
+            <br>
             <p>
                For the calculation of population summary statistics, there is an option to use R-based packages or the terminal-version 
-               of Arlequin called Arlecore. For the example (Fig. 6), the <a href="#arlecore">arlecore</a> submodule was used.
+               of Arlequin called Arlecore. For the example (Fig. 6), the 
+               <a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">Arlecore</a> 
+               submodule was used.
             </p>
             <img src="arlecore.jpg" alt="Figure 6. Sample results using the Arlecore submodule from restful forensics" class="responsive-img">
+            <br>
             <p>
                The same genotype and population file is used as input to run population structure analysis and directly
                visualized using CLUMPP (Fig. 7).
@@ -951,7 +966,7 @@
                   <tr>
                      <td>DNA Barcoding</td>
                      <td>Multiple Sequence Alignment</td>
-                     <td>Only global alignment can be performed</td>
+                     <td>Only multiple sequence alignments can be performed</td>
                   </tr>
                   </tbody>
                </table>
@@ -962,7 +977,7 @@
                <ol>
                   <li><strong>File Conversion: To Structure File</strong> - Additional options to set in the main and extra parameter file</li>
                   <li><strong>Population Summary Statistics: Arlecore</strong> - Plot adjustments to accommodate >10 populations</li>
-                  <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
+                  <li><strong>DNA Barcoding</strong> - Add option to perform pairwise alignments and export alignment as BAM/SAM.</li>
                   <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
                </ol>
             </section>
