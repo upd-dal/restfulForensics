@@ -216,8 +216,293 @@
             </p>
             
             <h3 class="section-title">Summary</h3>
+            <h4 class="section-title">Module 1: File Conversion</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Convert Files</td>
+                     <td>Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files</td>
+                     <td>VCF, BCF, CSV, PLINK files</td>
+                     <td>VCF, CSV or PLINK files</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Add Metadata</td>
+                     <td>Merge genotype data with metadata based on shared keywords (sample IDs)</td>
+                     <td>VCF, BCF, PLINK, CSV file (or zipped files)</td>
+                     <td>CSV files</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Widen SNP calls</td>
+                     <td>Convert long-formatted SNP calls to a wide format</td>
+                     <td>Compressed file (.zip/.tar) containing CSV/Excel files</td>
+                     <td>CSV file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To SNIPPER file</td>
+                     <td>Convert CSV/Excel files into a SNIPPER-compatible file for individual classification using ancestry-informative markers</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To STRUCTURE file</td>
+                     <td>Converts CSV/Excel file to a STRUCTURE v2.3.4-compatible file</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure (.str) file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To Arlequin file</td>
+                     <td>Converts CSV/Excel file to an Arlequin V3.5.2.2-compatible file</td>
+                     <td>CSV/Excel file</td>
+                     <td>Arlequin (.arp) file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 2: SNP Data Extraction</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>SNP Data Extraction</td>
+                     <td>Extract specific SNP calls from genome-wide data based on rsID or position</td>
+                     <td>VCF, BCF, PLINK files</td>
+                     <td>VCF file</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Concordance Analysis</td>
+                     <td>Check concordance of calls between datasets with overlapping samples</td>
+                     <td>CSV/Excel/VCF files</td>
+                     <td>Excel (.xlsx) and PNG file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 3: Filtering</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Filtering</td>
+                     <td>Perform quality control/filtering of samples and variants using standard options in PLINK 2.0</td>
+                     <td>VCF, BCF, PLINK files</td>
+                     <td>VCF file</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 4: Exploratory Analysis</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Exploratory Analysis</td>
+                     <td>Perform Principal Components Analysis using multivariate SNP data</td>
+                     <td>CSV/Excel file</td>
+                     <td>PNG plots</td>
+                     <td>ade4 v 1.7.24</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 5: Population Summary Statistics</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>R-based Calculations</td>
+                     <td>Calculate common population statistics using R-based packages</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) and PNG files</td>
+                     <td>poppr v2.9.8, hierfstat v0.5.11, and adegenet v2.1.11</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Concordance Analysis</td>
+                     <td>Check concordance of calls between datasets with overlapping samples</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) and PNG files</td>
+                     <td>Arlecore v3.5.2</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 6: Population Structure Analysis</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Run STRUCTURE v2.3.4</td>
+                     <td>Perform population structure analysis</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure (.str) file, STRUCTURE results, Q matrices, and .ind files</td>
+                     <td>STRUCTURE v2.3.4 and strataG</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Plot STRUCTURE results</td>
+                     <td>Visualize STRUCTURE results</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure plot (.png and .pdf)</td>
+                     <td>CLUMPP and strataG</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 7: Forensic Parameters</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Forensic Parameters</td>
+                     <td>Calculate forensic parameters specific for individual identity SNPs</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+
+            <h4 class="section-title">Module 8: Forensic DNA Inference</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Forensic DNA Inference</td>
+                     <td>Perform Naïve Bayes classification to evaluate classification performance of markers</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td>caret v7.0.1 and e1071 v1.7.17</td>
+                  </tr>
+                  </tbody>
+               </table>
             
-            
+            <h4 class="section-title">Module 8: Forensic DNA Inference</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Multiple Sequence Alignment</td>
+                     <td>Perform multiple sequence alignment using select methods</td>
+                     <td>Zipped FASTA files</td>
+                     <td>PDF and FASTA file of alignment</td>
+                     <td>msa v1.44.1 and DECIPER v3.8.1</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Phylogenetic Tree Analysis</td>
+                     <td>Build a phylogenetic tree based on aligned sequences</td>
+                     <td>Alignment file</td>
+                     <td>PNG file</td>
+                     <td>ggtree v4.2.0 and phangorn v2.12.1</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Barcoding</td>
+                     <td>Perform species identification, evaluate barcodes, calculate barcoding gap, and calculate species membership value</td>
+                     <td>Aligned sequences</td>
+                     <td>Metrics</td>
+                     <td>BarcodingR v1.0.4</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
             <div class="page-navigation">
                <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
                <a href="#" onclick="showPage('fileconversion'); return false;">Next →</a>
@@ -271,7 +556,7 @@
             <p><strong>Input file</strong>:
             <ul>
                <li><p>Genotype data in PLINK 1.9/2.0, VCF (or vcf.gz), BCF, CSV/Excel (genotype) file formats. 
-               Zipped VCF/BCF files are accepted.</p></li>
+               Zipped VCF/BCF/CSV/Excel files are accepted as long as it contains a single file type.</p></li>
                <li><p>Metadata of the samples</p></li>
             </ul>
             </p>
@@ -992,6 +1277,9 @@
          
          <section id="citation" class="page">
             <h1 class="section-title">VI Citation</h1>
+            <p>To cite the application: Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics</p>
+            <p>Manuscript in preparation.</p>
+            
             <div class="page-navigation">
                <a href="#" onclick="showPage('limitations'); return false;">← Previous</a>
             </div>
