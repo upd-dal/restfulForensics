@@ -279,11 +279,11 @@ file_conversion_server <- function(input, output, session, rv) {
           files <- unpacked$data_files
           ext <- tools::file_ext(files[[1]])
           
-          if (ext == "csv") {
+          if (ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             all.list <- list()
             
             for (x in files) {
-              all.list[[x]] <- read.csv(x, check.names = FALSE, row.names = 1)
+              all.list[[x]] <- load_csv_xlsx_files(x)
             }
             
             merged <- dplyr::bind_rows(all.list)
@@ -306,7 +306,7 @@ file_conversion_server <- function(input, output, session, rv) {
           
         } else {
           # if single files
-          if (file_extension == "csv") {
+          if (file_extension %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             csv_df <- load_csv_xlsx_files(input_file)
             result <- add_metadata(csv_df, for_merging)
           } else {
@@ -565,13 +565,12 @@ file_conversion_server <- function(input, output, session, rv) {
 
     if (!is.null(input$refProvided)) {
       inputPath <- tosnipper_file[, -c(2, 3)]
-      refPath <- tosnipper_file[, 2:3]
+      refPath <- tosnipper_file[, 1:3]
     } else {
       inputPath <- tosnipper_file
       refPath <- load_csv_xlsx_files(input$refFile$datapath)
     }
 
-    refPath <- dplyr::rename(refPath, Sample = 1)
     targetSet <- input$targetPop
     targetName <- if (targetSet) input$targetPopName else NULL
     inputData <- colnames(inputPath)

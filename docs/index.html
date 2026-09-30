@@ -29,7 +29,6 @@
             <li class="nav-item"><a href="#" class="nav-link" onclick="showPage('installation'); return false;">II Installation</a>
                <ul>
                   <li><a href="#" onclick="showSection('installation', 'prerequisites'); return false;">Prerequisites</a></li>
-                  <li><a href="#" onclick="showSection('installation', 'dependency'); return false;">Dependencies</a></li>
                   <li><a href="#" onclick="showSection('installation', 'installationguide'); return false;">Installation Guide</a></li>
                </ul>
             </li>
@@ -145,33 +144,57 @@
                      (should be compatible with R versions above 4.5.0)</p></li>
                   <li><p>Integrated Development Environment such as  
                   <a href="https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads">RStudio</a></p></li>
+                  <li><p><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">
+                     STRUCTURE v2.3.4 (Windows without front end)</a></p></li>
+                  <li><p><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">
+                     Arlecore (terminal-based version of Arlequin v3.5.2.2)</a></p></li>
+                  <li><p><a href="https://rosenberglab.stanford.edu/clumppDownload.html">
+                     CLUMPP (Windows)</a></p></li>
                </ul>
-            </section>
-            
-            <section id="dependency" class="section">
-               <h2 class="section-title">Dependency List</h2>
-                <p>The package dependencies are listed in 
-                <code>R/packages.R</code> and installed/loaded upon running 
-                <code>source("install.R")</code></p>
             </section>
            
            <section id="installationguide" class="section">
               <h2 class="section-title">Installation Guide</h2>
-                  <p>Clone the github repository by performing 
-                  <code>git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git</code> 
-                  in the RStudio terminal. If using Windows command prompt terminal, 
-                  ensure that git is installed in the system. To install git, follow these 
-                  <a href="https://git-scm.com/install/">instructions</a>.
-                  </p>
-                  <p>After cloning the repository, download the dependencies by entering 
-                  <code>source("install.R")</code> within the console and run restful forensics
-                  using <code>shiny::runApp()</code>.
-                  </p>
-                  <pre><code>
-                     git clone https://github.com/NSRI-DAL-2025-Project/restfulForensics.git
+                  <p>1. Clone the repository</p>
+                  <p><b><i>Using Windows PowerShell</i></b></p>
+                  <ul>
+                     <li><p>Ensure that Git is installed in your system. If not, download from the official
+                     <a href="https://git-scm.com/">website</a> and install.</p></li>
+                     <li><p>Within PowerShell, configure username and email:
+                     <pre><code>
+                     git config --global user.name "Your Name" 
+                     git config --global user.email "you@example.com"
+                     </code></pre>
+                     </p></li>
+                     <li><p>Verify installation by doing <code>git --version</code>.</p></li>
+                     <li><p>Launch PowerShell with appropriate permissions (admin privileges if required).</p></li>
+                     <li><p>Clone the repository by performing: <code>git clone https://github.com/upd-dal/restfulForensics</code></p></li>
+                  </ul>
+                  
+                  <p><b><i>Using RStudio IDE</i></b></p>
+                  <ul>
+                     <li><p>Open RStudio.</p></li>
+                     <li><p>Go to File > New Project > Version Control > Git.</p></li>
+                     <li><p>Paste the URL into 'Repository URL': <code>https://github.com/upd-dal/restfulForensics</code></p></li>
+                     <li><p>Set directory then click *Create Project*. RStudio clones and opens the project.</p></li>
+                  </ul>
+                  
+                  <p><b><i>Using R Terminal</i></b></p>
+                  <ul>
+                     <li>Ensure that Git is installed in your system. Check by performing <code>git --version</code>.</li>
+                     <li>Open the R terminal (beside the Console) and run: <code>git clone https://github.com/upd-dal/restfulForensics</code></li>
+                  </ul>
+                  
+                  <p>2. Launch the application</p>
+                  <ul>
+                     <li><p>Change directory in R to where the repository was copied.</p></li>
+                     <li><p>Launch the application by copying and pasting the following commands to the console:
+                     <pre><code>
                      source("install.R")
                      shiny::runApp()
-                  </code></pre>
+                     </code></pre>
+                     </p></li>
+                  </ul>
            </section>
            
             <div class="page-navigation">
@@ -192,6 +215,294 @@
                instructions for use, sample format/s required as input or as a supplementary, and sample file/s.
             </p>
             
+            <h3 class="section-title">Summary</h3>
+            <h4 class="section-title">Module 1: File Conversion</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Convert Files</td>
+                     <td>Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files</td>
+                     <td>VCF, BCF, CSV, PLINK files</td>
+                     <td>VCF, CSV or PLINK files</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Add Metadata</td>
+                     <td>Merge genotype data with metadata based on shared keywords (sample IDs)</td>
+                     <td>VCF, BCF, PLINK, CSV file (or zipped files)</td>
+                     <td>CSV files</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Widen SNP calls</td>
+                     <td>Convert long-formatted SNP calls to a wide format</td>
+                     <td>Compressed file (.zip/.tar) containing CSV/Excel files</td>
+                     <td>CSV file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To SNIPPER file</td>
+                     <td>Convert CSV/Excel files into a SNIPPER-compatible file for individual classification using ancestry-informative markers</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To STRUCTURE file</td>
+                     <td>Converts CSV/Excel file to a STRUCTURE v2.3.4-compatible file</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure (.str) file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>To Arlequin file</td>
+                     <td>Converts CSV/Excel file to an Arlequin V3.5.2.2-compatible file</td>
+                     <td>CSV/Excel file</td>
+                     <td>Arlequin (.arp) file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 2: SNP Data Extraction</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>SNP Data Extraction</td>
+                     <td>Extract specific SNP calls from genome-wide data based on rsID or position</td>
+                     <td>VCF, BCF, PLINK files</td>
+                     <td>VCF file</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Concordance Analysis</td>
+                     <td>Check concordance of calls between datasets with overlapping samples</td>
+                     <td>CSV/Excel/VCF files</td>
+                     <td>Excel (.xlsx) and PNG file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 3: Filtering</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Filtering</td>
+                     <td>Perform quality control/filtering of samples and variants using standard options in PLINK 2.0</td>
+                     <td>VCF, BCF, PLINK files</td>
+                     <td>VCF file</td>
+                     <td>PLINK 2.0</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 4: Exploratory Analysis</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Exploratory Analysis</td>
+                     <td>Perform Principal Components Analysis using multivariate SNP data</td>
+                     <td>CSV/Excel file</td>
+                     <td>PNG plots</td>
+                     <td>ade4 v 1.7.24</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 5: Population Summary Statistics</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>R-based Calculations</td>
+                     <td>Calculate common population statistics using R-based packages</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) and PNG files</td>
+                     <td>poppr v2.9.8, hierfstat v0.5.11, and adegenet v2.1.11</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Concordance Analysis</td>
+                     <td>Check concordance of calls between datasets with overlapping samples</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) and PNG files</td>
+                     <td>Arlecore v3.5.2</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 6: Population Structure Analysis</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Run STRUCTURE v2.3.4</td>
+                     <td>Perform population structure analysis</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure (.str) file, STRUCTURE results, Q matrices, and .ind files</td>
+                     <td>STRUCTURE v2.3.4 and strataG</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Plot STRUCTURE results</td>
+                     <td>Visualize STRUCTURE results</td>
+                     <td>CSV/Excel file</td>
+                     <td>Structure plot (.png and .pdf)</td>
+                     <td>CLUMPP and strataG</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
+            <h4 class="section-title">Module 7: Forensic Parameters</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Forensic Parameters</td>
+                     <td>Calculate forensic parameters specific for individual identity SNPs</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td></td>
+                  </tr>
+                  </tbody>
+               </table>
+
+            <h4 class="section-title">Module 8: Forensic DNA Inference</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Forensic DNA Inference</td>
+                     <td>Perform Naïve Bayes classification to evaluate classification performance of markers</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td>caret v7.0.1 and e1071 v1.7.17</td>
+                  </tr>
+                  </tbody>
+               </table>
+            
+            <h4 class="section-title">Module 8: Forensic DNA Inference</h4>
+             <table class="styled-table">
+                  <thead>
+                  <tr>
+                     <th>Feature</th>
+                     <th>Description</th>
+                     <th>Input file/s</th>
+                     <th>Output</th>
+                     <th>Related Tools</th>
+                  </tr>
+                  </thead>
+                  
+                  <tbody>
+                  <tr>
+                     <td>Multiple Sequence Alignment</td>
+                     <td>Perform multiple sequence alignment using select methods</td>
+                     <td>Zipped FASTA files</td>
+                     <td>PDF and FASTA file of alignment</td>
+                     <td>msa v1.44.1 and DECIPER v3.8.1</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Phylogenetic Tree Analysis</td>
+                     <td>Build a phylogenetic tree based on aligned sequences</td>
+                     <td>Alignment file</td>
+                     <td>PNG file</td>
+                     <td>ggtree v4.2.0 and phangorn v2.12.1</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Barcoding</td>
+                     <td>Perform species identification, evaluate barcodes, calculate barcoding gap, and calculate species membership value</td>
+                     <td>Aligned sequences</td>
+                     <td>Metrics</td>
+                     <td>BarcodingR v1.0.4</td>
+                  </tr>
+                  </tbody>
+               </table>
+               
             <div class="page-navigation">
                <a href="#" onclick="showPage('installation'); return false;">← Previous</a>
                <a href="#" onclick="showPage('fileconversion'); return false;">Next →</a>
@@ -245,7 +556,7 @@
             <p><strong>Input file</strong>:
             <ul>
                <li><p>Genotype data in PLINK 1.9/2.0, VCF (or vcf.gz), BCF, CSV/Excel (genotype) file formats. 
-               Zipped VCF/BCF files are accepted.</p></li>
+               Zipped VCF/BCF/CSV/Excel files are accepted as long as it contains a single file type.</p></li>
                <li><p>Metadata of the samples</p></li>
             </ul>
             </p>
@@ -282,7 +593,7 @@
             to a SNIPPER compatible file for individual classification using 
             ancestry-informative markers.
             </p>
-            <p>The <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER</a>
+            <p>The <a href="https://mathgene.usc.es/snipper3/index.php">SNIPPER v4</a>
             app suite is a web portal for classification of individuals into phenotypes and 
             biogeographical ancestry. It is developed and hosted by Universidade de Santiago 
             de Compostella and also has a built-in file generation option with SNIPPER 4.</p>
@@ -293,7 +604,8 @@
             is required.
             </p>
             <p><strong>Expected output file</strong>: Excel (.xlsx) file compatible with 
-            SNIPPER 3.5 for ancestry-based individual classification</p>
+            SNIPPER v4 for ancestry-based individual classification</p>
+            
          </section>
          
          <section id="tostructure" class="section">
@@ -303,7 +615,7 @@
             requirements that is internally handled during conversion by the app.
             </p>
             <p>
-               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE</a> 
+               <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE v2.3.4</a> 
                is a free software used for investigating population structure using multi-locus 
                genotype data (Stephen and Donnelly, 2000; Falush et al., 2003; Falush et al., 2007; 
                Hubisz et al., 2009).
@@ -314,7 +626,7 @@
             software is installed</p>
             <p><strong>Expected output file</strong>: Structure (.str) file and the revised labels</p>
             <p>
-               There is also a dedicated module within restful forensics that <a href="#runstructure">runs STRUCTURE</a>
+               There is also a dedicated module within restful forensics that <a href="#" onclick="showSection('popstructure', 'runstructure'); return false;">runs STRUCTURE</a>
                 automatically using the CSV/Excel file containing genotype and population data directly. 
             </p>
          </section>
@@ -324,7 +636,7 @@
             <p>This submodule converts a genotype file with sample and population information to a 
             standard Arlequin-compatible input file.</p>
             <p>
-               <a href="https://cmpg.unibe.ch/software/arlequin35/">Arlequin</a> is a free software 
+               <a href="https://cmpg.unibe.ch/software/arlequin35/">Arlequin v3.5.2.2</a> is a free software 
                package for population genetic analysis, calculating intra-population and inter-population 
                metrics (Excoffier & Lischer, 2010).
             </p>
@@ -340,7 +652,7 @@
             <p><strong>Expected output file</strong>: Arlequin (.arp) file</p>
             <p>
                There is a dedicated module within restful forensics that runs the terminal version of Arlequin, 
-               <a href="#arlecore">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
+               <a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
             </p>
          </section>   
             
@@ -516,8 +828,8 @@
                   <li><p>PNG plots (heterozygosity, FST matrix, and Coancestry coefficient matrix)</p></li>
                </ul>
                </p>
-               <p><strong>Required Download:</strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
-               Download 'arlequin_win.zip' and copy the 64bit executable to the 'arlequin' folder of restful forensics.</p>
+               <p><strong>Required Download: </strong><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">Arlequin</a> software.
+               Download 'arlequin_win.zip' and copy the 64bit executable to the root/folder of restful forensics.</p>
                <p>The zipped arlecore v3.5.2 package includes R functions for parsing sections from the resulting file.
                Select R functions were reused and adapted for compatibility with a more recent R version. 
                The functions reused are coancestryCoeff.R, fStat_Pvalues_Func.R, pairFstMatrix.R, pairwiseDiffMatrix.R,
@@ -539,7 +851,7 @@
             
             <section id="runstructure" class="section">
                <h3 class="section-title">6.1 Run STRUCTURE v2.3.4</h3>
-               <p>This submodule analyzes genetic data and investigates population genetic structure using the
+               <p>This submodule analyzes genetic data and investigates population genetic structure using the 
                <a href="https://web.stanford.edu/group/pritchardlab/structure.html">STRUCTURE v2.3.4</a> software 
                integrated in R by the <a href="https://github.com/EricArcher/strataG/tree/master/R">strataG</a> R
                package.
@@ -557,8 +869,8 @@
                   <li><p>Individual (.ind) files</p></li>
                </ul>
                </p>
-               <p><strong>Required Download:</strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
-               Download the Windows package (without the front end) and copy the executable to the structure folder of restful forensics.</p>
+               <p><strong>Required Download: </strong><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">STRUCTURE</a> executable.
+               Download the Windows package (without the front end) and copy the executable to the root/folder of restful forensics.</p>
                <p>
                   The STRUCTURE files, qmatrices, and/or indiv files can be used directly for other programs such
                   as <a href="https://github.com/ramachandran-lab/pong">pong</a> and 
@@ -588,7 +900,7 @@
                </ul>
                </p>
                <p><strong>Expected outputs</strong>: Structure plot (.png and .pdf files)</p>
-               <p><strong>Required Download:</strong><a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a> executable.
+               <p><strong>Required Download: </strong><a href="https://rosenberglab.stanford.edu/clumpp.html">CLUMPP</a> executable.
                Download the Windows version and copy the executable to the root/folder of restful forensics.</p>
                <p>
             </section>
@@ -830,30 +1142,42 @@
                 used independently or together following a certain workflow (Fig. 2).
             </p>
             <img src="workflow.png" alt="Figure 2. Sample workflow for different forensic marker panels" class="responsive-img">
+            <br>
             <p>
                restful forensics have been tested using data from the 1000 Genomes Project and Human Genome Diversity Project. 
-               Quality control was performed on the per chromosome VCF files using the <a href="#filtering">filtering</a> 
-               module before extracting markers using the <a href="extractiontab">SNP Data Extraction</a> submodule.
+               Quality control was performed on the per chromosome VCF files using the 
+               <a href="#" onclick="showPage('filtering'); return false;">Filtering</a>
+               module before extracting markers using the 
+               <a href="#" onclick="showPage('extractiontab'); return false;">SNP Data Extraction</a>
+               submodule.
                This process is represented in Fig. 3 with the dotted arrows indicating a two-way interaction. 
                Extraction results were then zipped together for subsequent processing.
             </p>
             <img src="chart.png" alt="Figure 3. restful forensics workflows" class="responsive-img">
+            <br>
             <p>
-               Population data were matched and merged with samples using the <a href="#addmeta">"Add Metadata"</a> submodule.
+               Population data were matched and merged with samples using the 
+               <a href="#" onclick="showPage('addmeta'); return false;">Add Metadata</a>
+               submodule.
                While the analysis modules within restful forensics require a genotype file with a single-level population assignment,
                the Add Metadata submodule provides the option to merge multiple columns/information (Fig. 4).
             </p>
             <img src="metadata.jpg" alt="Figure 4. Add Metadata submodule parameters from restful forensics" class="responsive-img">
+            <br>
             <p>
                Following Fig. 2 and Fig. 3, the genotype file with population information is used as input
                for exploratory analysis (Fig. 5). Note that the module will not run without a population column.
             </p>
             <img src="pca.jpg" alt="Figure 5. Sample results using the Exploratory Analysis module from restful forensics" class="responsive-img">
+            <br>
             <p>
                For the calculation of population summary statistics, there is an option to use R-based packages or the terminal-version 
-               of Arlequin called Arlecore. For the example (Fig. 6), the <a href="#arlecore">arlecore</a> submodule was used.
+               of Arlequin called Arlecore. For the example (Fig. 6), the 
+               <a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">Arlecore</a> 
+               submodule was used.
             </p>
             <img src="arlecore.jpg" alt="Figure 6. Sample results using the Arlecore submodule from restful forensics" class="responsive-img">
+            <br>
             <p>
                The same genotype and population file is used as input to run population structure analysis and directly
                visualized using CLUMPP (Fig. 7).
@@ -927,7 +1251,7 @@
                   <tr>
                      <td>DNA Barcoding</td>
                      <td>Multiple Sequence Alignment</td>
-                     <td>Only global alignment can be performed</td>
+                     <td>Only multiple sequence alignments can be performed</td>
                   </tr>
                   </tbody>
                </table>
@@ -938,7 +1262,7 @@
                <ol>
                   <li><strong>File Conversion: To Structure File</strong> - Additional options to set in the main and extra parameter file</li>
                   <li><strong>Population Summary Statistics: Arlecore</strong> - Plot adjustments to accommodate >10 populations</li>
-                  <li><strong>DNA Barcoding</strong> - Add option to perform local sequence alignment</li>
+                  <li><strong>DNA Barcoding</strong> - Add option to perform pairwise alignments and export alignment as BAM/SAM.</li>
                   <li><strong>Additional Feature</strong> - Incorporation of ADMIXTURE software</li>
                </ol>
             </section>
@@ -953,6 +1277,9 @@
          
          <section id="citation" class="page">
             <h1 class="section-title">VI Citation</h1>
+            <p>To cite the application: Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics</p>
+            <p>Manuscript in preparation.</p>
+            
             <div class="page-navigation">
                <a href="#" onclick="showPage('limitations'); return false;">← Previous</a>
             </div>

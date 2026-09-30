@@ -271,22 +271,27 @@ plot_heterozygosity <- function(Het_fsnps_df, out_dir) {
 #' @param out_dir The directory to save the plot.
 #'
 #' @returns PNG file of the heatmap.
-plot_fst <- function(fst_df, out_dir) {
+plot_fst <- function(fst_df, out_dir, show_values = FALSE) {
   out_path <- file.path(out_dir, "fst_heatmap.png")
 
   p <- ggplot(fst_df, aes(x = Site1, y = Site2, fill = Fst, label = round(Fst, 3))) +
     geom_tile(color = "black") +
-    geom_text(aes(label = round(Fst, 3)), size = 3, color = "black") +
     scale_fill_gradient2(
       low = "blue", mid = "pink", high = "red",
       midpoint = max(fst_df$Fst, na.rm = TRUE) / 2
     ) +
-    labs(x = "Site 1", y = "Site 2", fill = "Fst") +
+    labs(x = "Population 1", y = "Population 2", fill = "Fst") +
     theme_minimal(base_size = 11) +
     theme(
       axis.text = element_text(face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1)
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)
     )
+  
+  if (show_values) {
+    p <- p +
+      geom_text(aes(label = round(Fst, 3)), size = 3, color = "black")
+  }
+  
   ggsave(out_path, plot = p, width = 8, height = 6, dpi = 300)
   return(out_path)
 }

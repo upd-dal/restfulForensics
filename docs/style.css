@@ -225,17 +225,17 @@ code {
    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
    font-size: 85%;
    background-color: rgba(175, 184, 193, 0.2);
-   border-radius: 6px;
+   border-radius: 2px;
 }
 
 pre {
-   padding: 16px;
+   padding: 4px;
    overflow: auto;
-   font-size: 85%;
+   font-size: 95%;
    line-height: 1.45;
    background-color: #f6f8fa;
-   border-radius: 6px;
-   margin-bottom: 16px;
+   border-radius: 4px;
+   margin-bottom: 6px;
 }
 
 pre code {
@@ -312,7 +312,7 @@ pre code {
 }
 
 .styled-table tbody tr:hover {
-   background-color: #0969da;
+   background-color: #a7c0e0;
    cursor: pointer;
 }
 

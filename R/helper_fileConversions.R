@@ -679,6 +679,16 @@ to_snipper <- function(input,
   } else {
     stop("Input file is not a dataframe.")
   }
+  
+  input.file <- input.file %>% dplyr::mutate(
+    dplyr::across(tidyselect::everything(), as.character)) %>%
+    dplyr::mutate(dplyr::across(
+      tidyselect::everything(), ~ {
+        x <- trimws(.x)
+        x[is.na(x) | x == "" | x %in% c("N/A", "NA", "N")] <- "NN"
+        x
+      }
+    ))
 
   tosnipper <- lapply(
     input.file,
@@ -686,10 +696,10 @@ to_snipper <- function(input,
       gsub(pattern = "/", replacement = "", x = x, fixed = TRUE)
     }
   )
+  tosnipper <- as.data.frame(tosnipper)
   
-  tosnipper <- clean_input_data(as.data.frame(tosnipper))
   tosnipper <- dplyr::rename(tosnipper, Sample = 1)
-  reference <- dplyr::rename(reference, Sample = 1)
+  reference <- dplyr::rename(references, Sample = 1)
 
   if (class(tosnipper$Sample) != "character") {
     tosnipper$Sample <- as.character(tosnipper$Sample)
@@ -708,6 +718,8 @@ to_snipper <- function(input,
   data <- as.data.frame(matched[, 2:ncol(matched) - 1])
   drops <- "Sample"
   data <- data[, !(names(data) %in% drops)]
+  print(Superpop)
+  print(Population)
 
   to_excel <- dplyr::bind_cols(Population, Superpop, Sample, data)
   to_excel <- dplyr::rename(to_excel, Population = 1, Superpop = 2, Sample = 3)
