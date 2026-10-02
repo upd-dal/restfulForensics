@@ -1,10 +1,5 @@
 run_structure_analysis <- function(input, output, session, rv) {
-  
-  structure_exec <- normalizePath(
-    "structure.exe",
-    mustWork = TRUE
-  )
-  
+
   examplePop_STR2 <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -24,8 +19,9 @@ run_structure_analysis <- function(input, output, session, rv) {
     )
   )
   
+  structure_exec <- get_structure_path
   observe({
-    file_ready <- !is.null(input$structureFile)
+    file_ready <- !is.null(input$structureFile) && file.exists(structure_exec)
     shinyjs::toggleState("runStructure", condition = file_ready)
   })
   

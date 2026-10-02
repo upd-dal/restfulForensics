@@ -2,26 +2,25 @@
 #'
 #' @returns The file path for PLINK 2.0.
 get_plink2_path <- function() {
-  return("./plink/plink2.exe")
+    normalizePath("./plink/plink2.exe")
 }
 
 #' Get PLINK1.9 executable path
 #'
 #' @returns The file path for PLINK 1.9.
 get_plink_path <- function() {
-  return("./plink/plink.exe")
+    normalizePath("./plink/plink.exe")
 }
 
 #' Get Arlecore path
 #'
 #' @returns The file path for the 64-bit arlecore executable
-get_arlecore_path <- function() {
-  normalizePath("./arlecore64.exe",
-    winslash = "\\",
-    mustWork = TRUE
-  )
-}
+get_arlecore_path <- "./arlecore64.exe"
 
+#' Get STRUCTURE path
+#'
+#' @returns The file path for the 64-bit arlecore executable
+get_structure_path <- "./structure.exe"
 
 #' Unpack compressed files
 #'
