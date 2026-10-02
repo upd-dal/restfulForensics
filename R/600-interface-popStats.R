@@ -126,7 +126,7 @@ popstats_tab <- function() {
                 condition = "input.calcHWE || input.calcLD",
                 helpText("Running will take some time and will take longer with more populations/samples.")
               ),
-
+              helpText("Run button will remain unavailable if Arlecore 64-bit executable is not found in the root directory."),
               actionButton("runArlecore", "Run Arlecore", icon = icon("arrow-up-right-from-square")),
               uiOutput("download_arlecore_results_UI")
             ),

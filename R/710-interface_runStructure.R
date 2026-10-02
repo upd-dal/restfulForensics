@@ -27,6 +27,7 @@ structure_runs <- function() {
             )
           )
         ),
+        helpText("Run button will remain unavailable if STRUCTURE v2.3.4 executable is not found in the root directory."),
         actionButton("runStructure", "Run STRUCTURE", icon = icon("play")),
         uiOutput("downloadButtons")
       ),

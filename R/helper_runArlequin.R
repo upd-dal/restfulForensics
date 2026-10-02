@@ -4,9 +4,8 @@
 #' @param ld To indicate if linkage disequilibrium will be calculated. Default is FALSE.
 #'
 #' @returns The path of the resulting folder.
-run_arlequin <- function(file, ld = FALSE, hwe = FALSE) {
-  arlecore_path <- get_arlecore_path()
-  
+run_arlequin <- function(file, ld = FALSE, hwe = FALSE, arlecore_path = arlecore_path) {
+
   if (isTRUE(ld) && isTRUE(hwe)) {
     print("Printing with HWE and with LD")
     ars_file <- normalizePath("./arlequin/arl_run_withHWE_withLD.ars", winslash = "\\", mustWork = TRUE)

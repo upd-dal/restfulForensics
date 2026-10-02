@@ -45,7 +45,7 @@ pop_stats_server <- function(input, output, session, rv) {
   observeEvent(input$runPopStats, {
     disable("runPopStats")
     req(input$popStatsFile)
-
+    
     withProgress(message = "Running population analysis...", value = 0, {
       tryCatch(
         {
@@ -314,17 +314,20 @@ pop_stats_server <- function(input, output, session, rv) {
   arlequinLD <- reactiveVal(NULL)
   locusData <- reactiveVal(NULL)
 
+  arlecore_path <- get_arlecore_path
+  
   observe({
-    shinyjs::toggleState("runArlecore", !is.null(input$fileForArlecoreGT) || !is.null(input$fileForArlecoreARP))
+    shinyjs::toggleState("runArlecore", (!is.null(input$fileForArlecoreGT) || !is.null(input$fileForArlecoreARP)) && file.exists(arlecore_path))
   })
 
   observeEvent(input$runArlecore, {
     disable("runArlecore")
 
     withProgress(message = "Analysis ongoing...", {
-      
-      incProgress(0.2, detail = "Loading input file...")
-      if (!is.null(input$fileForArlecoreGT)) {
+      tryCatch({
+        incProgress(0.2, detail = "Loading input file...")
+        
+        if (!is.null(input$fileForArlecoreGT)) {
         for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
         for_arp <- clean_input_data(for_arp)
         
@@ -358,7 +361,11 @@ pop_stats_server <- function(input, output, session, rv) {
       # returns path of res folder
       ld_value <- input$calcLD
       hwe_value <- input$calcHWE
-      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
+      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arlecore_path = arlecore_path)
+      }, error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+      )
 
       incProgress(0.8, detail = "Loading report...")
       # get report file
