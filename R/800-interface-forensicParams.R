@@ -136,27 +136,26 @@ forensic_params_tab <- function() {
           ),
           tabPanel(
             title = "Download Sample Files",
+            tags$a("Sample Allele Frequency Table", href = "pop_stat.xlsx", download = "pop_stat.xlsx"),
+            tags$a("Sample Profile", href = "sample_profile.txt", download = "sample_profile.txt")
           )
-        ), # end of instructions box
+        ), 
         fluidRow(
           tabBox(
             title = "Results",
             width = 12,
             tabPanel(
               title = "Calculations",
+              uiOutput("download_RMP_Summary_UI"),
               tableOutput("rmp_summary")
             ),
             tabPanel(
-              title = "Locus",
-              tableOutput("locus_information")
-            ),
-            tabPanel(
-              title = "Profile Data",
-              tableOutput("profileData")
+              title = "Missing Alleles",
+              tableOutput("missing_alleles")
             )
           )
         )
-      ) # end of profile
+      )
     )
   )
 }

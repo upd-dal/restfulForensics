@@ -172,6 +172,12 @@ exploratory_analysis_server <- function(input, output, session, rv) {
       paste0("pca_plot_", Sys.Date(), ".png")
     },
     content = function(file) {
+      if (!is.null(Populations())) {
+        cent_labels <- input$useCentroidLabels
+      } else {
+        cent_labels <- FALSE
+      }
+      
       plot <- plot_pca(
         ind_coords = PCAResults()$ind_coords,
         centroid = PCAResults()$centroid,
@@ -179,7 +185,8 @@ exploratory_analysis_server <- function(input, output, session, rv) {
         labels_colors = LabelColors(),
         pc_x = input$pcX,
         pc_y = input$pcY,
-        highlight_pop = input$highlightPops
+        highlight_pop = input$highlightPops,
+        centroid_label = cent_labels
       )
 
       ggsave(filename = file, plot = plot, width = 8, height = 8, dpi = 600)

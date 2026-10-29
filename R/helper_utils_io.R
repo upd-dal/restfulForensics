@@ -36,7 +36,7 @@ unpack_input_file <- function(files, output.dir = ".") {
     data_path <- tempfile(pattern = "unpacked_", tmpdir = output.dir)
     dir.create(data_path, recursive = TRUE, showWarnings = FALSE)
     
-    if (tools::file_ext(files) == "zip") {
+    if (archive_ext == "zip") {
       utils::unzip(files,
         files = NULL,
         list = FALSE,
@@ -44,7 +44,7 @@ unpack_input_file <- function(files, output.dir = ".") {
         exdir = data_path
       )
 
-    } else if (tools::file_ext(files) == "tar") {
+    } else if (archive_ext == "tar") {
       untar(files, 
             files = NULL, 
             list = FALSE, 
@@ -52,7 +52,7 @@ unpack_input_file <- function(files, output.dir = ".") {
             )
 
     } else {
-      stop("Not a zipped file. Accepted are zipped (.zip) and tar (.tar) files")
+      stop("Not a zipped file.")
     }
 
     data_files <- list.files(

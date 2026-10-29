@@ -177,15 +177,13 @@ forensic_params_server <- function(input, output, session, rv) {
       
     incProgress(0.2, detail = "Loading input file...")
     profile <- load_csv_xlsx_files(input$fileProfile$datapath)
-    profile <- clean_input_data(profile)
     
     tryCatch({
       
       incProgress(0.4, detail = "Loading reference database...")
       if (isFALSE(input$newPopDatabase)) {
       req(afTable())
-      af_long <- af_to_long(afTable()) %>%
-        dplyr::filter(population == input$rmp_population)
+      af_long <- af_to_long(afTable())
     } else {
       req(input$newPopDataFile)
       af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
@@ -208,57 +206,61 @@ forensic_params_server <- function(input, output, session, rv) {
     
     enable("calcRMP")
     })
-    
-    
     })
   
   output$rmp_summary <- renderTable({
     req(rmpResult())
     result <- rmpResult()
-    data.frame(
-      Metric = c(
-        "Random Match Probability (RMP)",
-        "Likelihood Ratio"
-      ),
-      Value = c(
-        format(result$rmp, scientific = TRUE, digits = 6),
-        format(result$lr, scientific = TRUE, digits = 6)
-      )
-    )
-  })
-  
-  output$locus_information <- renderTable({
-    req(rmpResult())
-    result <- rmpResult()
     
-    result$locus_results %>%
-      dplyr::select(
-        marker_std,
-        genotype_std,
-        allele1,
-        allele2,
-        p,
-        q,
-        gen_prob
+    result$summary %>%
+      dplyr::transmute(
+        Population = population,
+        'Loci Used' = loci_used,
+        'Random Match Probability (RMP)' = format(RMP, scientific = TRUE, digits = 6),
+        'Reciprocal RMP (1/RMP)' = format(reciprocal_RMP, scientific = TRUE, digits = 6)
       )
-  }, digits = 6)
+  })
   
-  output$profileData <- renderTable({
+  output$missing_alleles <- renderTable({
     req(rmpResult())
-    result <- rmpResult()
-    result$locus_results %>%
-      dplyr::select(marker, genotype, marker_std, genotype_std)
+    missing <- rmpResult()$missing
+    
+    if (nrow(missing) == 0) {
+      return(data.frame( Status = "No incomplete or missing genotypes found."))
+    }
+    
+    missing %>%
+      dplyr::select(
+        Marker = marker,
+        Genotype = genotype,
+        'First allele' = allele1,
+        'Second allele' = allele2,
+        Reason = reason
+      )
+ 
   })
   
-  output$rmp_population_UI <- renderUI({
-    if (isFALSE(input$newPopDatabase)) {
-      req(afTable())
-      af_long <- af_to_long(afTable())
-      selectInput("rmp_population",
-                  "Select Reference Population",
-                  choices = unique(af_long$population))
-    } else { NULL }
-  })
+  output$download_RMP_Summary <- downloadHandler(
+    filename = function() { paste0("RMP_summary_", Sys.Date(), ".csv")
+      },
+    content = function(file) {
+      req(rmpResult())
+      result <- rmpResult()
+      summary_table <- result$summary %>%
+        dplyr::transmute(
+          Population = population,
+          'Loci Used' = loci_used,
+          'Random Match Probability (RMP)' = RMP,
+          'Reciprocal RMP' = reciprocal_RMP
+        )
+      
+      write.csv(summary_table, file, row.names = FALSE, na = "")
+    },
+    contentType = "text/csv"
+  )
 
+  output$download_RMP_Summary_UI <- renderUI({
+    downloadButton("download_RMP_Summary", "Download Results")
+  })
   
   }

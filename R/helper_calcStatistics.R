@@ -121,7 +121,16 @@ compute_af <- function(fsnps_gen) {
 #' @param alpha The alpha value for the threshold. Default is 0.05.
 #'
 #' @returns A list of HWE stats results.
-compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05, chains = 100000) {
+compute_hwe <- function(fsnps_gen, correction = NULL, alpha = 0.05, chains = 100000) {
+  if (!is.null(correction)) {
+    correction <- match.arg(
+      correction, choices = p.adjust.methods
+    )
+  }
+  
+  if (chains < 0 || chains != as.integer(chains)) {
+    stop("Chains must be a non-negative integer.")
+  }
   # Hardy-Weinberg Equilibrium (List for export)
   fsnps_hwe <- as.data.frame(round(pegas::hw.test(fsnps_gen, B = chains), 6))
   fsnps_hwe <- data.frame(rownames(fsnps_hwe), fsnps_hwe)
@@ -131,11 +140,12 @@ compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05, chai
   # Chi-square test (Matrix for export, Data Frame for ggplot)
   fsnps_hwe_test <- data.frame(sapply(
     adegenet::seppop(fsnps_gen),
-    function(ls) pegas::hw.test(ls, B = 0)[, 3]
+    function(ls) pegas::hw.test(ls, B = chains)[, 3]
   ))
 
   fsnps_hwe_chisq_matrix <- t(data.matrix(fsnps_hwe_test))
-  fsnps_hwe_chisq_df <- as.data.frame(fsnps_hwe_chisq_matrix) %>% tibble::rownames_to_column("Population")
+  fsnps_hwe_chisq_df <- as.data.frame(fsnps_hwe_chisq_matrix) %>% 
+    tibble::rownames_to_column("Population")
 
   # Monte Carlo: p value
   fsnps_hwe_mc <- data.frame(sapply(
@@ -146,57 +156,53 @@ compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05, chai
   fsnps_hwe_mc_df <- data.frame(t(fsnps_hwe_mc))
   fsnps_hwe_mc_df <- tibble::rownames_to_column(fsnps_hwe_mc_df, var = "rsID")
 
-  loc_total <- adegenet::nLoc(fsnps_gen)
-  alpha_value <- alpha / loc_total
-  # loci out of HWE
-  if (is.null(correction)) {
-    loci_HWE_failure <- data.frame(
-      rsID = colnames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha, 2, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 2, mean)
+  adjust_pvalues <- function(p_matrix){
+    if (is.null(correction)) {
+      return(p_matrix)
+    }
+    
+    t(apply(
+      p_matrix, 1, function(p) {
+        p.adjust(p, method = correction)
+      }
+    ))
+  }
+  
+  chisq_adjusted <- adjust_pvalues(fsnps_hwe_chisq_matrix)
+  mc_adjusted <- adjust_pvalues(fsnps_hwe_mc)
+  
+  summary_failures <- function(chisq_p, mc_p) {
+    list(
+      loci = data.frame(
+        rsID = colnames(chisq_p),
+        Chisq = colMeans(chisq_p < alpha, na.rm = TRUE),
+        MC = colMeans(mc_p < alpha, na.rm = TRUE)
+      ),
+      populations = data.frame(
+        Populations = rownames(chisq_p),
+        Chisq = rowMeans(chisq_p < alpha, na.rm = TRUE),
+        MC = rowMeans(mc_p < alpha, na.rm = TRUE)
+      )
     )
-
-    pops_out_of_HWE <- data.frame(
-      Populations = rownames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha, 1, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 1, mean)
-    )
-  } else if (correction == "Bonferroni") {
-    loci_HWE_failure <- data.frame(
-      rsID = colnames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha_value, 2, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 2, mean)
-    )
-
-    pops_out_of_HWE <- data.frame(
-      Populations = rownames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha_value, 1, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 1, mean)
-    )
-  } else if (correction == "FDR") {
-    Chisq_FDR <- apply(fsnps_hwe_chisq_matrix, 1, p.adjust, method = "fdr")
-    Chisq_FDR <- t(Chisq_FDR)
-
-    MC_FDR <- apply(fsnps_hwe_mc, 1, p.adjust, method = "fdr")
-    MC_FDR <- t(MC_FDR)
-
-    loci_HWE_failure <- data.frame(
-      rsID = colnames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha_value, 2, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 2, mean),
-      Chisq_FDR = apply(Chisq_FDR < alpha_value, 2, mean),
-      MC_FDR = apply(MC_FDR < alpha_value, 2, mean)
-    )
-
-    pops_out_of_HWE <- data.frame(
-      Populations = rownames(fsnps_hwe_chisq_matrix),
-      Chisq = apply(fsnps_hwe_chisq_matrix < alpha_value, 1, mean),
-      MC = apply(fsnps_hwe_mc < alpha_value, 1, mean),
-      Chisq_FDR = apply(Chisq_FDR < alpha_value, 1, mean),
-      MC_FDR = apply(MC_FDR < alpha_value, 1, mean)
-    )
-  } else {
-    stop("Correction method not supported")
+  }
+  
+  summary <- summary_failures(fsnps_hwe_chisq_matrix, fsnps_hwe_mc)
+  
+  loci_HWE_failure <- summary$loci
+  pops_out_of_HWE <- summary$populations
+  
+  if (!is.null(correction)) {
+    adjusted_summary <- summary_failures(chisq_adjusted, mc_adjusted)
+    names(adjusted_summary$loci)[-1] <- paste0(names(adjusted_summary$loci)[-1],
+                                               "_", correction)
+    
+    names(adjusted_summary$populations)[-1] <- paste0(names(adjusted_summary$populations)[-1],
+                                               "_", correction)
+    
+    loci_HWE_failure <- cbind(loci_HWE_failure,
+                              adjusted_summary$loci[, -1, drop = FALSE])
+    pops_out_of_HWE <- cbind(pops_out_of_HWE, 
+                             adjusted_summary$populations[, -1, drop = FALSE])
   }
 
   rownames(loci_HWE_failure) <- NULL
@@ -206,6 +212,8 @@ compute_hwe <- function(fsnps_gen, correction = "Bonferroni", alpha = 0.05, chai
     hw_summary = fsnps_hwe,
     hw_dataframe = fsnps_hwe_chisq_df,
     hw_mc = fsnps_hwe_mc_df,
+    #chisq_adjusted = as.data.frame(chisq_adjusted),
+    #mc_adjusted = as.data.frame(mc_adjusted),
     loci_HWE_failure = loci_HWE_failure,
     pops_out_of_HWE = pops_out_of_HWE
   ))
@@ -339,6 +347,8 @@ export_pop_results <- function(allele_freq, priv_alleles, stats_matrix, hw_matri
     "Hardy-Weinberg Equilibrium" = as.data.frame(hw_matrix$hw_summary),
     "Chi-square test HWE" = as.data.frame(hw_matrix$hw_dataframe),
     "Monte Carlo test HWE" = as.data.frame(hw_matrix$hw_mc),
+    #"Adjusted Chi-square" = as.data.frame(hw_matrix$chisq_adjusted),
+    #"Adjusted MC test" = as.data.frame(hw_matrix$mc_adjusted),
     "Loci out of HWE" = as.data.frame(hw_matrix$loci_HWE_failure),
     "Pops out of HWE" = as.data.frame(hw_matrix$pops_out_of_HWE),
     "Pairwise Fst Matrix" = as.data.frame(fst_matrix$fst_matrix)
@@ -510,6 +520,11 @@ af_to_long <- function(df) {
       marker = standardize_names(marker),
       allele = trimws(allele),
       freq = as.numeric(freq)
+    ) %>%
+    dplyr::mutate(
+      marker = gsub("[^[:alnum:]]", "", marker),
+      allele = trimws(allele),
+      freq = as.numeric(freq)
     )
 }
 
@@ -624,44 +639,105 @@ calc_rmp <- function(profile, af_table, n_ref = 100, theta = 0.01) {
     genotype_std = as.character(genotype)
   )
   
+  allele_parts <- stringr::str_split_fixed(
+    ifelse(is.na(profile$genotype_std), "", profile$genotype_std),
+    "/", 2
+  )
+  
+  profile$allele1 <- trimws(allele_parts[,1])
+  profile$allele2 <- trimws(allele_parts[,2])
+  missing_vals <- c("", "NA", "N", ".")
+  
+  profile$allele1[toupper(profile$allele1) %in% missing_vals] <- NA_character_
+  profile$allele2[toupper(profile$allele2) %in% missing_vals] <- NA_character_
+  
+  incomplete <- is.na(profile$allele1) | is.na(profile$allele2)
+  missing <- profile[incomplete,] %>%
+    dplyr::transmute(
+      marker = marker,
+      genotype = genotype_std,
+      marker_std = marker_std,
+      allele1 = allele1,
+      allele2 = allele2,
+      reason = dplyr::case_when(
+        is.na(allele1) &  is.na(allele2) ~ "Both alleles missing",
+        is.na(allele1) ~ "First allele missing",
+        is.na(allele2) ~ "Second allele missing"
+      )
+    )
+  
+  profile <- profile[!incomplete,]
+  
   freq_floor <- 5/(2*n_ref)
   
-  af_table <- dplyr::group_by(af_table, marker_std)
-  af_table <- dplyr::mutate(af_table, freq_adj = pmax(freq, freq_floor))
-  af_table <- dplyr::mutate(af_table, freq_adj = freq_adj/ sum(freq_adj))
-  af_table <- dplyr::ungroup(af_table)
-  
-  
-  locus_res <- profile %>%
-    dplyr::rowwise() %>%
+  af_table <- af_table %>%
     dplyr::mutate(
-      allele1 = strsplit(genotype_std, "/", fixed = TRUE)[[1]][1],
-      allele2 = strsplit(genotype_std, "/", fixed = TRUE)[[1]][2]
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::rowwise() %>%
+      marker_std = as.character(marker),
+      allele = trimws(as.character(allele)),
+      population = as.character(population),
+      freq = as.numeric(freq)
+    ) %>% 
+    dplyr::group_by(population, marker_std) %>%
     dplyr::mutate(
-      p = af_table$freq_adj[
-        match(paste(marker_std, allele1), paste(af_table$marker_std, af_table$allele))
-      ],
-      
-      q = af_table$freq_adj[
-        match(paste(marker_std, allele2), paste(af_table$marker_std, af_table$allele))
-      ],
-      
-      gen_prob = dplyr::case_when(
-        is.na(p) | is.na(q) ~ NA_real_,
-        allele1 == allele2 ~ p^2 + theta*p*(1-p),
-        TRUE ~ 2*p*q*(1-theta)
-      )
+      freq_adj = pmax(freq, freq_floor),
+      freq_adj = freq_adj/sum(freq_adj)
     ) %>%
     dplyr::ungroup()
   
-    rmp <- prod(locus_res$gen_prob)
-    lr <- 1/rmp
-    return(list(locus_results = locus_res,
-         rmp = rmp,
-         lr = lr))
+  af_by_pop <- split(af_table, af_table$population)
+  
+  calc_locus <- function(af_pop) {
+    locus_res <- profile %>%
+      dplyr::rowwise() %>%
+      dplyr::mutate(
+        p = af_pop$freq_adj[
+          match(
+            paste(marker_std, allele1),
+            paste(af_pop$marker_std, af_pop$allele)
+          )
+        ],
+        q = af_pop$freq_adj[
+          match(
+            paste(marker_std, allele2),
+            paste(af_pop$marker_std, af_pop$allele)
+          )
+        ],
+        gen_prob = dplyr::case_when(
+          is.na(p) | is.na(q) ~ NA_real_,
+          allele1 == allele2 ~ p^2 + theta * p * (1 - p),
+          TRUE ~ 2 * p * q * (1 - theta)
+        )
+      ) %>%
+      dplyr::ungroup()
+    locus_res
+  }
+  
+  # apply per pop
+  locus_results_by_pop <- lapply(af_by_pop, calc_locus)
+  
+  # calculate rmp and reciprocal rmp
+  summary_table <- dplyr::bind_rows(
+    lapply(names(locus_results_by_pop), function(pop) {
+      locus_res <- locus_results_by_pop[[pop]]
+      
+      rmp <- if (anyNA(locus_res$gen_prob)) {
+        NA_real_
+      } else { prod(locus_res$gen_prob) }
+      
+      data.frame(
+        population = pop,
+        loci_used = sum(!is.na(locus_res$gen_prob)),
+        RMP = rmp,
+        reciprocal_RMP = if (!is.na(rmp) && rmp > 0) 1/rmp else NA_real_
+      )
+    })
+  )
+    return(list(
+      allele_freq_by_pop = af_by_pop,
+      locus_results_by_pop = locus_results_by_pop,
+      summary = summary_table,
+      missing = missing
+      ))
 }
 
 #' Calculate the population breakdown of samples

@@ -119,7 +119,8 @@ plot_pca <- function(ind_coords,
                      height = 8,
                      pc_x = 1,
                      pc_y = 2,
-                     highlight_pop = NULL) {
+                     highlight_pop = NULL,
+                     centroid_label = TRUE) {
   # Ensure data frames
   if (!is.data.frame(ind_coords)) ind_coords <- as.data.frame(ind_coords)
   if (!is.data.frame(centroid)) centroid <- as.data.frame(centroid)
@@ -129,7 +130,7 @@ plot_pca <- function(ind_coords,
   if (!is.null(highlight_pop)) {
     ind_coords$highlight <- ind_coords$Site %in% highlight_pop
   } else {
-    ind_coords$highlight <- TRUE # or null?
+    ind_coords$highlight <- TRUE
   }
 
   # Axis labels
@@ -158,24 +159,29 @@ plot_pca <- function(ind_coords,
       geom_point(aes(alpha = highlight),
         # color = "black",
         size = 3,
-        show.legend = FALSE
-      ) +
-      ggrepel::geom_label_repel(
-        data = centroid,
-        aes(
-          x = .data[[paste0("PC", pc_x)]],
-          y = .data[[paste0("PC", pc_y)]],
-          label = Site,
-          fill = Site
-        ),
-        color = "black",
-        size = 4, show.legend = FALSE
+        show.legend = c(alpha = FALSE)
       ) +
       scale_fill_manual(values = labels_colors$colors) +
       scale_shape_manual(values = labels_colors$shapes) +
       scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0.20)) +
       labs(x = xlab, y = ylab) +
       ggtheme
+    
+    if (isTRUE(centroid_label)) {
+      plot <- plot + 
+        ggrepel::geom_label_repel(
+          data = centroid,
+          aes(
+            x = .data[[paste0("PC", pc_x)]],
+            y = .data[[paste0("PC", pc_y)]],
+            label = Site,
+            fill = Site
+          ),
+          color = "black",
+          size = 4, show.legend = FALSE
+        )
+    }
+      
   } else {
     plot <- ggplot(ind_coords, aes(
       x = .data[[paste0("PC", pc_x)]],

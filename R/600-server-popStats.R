@@ -71,12 +71,16 @@ pop_stats_server <- function(input, output, session, rv) {
           afData(af_stats)
 
           ## HWE
-          incProgress(0.8, detail = "Running HWE and FST calculations...")
-          hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = input$correctionModel, alpha = input$alphaValue, chains = input$markovHWE)
+          incProgress(0.8, detail = "Running HWE test calculations...")
+          corr_model <- input$correctionModel
+          if (corr_model == "none") {
+            corr_model <- NULL
+          }
+          hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = corr_model, alpha = input$alphaValue, chains = input$markovHWE)
           hardyWeinberg(hardy_weinberg_stats)
 
           ## FST
-          incProgress(1.0, detail = "Still running HWE and FST calculations...")
+          incProgress(1.0, detail = "Running FST calculations...")
           fst_stats <- compute_fst(fsnps_gen())
           fstStats(fst_stats)
           fst_data <- fstStats()$fst_dataframe

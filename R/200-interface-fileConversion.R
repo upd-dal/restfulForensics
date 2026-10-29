@@ -20,7 +20,7 @@ file_conversion_tab <- function() {
             ),
             conditionalPanel(
               condition = "input.inputType1 == 'vcf1'",
-              fileInput("VCFFile", "Upload VCF File", accept = c(".vcf", ".zip", ".tar")),
+              fileInput("VCFFile", "Upload VCF File", accept = c(".vcf", ".zip", ".tar", ".gz")),
               radioButtons("inputType2_vcf", "Choose final file type",
                 choices = c(
                   "PLINK2 files (.psam/.pvar/.pgen)" = "plink2",
@@ -123,7 +123,7 @@ file_conversion_tab <- function() {
               condition = "input.populationType == 'multiplepop'",
               fileInput("refMetadata", "Upload file containing the metadata", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
               uiOutput("metaHeader"),
-              helpText("*Accepts CSV or Excel files"),
+              helpText("*Make sure to check the sample column."),
 
               # --- Breakdowns
               radioButtons("breakdownPop", "Calculate population breakdown?",
@@ -313,8 +313,6 @@ file_conversion_tab <- function() {
               title = "Download Sample File",
               tags$ul(
                 tags$a("A. Sample CSV file", href = "sample.csv", download = "sample.csv"),
-                br(),
-                tags$a("B. Sample zipped file", href = "sample_snipper.csv", download = "sample_snipper.csv")
               )
             )
           )

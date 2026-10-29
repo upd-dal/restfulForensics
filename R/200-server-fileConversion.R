@@ -50,7 +50,6 @@ file_conversion_server <- function(input, output, session, rv) {
   }
 
   observeEvent(input$ConvertFILES, {
-    req(input$ConvertFILES)
     disable("ConvertFILES")
     outputType <- output_type(input)
     req(outputType)
@@ -64,6 +63,7 @@ file_conversion_server <- function(input, output, session, rv) {
 
     if (input$inputType1 == "csv1") {
       csv_ext <- tools::file_ext(input$CSVFile$name)
+      
       if (csv_ext %in% c("zip", "tar")) {
         unpacked_files <- unpack_input_file(input$CSVFile$datapath, output.dir)
         file_names <- unpacked_files$data_files
@@ -78,7 +78,7 @@ file_conversion_server <- function(input, output, session, rv) {
       csv_file <- if (csv_ext %in% c("zip", "tar")) {
         csv_merged
       } else {
-        input_file
+        load_csv_xlsx_files(input_file)
       }
 
       csv_to_gen_obj <- csv_to_gentibble(csv_file, loci.meta = input$lociMetaFile$datapath)
@@ -88,7 +88,14 @@ file_conversion_server <- function(input, output, session, rv) {
     } else {
       prepared <- convert_files(
         input_file = input_file,
-        output.dir = output.dir
+        output.dir = output.dir,
+        original_name = switch(
+          input$inputType1,
+          "vcf1" = input$VCFFile$name,
+          "bcf1" = input$BCFFile$name,
+          "csv1" = input$CSVFile$name,
+          "plink1" = input$bedFile$name
+        )
       )
 
       result <- convert_from_plink2(
@@ -513,7 +520,6 @@ file_conversion_server <- function(input, output, session, rv) {
   exampleTableSnipper2 <- data.frame(
     Ind = c("sample1", "sample2", "sample3", "sample4", "..."),
     Pop = c("sub_pop1", "sub_pop2", "sub_pop3", "sub_pop4", "..."),
-    Superpop = c("region1", "region1", "region2", "region3", "..."),
     rs101 = c("A/A", "A/T", "T/T", "A/T", "..."),
     rs102 = c("G/C", "G/C", "G/G", "G/C", "..."),
     rs103 = c("C/C", "C/G", "G/G", "G/G", "..."),
@@ -533,8 +539,7 @@ file_conversion_server <- function(input, output, session, rv) {
 
   exampleRefSnipper <- data.frame(
     Sample.Name = c("sample1", "sample2", "sample3", "sample4", "..."),
-    Population = c("Malaysia", "Mexico", "Greece", "South Korea", "..."),
-    Superpopulation = c("Southeast Asia", "North and South America", "Europe", "East Asia", "...")
+    Population = c("Malaysia", "Mexico", "Greece", "South Korea", "...")
   )
 
   output$exampleRefSnipper <- DT::renderDataTable(
@@ -564,8 +569,8 @@ file_conversion_server <- function(input, output, session, rv) {
     tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
     if (!is.null(input$refProvided)) {
-      inputPath <- tosnipper_file[, -c(2, 3)]
-      refPath <- tosnipper_file[, 1:3]
+      inputPath <- tosnipper_file[, -2]
+      refPath <- tosnipper_file[, 1:2]
     } else {
       inputPath <- tosnipper_file
       refPath <- load_csv_xlsx_files(input$refFile$datapath)

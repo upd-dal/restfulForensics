@@ -11,7 +11,17 @@ popstats_tab <- function() {
             box(
               fileInput("popStatsFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
               numericInput("markovHWE", "Set Markov Chains for HWE calculations", value = 1000, min = 1000),
-              selectInput("correctionModel", "Select Correction Model", choices = c("Bonferroni" = "Bonferroni", "FDR" = "FDR")),
+              selectInput("correctionModel", "Select Correction Model", 
+                          choices = c(
+                                      "None" = "none",
+                                      "Bonferroni" = "bonferroni",
+                                      "FDR" = "fdr",
+                                      "Holm" = "holm",
+                                      "Hochberg" = "hochberg",
+                                      "Hommel" = "hommel",
+                                      "Benjamini-Hochberg" = "BH",
+                                      "Benjamini-Yekutieli" = "BY"
+                                      )),
               numericInput("alphaValue", "Set Alpha Value", value = 0.05, min = 0.00, max = 1),
               checkboxInput("incLabels", "Show FST values in Heatmap", value = FALSE),
               actionButton("runPopStats", "Analyze", icon = icon("magnifying-glass-chart")),

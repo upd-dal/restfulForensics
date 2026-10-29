@@ -47,9 +47,9 @@ classification_server <- function(input, output, session, rv) {
     
     incProgress(0.4, detail = "Processing results...")
     stats <- as.data.frame(result$predStat)
-    stats <- data.frame(rowname(stats), stats)
+    stats <- data.frame(row.names(stats), stats)
     other_stat <- t(as.data.frame(result$otherStat))
-    other_stat <- data.frame(rowname(other_stat), other_stat)
+    other_stat <- data.frame(row.names(other_stat), other_stat)
     
     predTable(as.data.frame(result$predTable))
     predStat(stats)

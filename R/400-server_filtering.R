@@ -33,12 +33,13 @@ filtering_server <- function(input, output, session, rv) {
   filtered_plink_file <- reactiveVal(NULL)
 
   observeEvent(input$calcDP, {
-    req(input$markerFileFilter)
-
-    vcf_path <- input$markerFileFilter$datapath
-    ref_path <- if (!is.null(input$highlightRef)) input$highlightRef$datapath else NULL
-    palette <- if (!is.null(input$colorPalette)) input$colorPalette else NULL
-    ext <- tools::file_ext(input$markerFileFilter$name)
+    
+    if (!is.null(input$markerFileFilter)) {
+      vcf_path <- input$markerFileFilter$datapath
+      ref_path <- if (!is.null(input$highlightRef)) input$highlightRef$datapath else NULL
+      palette <- if (!is.null(input$colorPalette)) input$colorPalette else NULL
+      ext <- tools::file_ext(input$markerFileFilter$name)
+    }
 
   withProgress(message = "Ongoing...", {
     incProgress(0.2, detail = "Loading input file...")
@@ -52,22 +53,11 @@ filtering_server <- function(input, output, session, rv) {
       depth_outputs(dp)
     }
 
-    # CHECK THE FILE EXTENSIONS
-    input_type <- if (!is.null(input$markerFileFilter)) {
-      if (grepl("\\.bcf$", input$markerFileFilter$name, ignore.case = TRUE)) {
-        "bcf"
-      } else {
-        "vcf"
-      }
-    } else {
-      "plink"
-    }
     incProgress(0.4, detail = "Preparing file for filtering...")
-    # convert
     pgen_prefix <- file.path(temp_dir, "convert_to_plink2")
-    if (input_type %in% c("vcf", "bcf")) {
-      convert_to_plink2(input$markerFileFilter$datapath, original_name = NULL, isplink = FALSE, name = pgen_prefix)
-    } else {
+    if (!is.null(input$markerFileFilter)) {
+      convert_to_plink2(input$markerFileFilter$datapath, original_name = input$markerFileFilter$name, isplink = FALSE, name = pgen_prefix)
+    } else if (is.null(input$markerFileFilter) & !is.null(input$bedFileFilter)) {
       bed_prefix <- tools::file_path_sans_ext(input$bedFileFilter$datapath)
       convert_to_plink2(bed_prefix, original_name = NULL, isplink = TRUE, name = pgen_prefix)
     }

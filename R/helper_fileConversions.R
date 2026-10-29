@@ -13,31 +13,40 @@ validate_gt_df <- function(df) {
   }
 }
 
+validate_file <- function(df) {
+  validate_gt_df(df)
+  val <- df[1, 2]
+  with_pop <- is.character(val) && !grepl("[/|]", x)
+  
+  if (isFALSE(with_pop)) {
+    stop("File should contain a population column.")
+  }
+}
+
 clean_input_data <- function(file) {
-  val <- file[1, 3]
-  if (isTRUE(grepl("/", val))) {
-    file <- as.data.frame(file)
-  } else if (isTRUE(grepl("|", val))) {
-    file <- lapply(file, function(x) gsub("|", "/", x, fixed = TRUE))
-    file <- as.data.frame(file)
-  } else {
-    file[, 3:ncol(file)] <- lapply(file[, 3:ncol(file), drop = FALSE], function(x) {
+  file <- as.data.frame(file)
+  
+  file[, 3:ncol(file)] <- lapply(
+    file[, 3:ncol(file), drop = FALSE],
+    function(x) {
       x <- as.character(x)
+      x[is.na(x)] <- "N"
+      x <- gsub("|", "/", x, fixed = TRUE)
       x <- sub("^([A-Za-z])([A-Za-z])$", "\\1/\\2", x)
       x
-    })
-  }
+    }
+  )
   
   file[is.na(file)] <- "N"
   file <- file %>%
-    mutate(across(everything(), as.character)) %>%
-    mutate(across(everything(), ~ case_when(
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::case_when(
       .x %in% c("N/A", "NA", ".") ~ "N",
       TRUE ~ .x
     )))
   file <- as.data.frame(file)
 
-  return(file)
+  return(as.data.frame(file))
 }
 
 #' Convert dataframes to genind object
@@ -152,41 +161,47 @@ subset_genind_pop <- function(fsnps_gen, pops) {
 #' @returns The prefix of PLINK2.0 files.
 convert_to_plink2 <- function(input.file,
                               original_name = NULL,
-                              isplink = FALSE,
                               name = "convert_to_plink2",
                               output_chr = "26") {
   plink_path <- get_plink2_path()
+
   check_name <- if (is.null(original_name)) {
     input.file
   } else {
     original_name
   }
-
-  is_vcf <- grepl("\\.vcf(\\.gz)?$", check_name, ignore.case = TRUE)
-  is_bcf <- grepl("\\.bcf$", check_name, ignore.case = TRUE)
-
-  if (isplink == TRUE) {
-    args <- c(
-      "--bfile", input.file,
-      "--make-pgen",
-      "--sort-vars",
-      "--output-chr", output_chr,
-      "--out", name
-    )
-  } else if (is_vcf || is_bcf) {
-    input_flag <- if (is_bcf) "--bcf" else "--vcf"
-    args <- c(
-      input_flag, input.file,
-      "--make-pgen",
-      "--sort-vars",
-      "--output-chr", output_chr,
-      "--out", name
-    )
-  } else {
-    stop("Unsupported file type. Please provide a VCF, VCF.GZ, or BCF.")
+  
+  file_extension <- tolower(tools::file_ext(check_name))
+  flag <- switch(
+    file_extension,
+    bed = "--bfile",
+    bim = "--bfile",
+    fam = "--bfile",
+    vcf = "--vcf",
+    gz = "--vcf",
+    bcf = "--bcf",
+    NULL
+  )
+  
+  if (is.null(flag)) {
+    stop("Unsupported file type: ", check_name)
   }
-
-  res <- system2(plink_path, args = args, stdout = TRUE, stderr = TRUE)
+  
+  if (file_extension %in% c("bed", "bim", "fam")) {
+    input <- tools::file_path_sans_ext(input.file)
+  } else {
+    input <- input.file
+  }
+  
+  args <- c(
+    flag, input,
+    "--make-pgen",
+    "--sort-vars",
+    "--output-chr", output_chr,
+    "--out", name
+  )
+  
+  system2(plink_path, args = args, stdout = TRUE, stderr = TRUE)
   return(name)
 }
 
@@ -270,14 +285,19 @@ convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".
 
 #' Evaluate and convert data files to PLINK
 #' @return Plink2 file prefix
-convert_files <- function(input_file, output.dir = ".") {
+convert_files <- function(input_file, output.dir = ".", original_name = NULL) {
   
   if (!file.exists(input_file)) {
     stop("File not found.")
   }
   
   # check if zipped or not
-  file_extension <- tools::file_ext(input_file)
+  file_extension <- tolower(
+    tools::file_ext(
+      if (!is.null(original_name)) original_name else input_file
+    )
+  )
+  
   if (file_extension %in% c("zip", "tar")) {
     unpacked <- unpack_input_file(input_file, output.dir)
     files <- unpacked$data_files
@@ -292,17 +312,10 @@ convert_files <- function(input_file, output.dir = ".") {
     }
     return(merged_plink$pgen_prefix)
     
-  } else if (file_extension == "bed") {
-    input_prefix <- tools::file_path_sans_ext(input_file)
-    pgen_prefix <- file.path(output.dir, "input_pgen")
-    convert_to_plink2(input_file, original_name = input_prefix, isplink = TRUE, name = pgen_prefix, output_chr = "26")
-    return(pgen_prefix)
-    
   } else {
     pgen_prefix <- file.path(output.dir, "input_pgen")
-    convert_to_plink2(input_file, original_name = NULL, isplink = FALSE, name = pgen_prefix, output_chr = "26")
+    convert_to_plink2(input_file, original_name = original_name, name = pgen_prefix, output_chr = "26")
     return(pgen_prefix)
-    
   }
 }
 
@@ -332,9 +345,10 @@ convert_from_plink2 <- function(prefix,
 
   if (output_type == "plink2") {
     files <- list.files(
-      path = dirname(out_prefix),
-      pattern = paste0("^", basename(out_prefix), "\\."),
-      full.names = TRUE
+      path = dirname(prefix),
+      pattern = paste0("^", basename(prefix), "\\.(pgen|pvar|psam)(\\.zst)?$"),
+      full.names = TRUE,
+      ignore.case = TRUE
     )
     zip_path <- paste0(out_prefix, ".zip")
     zip::zipr(zipfile = zip_path, files = files)
@@ -414,7 +428,6 @@ vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
   if (extension %in% c("vcf", "gz")) {
     raw_file <- load_vcf_files(files, output.dir = output.dir)
     raw_file <- dplyr::rename(raw_file, Sample = 1)
-    #raw_file$Sample <- gsub("HGDP([0-9]+)_HGDP\\1$", "HG\\1", raw_file$Sample)
     raw_file$Sample <- trimws(raw_file$Sample)
   } else {
     stop("Input is not a VCF file.")
@@ -440,7 +453,6 @@ vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
 #' @param df The dataframe containing sample and genotype information.
 #' @param metadata The dataframe containing the sample and population information. Sample name should match the samples with genotype information.
 add_metadata <- function(df, metadata) {
-  validate_gt_file(df)
   df <- clean_input_data(df)
   
   # check if single population
@@ -472,6 +484,7 @@ add_metadata <- function(df, metadata) {
     with_meta_data <- final_df %>%
       dplyr::inner_join(ref_data, by = "Sample") %>%
       relocate(cols, .after = 1) 
+    with_meta_data <- dplyr::rename(with_meta_data, Pop = 2)
     
     missing_meta <- final_df %>% dplyr::anti_join(ref_data, by = "Sample")
     
@@ -508,7 +521,7 @@ to_binary <- function(df, markers = marker.file) {
   marker <- as.data.frame(markers)
   marker <- marker[, -c(2, 3, 4)]
   marker <- marker[, 1:3]
-  marker <- marker %>% mutate(across(tidyselect::everything(), ~ case_when(
+  marker <- marker %>% dplyr::mutate(dplyr::across(tidyselect::everything(), ~ case_when(
     . == "A" ~ "AA",
     . == "T" ~ "TT",
     . == "C" ~ "CC",
@@ -519,17 +532,17 @@ to_binary <- function(df, markers = marker.file) {
 
   df_marker <- merge(marker, revised_data, by = "ID", all.x = TRUE)
   df_marker <- df_marker %>%
-    mutate(across(
-      ends_with("_id"),
+    dplyr::mutate(dplyr::across(
+      tidyselect::ends_with("_id"),
       ~ case_when(
-        .x == "" ~ "",
-        .x == "N" ~ "",
+        .x == "" ~ 3,
+        .x == "N" ~ 3,
         .x == df_marker$REF ~ 0,
         .x == df_marker$ALT ~ 2,
         TRUE ~ 1
       )
     ))
-
+  df_marker[df_marker==3] <- NA
   final_df <- df_marker[, -c(1, 2, 3)]
   final_df <- data.frame(t(final_df))
   return(final_df)
@@ -543,7 +556,7 @@ to_binary <- function(df, markers = marker.file) {
 #'
 #' @returns A gentibble object.
 csv_to_gentibble <- function(file, loci.meta = loci.meta) {
-  df <- load_csv_xlsx_files(file)
+  df <- file
   validate_gt_df(df)
   df <- clean_input_data(df)
   df <- as.data.frame(df)
@@ -680,6 +693,8 @@ to_snipper <- function(input,
     stop("Input file is not a dataframe.")
   }
   
+  validate_gt_df(input.file)
+  
   input.file <- input.file %>% dplyr::mutate(
     dplyr::across(tidyselect::everything(), as.character)) %>%
     dplyr::mutate(dplyr::across(
@@ -711,18 +726,16 @@ to_snipper <- function(input,
 
   matched <- tosnipper %>% dplyr::left_join(reference, by = "Sample")
   last.col <- as.integer(ncol(matched))
-  sec.last <- last.col - 1
-  Superpop <- as.data.frame(matched[, last.col])
-  Population <- as.data.frame(matched[, sec.last])
+  #sec.last <- last.col - 1
+  Population <- as.data.frame(matched[, last.col])
+  #Population <- as.data.frame(matched[, sec.last])
   Sample <- as.data.frame(matched$Sample)
   data <- as.data.frame(matched[, 2:ncol(matched) - 1])
   drops <- "Sample"
   data <- data[, !(names(data) %in% drops)]
-  print(Superpop)
-  print(Population)
 
-  to_excel <- dplyr::bind_cols(Population, Superpop, Sample, data)
-  to_excel <- dplyr::rename(to_excel, Population = 1, Superpop = 2, Sample = 3)
+  to_excel <- dplyr::bind_cols(Population, Sample, data)
+  to_excel <- dplyr::rename(to_excel, Population = 1, Sample = 2)
 
   tosnpr_split <- split(to_excel, to_excel$Population)
   tosnpr_split <- tosnpr_split %>% map(`rownames<-`, NULL)
@@ -740,13 +753,13 @@ to_snipper <- function(input,
   merged <- plyr::ldply(tosnpr_split, data.frame)
   merged <- merged[, -c(1, 3)]
 
-  if (target.pop == TRUE) {
+  if (isTRUE(target.pop) == TRUE) {
     target <- merged[merged$Population == population.name, ]
     target$snpr <- "0"
     non.target <- merged[merged$Population != population.name, ]
     non.target$snpr <- "1"
     merged2 <- dplyr::bind_rows(target, non.target)
-  } else if (target.pop == FALSE) {
+  } else if (isFALSE(target.pop)) {
     merged2 <- merged
     merged2$snpr <- "1"
   } else {
@@ -754,15 +767,14 @@ to_snipper <- function(input,
   }
 
   sample.count <- as.integer(nrow(merged2))
-  pop.only <- as.data.frame(merged2$Superpop)
+  pop.only <- as.data.frame(merged2$Population)
   pop.only <- pop.only[!duplicated(pop.only), ]
   pop.only <- as.data.frame(pop.only)
   pop.count <- as.integer(nrow(pop.only))
-  merged3 <- merged2[, -2]
-  merged3 <- as.data.frame(merged3)
+  merged3 <- as.data.frame(merged2)
 
   names(merged3)[names(merged3) == "...1"] <- sample.count
-  names(merged3)[names(merged3) == "Superpop"] <- markers
+  names(merged3)[names(merged3) == "Population"] <- markers
   names(merged3)[names(merged3) == "Sample"] <- pop.count
   names(merged3)[names(merged3) == "snpr"] <- ""
 

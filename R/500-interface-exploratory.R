@@ -6,13 +6,13 @@ exploratory_tab <- function() {
       box(
         fileInput("pcaFile", "Upload Genotype File", accept = c(".csv", ".txt", "xlsx", "xlsm", "xlsb", "xls")),
         checkboxInput("useDefaultColors", "Use Default Colors and Labels", TRUE),
+        checkboxInput("useCentroidLabels", "Add Population Labels (centroid)", TRUE),
         conditionalPanel(
           condition = "!input.useDefaultColors",
           fileInput("pcaStyleFile", "Customize population colors and shapes.", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
           helpText("Columns should contain: [1] Population name, [2] Color (name or hex code), [3] Shapes"),
           p("The order of the colors would match the order of PCA labels")
         ),
-        br(),
         numericInput("pcX", "PC Axis X", value = 1, min = 1),
         numericInput("pcY", "PC Axis Y", value = 2, min = 1),
         uiOutput("selectedPopulation"),

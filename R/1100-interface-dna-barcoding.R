@@ -45,7 +45,7 @@ msa_tab <- function() {
           tabPanel(
             title = "Download Sample File",
             tags$ul(
-              tags$a("Sample zipped FASTA file", href = "lacto2.zip", download = "lacto2.zip")
+              tags$a("Sample zipped FASTA file", href = "endemic_birds.zip", download = "endemic_birds.zip")
             ),
           )
         ),

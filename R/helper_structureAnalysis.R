@@ -243,3 +243,23 @@ structure_get_populations <- function(file){
   
   return(unique(pops))
 }
+
+structurePlot2 <- function(
+    q.mat, 
+    type = NULL,
+    plot = TRUE
+) {
+  pop_labels <- as.character(q.mat$orig.pop)
+  p <- swfscMisc::plotAssignments(
+    q.mat %>% 
+      dplyr::select(id, dplyr::starts_with('Group.')) %>% 
+      tibble::column_to_rownames('id'),
+    orig = factor(pop_labels, levels = unique(pop_labels)),
+    type = type, 
+    plot = FALSE
+  ) + 
+    ggplot2::theme(legend.position = 'none')
+  
+  if(plot) print(p)
+  invisible(p)
+}

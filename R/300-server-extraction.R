@@ -318,7 +318,6 @@ snp_extraction_server <- function(input, output, session, rv) {
           concordanceResult(plot$results)
           concordancePlotPath(plot$plot)
           showNotification("Concordance analysis complete, rendering outputs.", type = "message", duration = 30)
-          print(Sys.time())
         },
         error = function(e) {
           showNotification(paste("Error during analysis:", e$message), type = "error", duration = 10)
