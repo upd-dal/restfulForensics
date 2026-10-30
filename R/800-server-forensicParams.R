@@ -170,6 +170,11 @@ forensic_params_server <- function(input, output, session, rv) {
   
   rmpResult <- reactiveVal(NULL)
   
+  observe({
+    shinyjs::toggleState("calcRMP", !is.null(input$fileProfile))
+  })
+  
+  
   observeEvent(input$calcRMP, {
     disable("calcRMP")
     

@@ -96,10 +96,6 @@ forensic_params_tab <- function() {
           checkboxInput("newPopDatabase", "Upload allele frequency for a population?", value = FALSE),
           helpText("If FALSE, the data used for the 'Population Database' tab will be used"),
           conditionalPanel(
-            condition = "!input.newPopDatabase",
-            uiOutput("rmp_population_UI")
-            ),
-          conditionalPanel(
             condition = "input.newPopDatabase",
             fileInput("newPopDataFile", "Upload population reference database", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv"))
           ),

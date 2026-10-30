@@ -1,6 +1,6 @@
 snp_extraction_server <- function(input, output, session, rv) {
   # ================ MARKER EXTRACTION ====================#
-
+  
   output$examplersID <- renderTable({
     data.frame(
       rsID = c("rs101", "rs102", "rs103", "rs104", "...")
@@ -182,14 +182,13 @@ snp_extraction_server <- function(input, output, session, rv) {
           input_file <- input$markerFile$datapath
           convert_to_plink2(input_file,
             original_name = input$markerFile$name,
-            isplink = FALSE,
             name = pgen_prefix
           )
         } else {
           bed_prefix <- tools::file_path_sans_ext(input$bedFile$datapath)
           convert_to_plink2(bed_prefix,
             original_name = NULL,
-            isplink = TRUE, name = pgen_prefix
+            name = pgen_prefix
           )
         }
 

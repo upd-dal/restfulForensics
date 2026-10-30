@@ -16,7 +16,7 @@ validate_gt_df <- function(df) {
 validate_file <- function(df) {
   validate_gt_df(df)
   val <- df[1, 2]
-  with_pop <- is.character(val) && !grepl("[/|]", x)
+  with_pop <- is.character(val) && !grepl("[/|]", val) && (stringr::str_count(val, "[A-Za-z]") == 2)
   
   if (isFALSE(with_pop)) {
     stop("File should contain a population column.")

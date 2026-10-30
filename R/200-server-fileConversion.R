@@ -668,6 +668,7 @@ file_conversion_server <- function(input, output, session, rv) {
         req(input$tostrFile$datapath, input$systemFile)
         csv_file <- load_csv_xlsx_files(input$tostrFile$datapath)
         csv_file <- clean_input_data(csv_file)
+        validate_file(csv_file)
         genind <- convert_to_genind(csv_file, to_str = TRUE, popinfo = TRUE)
         csv_revised(genind$csv_revised)
         strconvert(genind$fsnps_gen)
@@ -763,7 +764,7 @@ file_conversion_server <- function(input, output, session, rv) {
     incProgress(0.2, detail = "Loading input file...")
     for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
     for_arp <- clean_input_data(for_arp)
-
+    validate_file(for_arp)
     # All null values are "N", set to ""
     for_arp <- for_arp %>%
       mutate(across(everything(), ~ case_when(

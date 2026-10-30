@@ -1,6 +1,6 @@
 filtering_server <- function(input, output, session, rv) {
   # ===================== FILTERING =======================#
-
+  
   observe({
     hasFile <- !is.null(input$markerFileFilter)
     anyFilter <- input$filterIndiv || input$filterVariant || input$filterAllele || input$filterQuality || input$filterHWE || input$filterLD || input$cutoffKing
@@ -56,10 +56,10 @@ filtering_server <- function(input, output, session, rv) {
     incProgress(0.4, detail = "Preparing file for filtering...")
     pgen_prefix <- file.path(temp_dir, "convert_to_plink2")
     if (!is.null(input$markerFileFilter)) {
-      convert_to_plink2(input$markerFileFilter$datapath, original_name = input$markerFileFilter$name, isplink = FALSE, name = pgen_prefix)
+      convert_to_plink2(input$markerFileFilter$datapath, original_name = input$markerFileFilter$name, name = pgen_prefix)
     } else if (is.null(input$markerFileFilter) & !is.null(input$bedFileFilter)) {
       bed_prefix <- tools::file_path_sans_ext(input$bedFileFilter$datapath)
-      convert_to_plink2(bed_prefix, original_name = NULL, isplink = TRUE, name = pgen_prefix)
+      convert_to_plink2(bed_prefix, original_name = NULL, name = pgen_prefix)
     }
 
     incProgress(0.6, detail = "Filtering...")

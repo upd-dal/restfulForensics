@@ -18,6 +18,10 @@ create_range_file <- function(pos_input, addID = FALSE) {
   }
 
   pos_df <- as.data.frame(pos_df)
+  
+  if (ncol(pos_df) < 3) {
+    stop("Position file should contain the ff: [1] marker [2] chromosome [3] position")
+  }
 
   if (isTRUE(addID)) {
     chr <- as.character(trimws(pos_df[[2]]))

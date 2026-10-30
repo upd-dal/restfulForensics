@@ -132,6 +132,7 @@ classification_server <- function(input, output, session, rv) {
   )
 
   output$downloadClassification_UI <- renderUI({
+    req(predTable(), predModel(), predStat(), PredictionList())
     downloadButton("downloadClassification", "Download Results")
   })
 }
