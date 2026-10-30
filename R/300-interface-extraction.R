@@ -2,6 +2,7 @@ snp_extraction_tab <- function() {
   # SNP EXTRACTION MODULE ===========================================================================
   tabItem(
     tabName = "markerExtract",
+    profvis::profvis_ui("profiler_extract"),
     tabsetPanel(
       # SNP extraction submodule =============================================================
       tabPanel(
@@ -84,6 +85,7 @@ snp_extraction_tab <- function() {
       # Concordance analysis submodule =======================================================
       tabPanel(
         title = "Concordance Analysis",
+        profvis::profvis_ui("profiler_concordance"),
         fluidRow(
           box(
             fileInput("concordanceFile1", "Upload File A", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv", ".vcf")),

@@ -1,6 +1,6 @@
 filtering_server <- function(input, output, session, rv) {
   # ===================== FILTERING =======================#
-  
+  callModule(profvis_server, "profiler_filter")
   observe({
     hasFile <- !is.null(input$markerFileFilter)
     anyFilter <- input$filterIndiv || input$filterVariant || input$filterAllele || input$filterQuality || input$filterHWE || input$filterLD || input$cutoffKing

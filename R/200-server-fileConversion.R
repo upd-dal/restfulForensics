@@ -48,6 +48,8 @@ file_conversion_server <- function(input, output, session, rv) {
       "csv1" = "vcf2"
     )
   }
+  
+  callModule(profvis_server, "profiler_convertfiles")
 
   observeEvent(input$ConvertFILES, {
     disable("ConvertFILES")
@@ -247,6 +249,8 @@ file_conversion_server <- function(input, output, session, rv) {
     )
   })
 
+  callModule(profvis_server, "profiler_widen")
+  
   output.dir <- tempdir()
 
   observeEvent(input$addMetadata, {
@@ -469,7 +473,7 @@ file_conversion_server <- function(input, output, session, rv) {
     })
     enable("run_uas2csv")
   })
-
+  callModule(profvis_server, "profiler_widen")
   outputName <- "merged_typed_data.csv"
 
   output$downloadUAScsv <- downloadHandler(
@@ -552,7 +556,7 @@ file_conversion_server <- function(input, output, session, rv) {
       pageLength = 10
     )
   )
-
+  callModule(profvis_server, "profiler_snipper")
   convertedSNIPPER <- reactiveVal(NULL)
   outputName <- "snipper.xlsx"
 
@@ -654,7 +658,7 @@ file_conversion_server <- function(input, output, session, rv) {
   observe({
     toggleState("csv2str", !is.null(input$tostrFile) && !is.null(input$systemFile))
   })
-
+  callModule(profvis_server, "profiler_structure")
   csv_revised <- reactiveVal(NULL)
   strconvert <- reactiveVal(NULL)
   str_file <- reactiveVal(NULL)
@@ -755,7 +759,7 @@ file_conversion_server <- function(input, output, session, rv) {
   observe({
     shinyjs::toggleState("convert2Arle", !is.null(input$toArleFile))
   })
-
+  callModule(profvis_server, "profiler_arle")
   observeEvent(input$convert2Arle, {
     disable("convert2Arle")
 
@@ -765,7 +769,6 @@ file_conversion_server <- function(input, output, session, rv) {
     for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
     for_arp <- clean_input_data(for_arp)
     validate_file(for_arp)
-    # All null values are "N", set to ""
     for_arp <- for_arp %>%
       mutate(across(everything(), ~ case_when(
         . == "N" ~ "",

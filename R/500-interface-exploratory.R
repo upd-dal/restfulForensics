@@ -2,6 +2,7 @@ exploratory_tab <- function() {
   # PRINCIPAL COMPONENT ANALYSIS MODULE =============================================================
   tabItem(
     tabName = "PCAtab",
+    profvis::profvis_ui("profiler_pca"),
     fluidRow(
       box(
         fileInput("pcaFile", "Upload Genotype File", accept = c(".csv", ".txt", "xlsx", "xlsm", "xlsb", "xls")),

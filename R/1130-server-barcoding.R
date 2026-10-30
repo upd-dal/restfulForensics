@@ -1,5 +1,6 @@
 barcoding_server <- function(input, output, session, rv) {
   # ===================== BARCODING =======================#
+  callModule(profvis_server, "profiler_barcoding")
   #------------------ Species identification
   observe({
     refReady <- !is.null(input$refBarcoding$datapath)

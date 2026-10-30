@@ -15,7 +15,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
       rs_n = c("...", "...", "...", "...", "...")
     )
   })
-
+  callModule(profvis_server, "profiler_pca")
   observe({
     hasDataFile <- !is.null(input$pcaFile)
     toggleState("runPCA", hasDataFile)

@@ -1,5 +1,5 @@
 run_structure_analysis <- function(input, output, session, rv) {
-
+  callModule(profvis_server, "profiler_strRun")
   examplePop_STR2 <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

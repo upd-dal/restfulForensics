@@ -2,6 +2,7 @@ classification_tab <- function() {
   # CLASSIFICATION MODULE ==========================================================================
   tabItem(
     tabName = "Classification",
+    profvis::profvis_ui("profiler_classification"),
     fluidRow(
       box(
         fileInput("forPredFile", "Upload file", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),

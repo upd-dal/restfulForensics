@@ -6,6 +6,7 @@ file_conversion_tab <- function() {
       # Format conversion submodule ==========================================================
       tabPanel(
         title = "Convert Files",
+        profvis::profvis_ui("profiler_convertfiles"),
         fluidRow(
           box(
             title = "File Conversion Options",
@@ -113,6 +114,7 @@ file_conversion_tab <- function() {
       ),
       tabPanel(
         title = "Add Metadata",
+        profvis::profvis_ui("profiler_addmetadata"),
         fluidRow(
           box(
             fileInput("genotypeFile", "Genotype File or zipped files", accept = c(".vcf", ".bcf", ".gz", ".zip", ".tar")),
@@ -202,6 +204,7 @@ file_conversion_tab <- function() {
       # Widen long genotype file submodule ===================================================
       tabPanel(
         title = "Widen SNP calls",
+        profvis::profvis_ui("profiler_widen"),
         fluidRow(
           box(
             fileInput("uas_zip", "Upload ZIP or TAR file",
@@ -247,6 +250,7 @@ file_conversion_tab <- function() {
       # Convert file to SNIPPER compatible file submodule ====================================
       tabPanel(
         title = "To SNIPPER file",
+        profvis::profvis_ui("profiler_snipper"),
         fluidRow(
           box(
             width = 6,
@@ -337,6 +341,7 @@ file_conversion_tab <- function() {
       # Convert file to standard STRUCTURE compatible file ===================================
       tabPanel(
         title = "To STRUCTURE file",
+        profvis::profvis_ui("profiler_structure"),
         fluidRow(
           box(
             width = 6,
@@ -406,6 +411,7 @@ file_conversion_tab <- function() {
       # Convert file to Arlequin compatible file ===================================
       tabPanel(
         title = "To Arlequin file",
+        profvis::profvis_ui("profiler_arle"),
         fluidRow(
           box(
             width = 6,

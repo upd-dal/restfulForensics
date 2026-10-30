@@ -1,6 +1,6 @@
 msa_server <- function(input, output, session, rv) {
   # ============ MULTIPLE SEQUENCE ALIGNMENT ==============#
-
+  callModule(profvis_server, "profiler_msa")
   fasta_data <- reactiveVal(NULL)
   alignment_scores <- reactiveVal(NULL)
   directory <- tempdir()

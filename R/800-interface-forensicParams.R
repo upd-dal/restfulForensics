@@ -5,6 +5,7 @@ forensic_params_tab <- function() {
     tabsetPanel(
       tabPanel(
         title = "Population Database",
+        profvis::profvis_ui("profiler_params"),
         fluidRow(
           box(
             fileInput("iisnpsFile", "Upload File", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
@@ -92,6 +93,7 @@ forensic_params_tab <- function() {
       ), 
       tabPanel(
         title = "Calculate RMP for a Profile",
+        profvis::profvis_ui("profiler_profile"),
         box(
           checkboxInput("newPopDatabase", "Upload allele frequency for a population?", value = FALSE),
           helpText("If FALSE, the data used for the 'Population Database' tab will be used"),

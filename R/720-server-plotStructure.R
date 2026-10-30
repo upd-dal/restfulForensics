@@ -1,5 +1,5 @@
 plot_structure_server <- function(input, output, session, rv) {
-  
+  callModule(profvis_server, "profiler_strEvanno")
   output.dir <- tempdir()
   evannoRes <- reactiveVal(NULL)
   
@@ -149,6 +149,7 @@ plot_structure_server <- function(input, output, session, rv) {
   })
   
   #==================== Plot STR Results ========================#
+  callModule(profvis_server, "profiler_strClumpp")
   populationNames <- reactiveVal(NULL)
   structureResults <- reactiveVal(NULL)
   clumppResults <- reactiveVal(NULL)

@@ -2,6 +2,7 @@ structure_runs <- function() {
   # POPULATION STRUCTURE MODULE ===========================================================================
   tabItem(
     tabName = "StructureRun",
+    profvis::profvis_ui("profiler_strRun"),
     fluidRow(
       box(
         fileInput("structureFile", "Upload File", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),

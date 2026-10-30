@@ -3,6 +3,7 @@ plot_structure_runs <- function() {
     tabName = "PlotStructure",
     tabPanel(
       title = "Plot Structure Results",
+      profvis::profvis_ui("profiler_strEvanno"),
       tabsetPanel(
         tabPanel(
           title = "Find Best K using Evanno",
@@ -65,6 +66,7 @@ plot_structure_runs <- function() {
         ), # end of tab panel for evanno
         tabPanel(
           title = "Run CLUMPP",
+          profvis::profvis_ui("profiler_strClumpp"),
           fluidRow(
             box(
               checkboxInput("plotSR", "Use STRUCTURE results", value = TRUE),

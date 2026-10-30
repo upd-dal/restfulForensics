@@ -7,6 +7,7 @@ popstats_tab <- function() {
       tabsetPanel(
         tabPanel(
           title = "R-based Calculations",
+          profvis::profvis_ui("profiler_rpop"),
           fluidRow(
             box(
               fileInput("popStatsFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
@@ -108,6 +109,7 @@ popstats_tab <- function() {
         ),
         tabPanel(
           title = "Arlecore",
+          profvis::profvis_ui("profiler_arlecore"),
           fluidRow(
             box(
               radioButtons("inputArlecore", "Choose input type", choices = c("Genotype File" = "gtFile",

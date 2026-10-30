@@ -1,6 +1,6 @@
 snp_extraction_server <- function(input, output, session, rv) {
   # ================ MARKER EXTRACTION ====================#
-  
+  callModule(profvis_server, "profiler_extract")
   output$examplersID <- renderTable({
     data.frame(
       rsID = c("rs101", "rs102", "rs103", "rs104", "...")
@@ -279,7 +279,7 @@ snp_extraction_server <- function(input, output, session, rv) {
   observe({
     toggleState("compareBtn", !is.null(input$concordanceFile1) && !is.null(input$concordanceFile2))
   })
-
+  callModule(profvis_server, "profiler_concordance")
   concordanceResult <- reactiveVal(NULL)
   concordancePlotPath <- reactiveVal(NULL)
 

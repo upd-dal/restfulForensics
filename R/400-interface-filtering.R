@@ -2,6 +2,7 @@ filtering_tab <- function() {
   # FILTERING MODULE ================================================================================
   tabItem(
     tabName = "FilterTab",
+    profvis::profvis_ui("profiler_filter"),
     fluidRow(
       box(
         title = "Upload Files",
