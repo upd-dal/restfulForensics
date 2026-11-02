@@ -249,7 +249,7 @@ file_conversion_server <- function(input, output, session, rv) {
     )
   })
 
-  callModule(profvis_server, "profiler_widen")
+  callModule(profvis_server, "profiler_addmetadata")
   
   output.dir <- tempdir()
 
