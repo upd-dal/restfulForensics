@@ -144,7 +144,7 @@ read_fasta <- function(zipped, directory) {
   )
 
   data_path <- file.path(directory, "fasta_files")
-  fasta_patterns <- paste("\\.fasta$", "\\.fa$", "\\.fna$", "\\fas$", sep = "|")
+  fasta_patterns <- paste("\\.fasta$", "\\.fa$", "\\.fna$", "\\.fas$", "\\.txt", sep = "|")
   
   fasta_files <- list.files(path = data_path, pattern = fasta_patterns, full.names = TRUE)
   

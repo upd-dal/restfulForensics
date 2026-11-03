@@ -7,7 +7,7 @@
 calc_msa <- function(files, algorithm) {
   # Creating Substitution Matrix
   personal_matrix <- pwalign::nucleotideSubstitutionMatrix(
-    match = 1, mismatch = 0, baseOnly = FALSE, type = "DNA"
+    match = 2, mismatch = -1, baseOnly = FALSE, type = "DNA"
   )
 
   gap_penalty <- -2
@@ -61,8 +61,8 @@ calc_msa <- function(files, algorithm) {
 #' @returns A phylogenetic tree plot.
 build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model)
-  nj_tree <- ape::nj(distance)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
+  nj_tree <- ape::njs(distance)
 
   if (!is.null(outgroup) && outgroup %in% nj_tree$tip.label) {
     nj_tree <- ape::root(nj_tree, outgroup = outgroup)
@@ -113,7 +113,7 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
 #' @returns A phylogenetic tree plot.
 build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
   upgma_tree <- phangorn::upgma(distance)
 
   if (!is.null(outgroup) && outgroup %in% upgma_tree$tip.label) {
