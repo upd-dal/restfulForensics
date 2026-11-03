@@ -9,7 +9,7 @@ msa_server <- function(input, output, session, rv) {
     req(input$fastaFile)
     
     tryCatch({
-      fasta <- read_fasta(input$fastaFile$datapath, directory)
+    fasta <- read_fasta(input$fastaFile$datapath, directory)
     fasta_data(fasta)
 
     aligned <- calc_msa(fasta,

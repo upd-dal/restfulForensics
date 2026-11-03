@@ -125,6 +125,10 @@ load_vcf_files <- function(vcf, output.dir = ".") {
   return(final_df)
 }
 
+
+#=============================
+# Add check for text files; read as string set if 
+#=============================
 #' Read FASTA files
 #'
 #' @param zipped The file path of the zipped file.
@@ -141,7 +145,9 @@ read_fasta <- function(zipped, directory) {
 
   data_path <- file.path(directory, "fasta_files")
   fasta_patterns <- paste("\\.fasta$", "\\.fa$", "\\.fna$", "\\fas$", sep = "|")
+  
   fasta_files <- list.files(path = data_path, pattern = fasta_patterns, full.names = TRUE)
+  
   dna_sequences <- Biostrings::readDNAStringSet(fasta_files)
 
   return(dna_sequences)
