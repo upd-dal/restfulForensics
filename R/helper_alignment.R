@@ -61,7 +61,7 @@ calc_msa <- function(files, algorithm) {
 #' @returns A phylogenetic tree plot.
 build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
   nj_tree <- ape::nj(distance)
 
   if (!is.null(outgroup) && outgroup %in% nj_tree$tip.label) {
@@ -83,7 +83,7 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
   set.seed(seed)
   boots <- ape::boot.phylo(nj_tree, bins,
     FUN = function(x) {
-      tree <- ape::nj(ape::dist.dna(x, model = model))
+      tree <- ape::nj(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
 
       if (!is.null(outgroup) && outgroup %in% tree$tip.label) {
         tree <- ape::root(tree, outgroup = outgroup)
@@ -113,7 +113,7 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
 #' @returns A phylogenetic tree plot.
 build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
   upgma_tree <- phangorn::upgma(distance)
 
   if (!is.null(outgroup) && outgroup %in% upgma_tree$tip.label) {
@@ -136,7 +136,7 @@ build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = mod
   set.seed(seed)
   boots <- ape::boot.phylo(upgma_tree, bins,
     FUN = function(x) {
-      tree <- phangorn::upgma(ape::dist.dna(x, model = model))
+      tree <- phangorn::upgma(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
 
       if (!is.null(outgroup) && outgroup %in% tree$tip.label) {
         tree <- ape::root(tree, outgroup = outgroup)

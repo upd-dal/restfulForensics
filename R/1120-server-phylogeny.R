@@ -40,7 +40,7 @@ phylogeny_server <- function(input, output, session, rv) {
           if (!is.null(input$seed)) {
             seed <- input$seed
           } else {
-            seed <- "123"
+            seed <- 123
           }
 
           if (tree_type == "NJ") {
