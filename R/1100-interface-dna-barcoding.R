@@ -106,7 +106,8 @@ phylogeny_tab <- function() {
             selectInput("model", "Choose Substitution Model",
               choices = c("N", "TS", "TV", "JC69", "K80", "F81", "K81", "F84", "BH87", "T92", "TN93", "GG95"),
               selected = "K80"
-            )
+            ),
+            checkboxInput("pairwiseDeletion", "Perform pairwise deletion when calculating distance", value = FALSE)
           ),
           conditionalPanel(
             condition = "input.treeType == 'Maximum Likelihood'",

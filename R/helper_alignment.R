@@ -59,10 +59,14 @@ calc_msa <- function(files, algorithm) {
 #' @param model The substitution model.
 #'
 #' @returns A phylogenetic tree plot.
-build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
+build_nj_tree <- function(alignment, 
+                          outgroup = NULL, 
+                          seed = 123, 
+                          model = model,
+                          pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
-  nj_tree <- ape::nj(distance)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = pairwise)
+  nj_tree <- ape::njs(distance)
 
   if (!is.null(outgroup) && outgroup %in% nj_tree$tip.label) {
     nj_tree <- ape::root(nj_tree, outgroup = outgroup)
@@ -111,9 +115,13 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
 #' @inheritParams build_nj_tree
 #'
 #' @returns A phylogenetic tree plot.
-build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
+build_upgma_tree <- function(alignment, 
+                             outgroup = NULL, 
+                             seed = 123, 
+                             model = model,
+                             pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = pairwise)
   upgma_tree <- phangorn::upgma(distance)
 
   if (!is.null(outgroup) && outgroup %in% upgma_tree$tip.label) {

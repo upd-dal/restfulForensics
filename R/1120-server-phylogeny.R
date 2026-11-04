@@ -27,6 +27,10 @@ phylogeny_server <- function(input, output, session, rv) {
       }
     }
 
+    # check distance of the alignment file
+    alignment_bins <- ape::as.DNAbin(alignment_file)
+    distance <- 
+    
     withProgress(message = "Building phylogenetic tree...", value = 0, {
       tryCatch(
         {
@@ -44,12 +48,12 @@ phylogeny_server <- function(input, output, session, rv) {
           }
 
           if (tree_type == "NJ") {
-            plot_obj <- build_nj_tree(aligned, outgroup = outgroup, model = model, seed = seed)
+            plot_obj <- build_nj_tree(aligned, outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
             tree_plot(plot_obj)
             tree_path(NULL)
             tree_model(paste("NJ C", model, ")", sep = ""))
           } else if (tree_type == "UPGMA") {
-            plot_obj <- build_upgma_tree(aligned, outgroup = outgroup, model = model, seed = seed)
+            plot_obj <- build_upgma_tree(aligned, outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
             tree_plot(plot_obj)
             tree_path(NULL)
             tree_model(paste("UPGMA (", model, ")", sep = ""))
