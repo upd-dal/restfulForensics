@@ -3,7 +3,8 @@ app_server <- function(input, output, session) {
     structureRes = NULL,
     alignmentMSA = NULL,
     alignmentAdjusted = NULL,
-    alignmentStaggered = NULL
+    alignmentStaggered = NULL,
+    alignmentTrimmed = NULL
   )
 
   navigation_server(input, output, session)

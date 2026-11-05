@@ -73,7 +73,7 @@ build_nj_tree <- function(alignment,
   }
 
   nj_tree <- ape::ladderize(nj_tree)
-  num_sites <- nchar(as.character(alignment[[1]]))
+  num_sites <- ncol(bins)
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
     tree_plot <- ggtree(nj_tree, branch.length = "none") +
@@ -87,7 +87,7 @@ build_nj_tree <- function(alignment,
   set.seed(seed)
   boots <- ape::boot.phylo(nj_tree, bins,
     FUN = function(x) {
-      tree <- ape::nj(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
+      tree <- ape::njs(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
 
       if (!is.null(outgroup) && outgroup %in% tree$tip.label) {
         tree <- ape::root(tree, outgroup = outgroup)
@@ -129,7 +129,7 @@ build_upgma_tree <- function(alignment,
   }
 
   upgma_tree <- ape::ladderize(upgma_tree)
-  num_sites <- nchar(as.character(alignment[[1]]))
+  num_sites <- ncol(bins)
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
 

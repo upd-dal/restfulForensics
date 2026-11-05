@@ -3,74 +3,115 @@ msa_tab <- function() {
   tabItem(
     tabName = "MSAtab",
     # Alignment submodule =====================================================================
-    tabPanel(
-      title = "Multiple Sequence Alignment",
-      fluidRow(
-        box(
-          fileInput("fastaFile", "Upload zipped FASTA files", accept = c(".zip", ".tar")),
-          radioButtons("substitutionMatrix", "Choose Substitution Matrix for MSA",
-            choices = c("ClustalW" = "ClustalW", "ClustalOmega" = "ClustalOmega", "MUSCLE" = "Muscle")
-          ),
-          actionButton("runMSA", "Align", icon = icon("align-justify")),
-          br(),
-          selectInput("msaDownloadType", "Choose alignment (FASTA and PDF) version to download:",
-            choices = c(
-              "Initial" = "initial",
-              "Adjusted" = "adjusted",
-              "Staggered" = "staggered"
+    tabsetPanel(
+      tabPanel(
+        title = "Multiple Sequence Alignment",
+        fluidRow(
+          box(
+            fileInput("fastaFile", "Upload zipped FASTA files", accept = c(".zip", ".tar")),
+            radioButtons("substitutionMatrix", "Choose Substitution Matrix for MSA",
+                         choices = c("ClustalW" = "ClustalW", "ClustalOmega" = "ClustalOmega", "MUSCLE" = "Muscle")
             ),
-            selected = "initial"
+            actionButton("runMSA", "Align", icon = icon("align-justify")),
+            br(),
+            selectInput("msaDownloadType", "Choose alignment (FASTA and PDF) version to download:",
+                        choices = c(
+                          "Initial" = "initial",
+                          "Adjusted" = "adjusted",
+                          "Staggered" = "staggered"
+                        ),
+                        selected = "initial"
+            )
+          ),
+          tabBox(
+            tabPanel(
+              title = "Instructions",
+              h4("Perform multiple sequence alignment"),
+              p(strong("Input file/s:"), "Zipped folder (.zip) containing FASTA files."),
+              p(strong("Parameter/s:"), "Substitution matrix for the alignment (ClustalW, ClustalOmega, MUSCLE)"),
+              p(strong("Expected output/s:")),
+              tags$ul(
+                tags$li("Aligned sequences"),
+                tags$li("Alignment scores"),
+                tags$li("Alignment PDF")
+              ),
+              hr(),
+              p("This performs multiple sequence alignment using the msa R package (Bodenhofer et al., 2015)
+                                               and post-processing using DECIPHER (Wright, 2015)."),
+              p(
+                "The aligned sequences can be used in the tab ",
+                tags$a(actionLink("tophylogentab", "'Phylogenetic Tree Analysis'."))
+              )
+            ),
+            tabPanel(
+              title = "Download Sample File",
+              tags$ul(
+                tags$a("Sample zipped FASTA file", href = "pangolins.zip", download = "pangolins.zip")
+              ),
+            )
+          ),
+          tabBox(
+            title = "Results",
+            width = 12,
+            tabPanel(
+              title = "Preview of Alignments",
+              verbatimTextOutput("initialAlignmentText"),
+              br(),
+              verbatimTextOutput("adjustedAlignmentText"),
+              br(),
+              verbatimTextOutput("staggeredAlignmentText"),
+              br(),
+              verbatimTextOutput("alignmentScoresPreview")
+            ),
+            tabPanel(
+              title = "Download Results",
+              uiOutput("downloadAlignedFASTA_UI"),
+              uiOutput("downloadAlignmentScores_UI"),
+              downloadButton("downloadAlignmentPDF", "Download Alignment in PDF")
+            )
           )
-        ),
+        )
+      ),
+      tabPanel(
+        title = "Trim Sequences",
+        box(
+          checkboxInput("uploadMSATrim", "Use results from the MSA tab?", value = FALSE),
+          conditionalPanel(
+            condition = "input.uploadMSATrim == true",
+            selectInput("sequenceToTrim", "Alignment to trim",
+                        choices = c(
+                          "Initial" = "initial",
+                          "Adjusted" = "adjusted",
+                          "Staggered" = "staggered"
+                        ),
+                        selected = "initialTrim"
+            )
+          ),
+          conditionalPanel(
+            condition = "input.uploadMSATrim == false",
+            fileInput("fileForTrim", "Upload MSA file for trimming")
+          ),
+          numericInput("startSeq", "Starting position", value = 50),
+          numericInput("endSeq", "End position", value = 150),
+          helpText("Indicate the start and end position of the sequence to keep"),
+          actionButton("trimSequences", "Trim sequences", icon=icon("scissors")),
+          uiOutput("downloadTrimmedFASTAUI")
+          ),
         tabBox(
           tabPanel(
             title = "Instructions",
-            h4("Perform multiple sequence alignment"),
-            p(strong("Input file/s:"), "Zipped folder (.zip) containing FASTA files."),
-            p(strong("Parameter/s:"), "Substitution matrix for the alignment (ClustalW, ClustalOmega, MUSCLE)"),
-            p(strong("Expected output/s:")),
-            tags$ul(
-              tags$li("Aligned sequences"),
-              tags$li("Alignment scores"),
-              tags$li("Alignment PDF")
-            ),
+            h4("Trim sequence alignments"),
+            p(strong("Input file/s:"), "Alignment file (msa, fasta, fas, fa, aln, msf)"),
+            p(strong("Parameter/s:"), "Start and end position of the subsequence to keep."),
+            p(strong("Expected output/s: Fasta file of trimmed sequences.")),
             hr(),
-            p("This performs multiple sequence alignment using the msa R package (Bodenhofer et al., 2015)
-                                               and post-processing using DECIPHER (Wright, 2015)."),
-            p(
-              "The aligned sequences can be used in the tab ",
-              tags$a(actionLink("tophylogentab", "'Phylogenetic Tree Analysis'."))
+            p("The ape and phangorn packages for building phylogenetic trees require
+              a distance matrix built from MSA without missing values, hence the
+              aligned sequences should be trimmed as needed.")
             )
-          ),
-          tabPanel(
-            title = "Download Sample File",
-            tags$ul(
-              tags$a("Sample zipped FASTA file", href = "endemic_birds.zip", download = "endemic_birds.zip")
-            ),
-          )
-        ),
-        tabBox(
-          title = "Results",
-          width = 12,
-          tabPanel(
-            title = "Preview of Alignments",
-            verbatimTextOutput("initialAlignmentText"),
-            br(),
-            verbatimTextOutput("adjustedAlignmentText"),
-            br(),
-            verbatimTextOutput("staggeredAlignmentText"),
-            br(),
-            verbatimTextOutput("alignmentScoresPreview")
-          ),
-          tabPanel(
-            title = "Download Results",
-            uiOutput("downloadAlignedFASTA_UI"),
-            uiOutput("downloadAlignmentScores_UI"),
-            downloadButton("downloadAlignmentPDF", "Download Alignment in PDF")
-          )
         )
       )
-    )
+    ) # end of tabset panel
   )
 }
 
@@ -89,7 +130,8 @@ phylogeny_tab <- function() {
               choices = c(
                 "Initial" = "initial",
                 "Adjusted" = "adjusted",
-                "Staggered" = "staggered"
+                "Staggered" = "staggered",
+                "Trimmed" = "trimmed"
               ),
               selected = "initial"
             )
@@ -98,24 +140,10 @@ phylogeny_tab <- function() {
             condition = "input.uploadMSA == false",
             fileInput("msaFileforPhylogen", "Upload MSA file")
           ),
-          selectInput("treeType", "Choose Method for Tree Construction",
-            choices = c("NJ", "UPGMA", "Parsimony", "Maximum Likelihood")
-          ),
-          conditionalPanel(
-            condition = "input.treeType == 'NJ' || input.treeType == 'UPGMA'",
-            selectInput("model", "Choose Substitution Model",
-              choices = c("N", "TS", "TV", "JC69", "K80", "F81", "K81", "F84", "BH87", "T92", "TN93", "GG95"),
-              selected = "K80"
-            ),
-            checkboxInput("pairwiseDeletion", "Perform pairwise deletion when calculating distance", value = FALSE)
-          ),
-          conditionalPanel(
-            condition = "input.treeType == 'Maximum Likelihood'",
-            textInput("bootstrapSamples", "Set number of bootstrap samples", value = 100)
-          ),
-          textInput("outgroup", "Outgroup (optional)", placeholder = "e.g. Sample1"),
-          textInput("seed", "Set Seed Value", value = 123),
-          actionButton("buildTree", "Build Tree", icon = icon("tree"))
+          
+          # 
+          actionButton("validateAlignment", "Validate Input File (distance)", icon = icon("check")),
+          uiOutput("phylogeneticOptionsUI")
         ),
         tabBox(
           title = "Instructions",
@@ -197,17 +225,27 @@ barcoding_tab <- function() {
               actionButton("identifySpecies", "Identify Species", icon = icon("magnifying-glass"))
             ),
             tabBox(
-              title = "Instructions",
-              h4("Perform species identification using the R package 'BarcodingR' (Zhang et al., 2016)"),
-              p(strong("Input file/s:")),
-              tags$ul(
-                tags$li("Aligned reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas)"),
-                tags$li("Aligned query sequences (.msa, .fasta, .msf, .aln, .faa, .fas)")
+              tabPanel(
+                title = "Instructions",
+                h4("Perform species identification using the R package 'BarcodingR' (Zhang et al., 2016)"),
+                p(strong("Input file/s:")),
+                tags$ul(
+                  tags$li("Aligned reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas)"),
+                  tags$li("Aligned query sequences (.msa, .fasta, .msf, .aln, .faa, .fas)")
+                ),
+                p(strong("Parameter/s:")),
+                tags$ul(
+                  tags$li("(without kmer method) Training model: bpNewTraining, fuzzyId, bpNewTrainingOnly, bpUsedTrained, or Bayesian"),
+                  tags$li("(with kmer method) Fuzzy-set Method or BP-based method")
+                )
               ),
-              p(strong("Parameter/s:")),
-              tags$ul(
-                tags$li("(without kmer method) Training model: bpNewTraining, fuzzyId, bpNewTrainingOnly, bpUsedTrained, or Bayesian"),
-                tags$li("(with kmer method) Fuzzy-set Method or BP-based method")
+              tabPanel(
+                title = "Sample Input Format/s",
+                tags$ul(
+                  tags$a("A. Sample files", href = "pangolins_sample.zip", download = "pangolins_sample.zip"),
+                  br(),
+                  tags$a("B. Sample reference files", href = "pangolins_ref.zip", download = "pangolins_ref.zip")
+                )
               )
             ),
             box(

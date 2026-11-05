@@ -175,8 +175,6 @@ snp_extraction_server <- function(input, output, session, rv) {
       {
         incProgress(0.2, detail = "Preparing input file...")
         pgen_prefix <- file.path(temp_dir, "input_pgen")
-        print(input$markerFile$name)
-        print(input$markerFile$datapath)
 
         if (!is.null(input$markerFile)) {
           input_file <- input$markerFile$datapath
