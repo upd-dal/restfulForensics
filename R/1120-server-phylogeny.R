@@ -167,7 +167,9 @@ phylogeny_server <- function(input, output, session, rv) {
   output$treePNG <- renderImage(
     {
       req(tree_path())
-      list(src = tree_path(), contentType = "image/png", width = 800, height = 600)
+      list(src = tree_path(),
+           contentType = "image/png",
+           width = 800, height = 600)
     },
     deleteFile = FALSE
   )

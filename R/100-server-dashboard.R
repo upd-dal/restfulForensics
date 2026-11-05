@@ -194,6 +194,11 @@ dashboard_server <- function(input, output, session, rv) {
                target = "_blank"
         )
       ),
+      p("Luczon, A.U., Ong, P.S., Quilang, J.P., & Fontanilla, I.K. (2016). Determining species identity from confiscated pangolin remains using DNA barcoding. Mitochondrial DNA Part B, 1(1), 763-766,",
+        tags$a("https://doi.org/10.1080/23802359.2016.1238752",
+               href = "https://doi.org/10.1080/23802359.2016.1238752",
+               target = "_blank")
+        ),
       p(
         "Nei, M. (1978). Estimation of average heterozygosity and genetic distance from a small number of individuals. Genetics:89:583-590.",
         tags$a("https://doi.org/10.1093/genetics/89.3.583",

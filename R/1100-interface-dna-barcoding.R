@@ -45,6 +45,7 @@ msa_tab <- function() {
             ),
             tabPanel(
               title = "Download Sample File",
+              p("The zipped data contains pangolin case samples (Luzcon et al., 2016)."),
               tags$ul(
                 tags$a("Sample zipped FASTA file", href = "pangolins.zip", download = "pangolins.zip")
               ),
@@ -65,6 +66,7 @@ msa_tab <- function() {
             ),
             tabPanel(
               title = "Download Results",
+              p("Note: Alignment best visualized in the PDF file."),
               uiOutput("downloadAlignedFASTA_UI"),
               uiOutput("downloadAlignmentScores_UI"),
               downloadButton("downloadAlignmentPDF", "Download Alignment in PDF")
@@ -241,10 +243,12 @@ barcoding_tab <- function() {
               ),
               tabPanel(
                 title = "Sample Input Format/s",
+                p("The sample alignment files are generated from the 'MSA' tab
+                  using the pangolins (Luczon et al., 2016) case dataset aligned using ClustalW."),
                 tags$ul(
-                  tags$a("A. Sample files", href = "pangolins_sample.zip", download = "pangolins_sample.zip"),
+                  tags$a("A. Sample files", href = "pangolins_samples.fa", download = "pangolins_samples.fa"),
                   br(),
-                  tags$a("B. Sample reference files", href = "pangolins_ref.zip", download = "pangolins_ref.zip")
+                  tags$a("B. Sample reference files", href = "pangolins_ref.fa", download = "pangolins_ref.fa")
                 )
               )
             ),
