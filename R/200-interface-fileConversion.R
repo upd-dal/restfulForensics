@@ -316,7 +316,7 @@ file_conversion_tab <- function() {
             tabPanel(
               title = "Download Sample File",
               tags$ul(
-                tags$a("A. Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
               )
             )
           )

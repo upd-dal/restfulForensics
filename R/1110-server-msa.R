@@ -1,15 +1,18 @@
 msa_server <- function(input, output, session, rv) {
   # ============ MULTIPLE SEQUENCE ALIGNMENT ==============#
-  callModule(profvis_server, "profiler_msa")
   fasta_data <- reactiveVal(NULL)
   alignment_scores <- reactiveVal(NULL)
   directory <- tempdir()
 
+  observe({
+    toggleState("runMSA", !is.null(input$fastaFile))
+  })
+  
   observeEvent(input$runMSA, {
     req(input$fastaFile)
     
     tryCatch({
-    fasta <- read_fasta(input$fastaFile$datapath, directory)
+      fasta <- read_fasta(input$fastaFile$datapath, directory)
     fasta_data(fasta)
 
     aligned <- calc_msa(fasta,
@@ -126,4 +129,56 @@ msa_server <- function(input, output, session, rv) {
     req(alignment_scores())
     downloadButton("downloadAlignmentScores", "Download Alignment Scores")
   })
+  
+  # ================= TRIM THE SEQUENCES ==================#
+  observe({
+   if (isTRUE(input$uploadMSATrim)) {
+     toggleState("trimSequences", !is.null(input$sequenceToTrim))
+   } else {
+     toggleState("trimSequences", !is.null(input$fileForTrim))
+   }
+  })
+  
+  observeEvent(input$trimSequences, {
+    disable(input$trimSequences)
+    
+    if (isTRUE(input$uploadMSATrim)) {
+      alignment <- switch(input$sequenceToTrim,
+                          initial = rv$alignmentMSA,
+                          adjusted = rv$alignmentAdjusted,
+                          staggered = rv$alignmentStaggered
+      )
+      alignment_file <- alignment
+    } else if (!is.null(input$fileForTrim)) {
+      file_ext_ref <- tools::file_ext(input$fileForTrim$name)
+      if (file_ext_ref == "msa") {
+        alignment_file <- Biostrings::ReadDNAStringSet(input$fileForTrim$datapath)
+      } else if (file_ext_ref %in% c("fasta", "fa", "fas", "msf", "aln")) {
+        if (file_ext_ref == "aln") {
+          file_ext_ref <- "clustal"
+        }
+        alignment_file <- seqinr::read.alignment(file = input$fileForTrim$datapath, format = file_ext_ref)
+      }
+    }
+    
+    trimmed_sequences <- subseq(alignment_file, start = input$startSeq, end = input$endSeq)
+    rv$alignmentTrimmed <- trimmed_sequences
+  })
+  
+  output$downloadTrimmedFASTA <- downloadHandler(
+    filename = function() {
+      "trimmed_barcodes.fasta"
+    },
+    content = function(file) {
+      req(rv$alignmentTrimmed)
+      Biostrings::writeXStringSet(rv$alignmentTrimmed, filepath = file, format = "fasta")
+    }
+  )
+  
+  output$downloadTrimmedFASTAUI <- renderUI({
+    req(rv$alignmentTrimmed)
+    downloadButton("downloadTrimmedFASTA", "Download Trimmed Sequences")
+  })
+  
+  
 }

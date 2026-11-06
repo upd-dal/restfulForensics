@@ -7,7 +7,7 @@
 calc_msa <- function(files, algorithm) {
   # Creating Substitution Matrix
   personal_matrix <- pwalign::nucleotideSubstitutionMatrix(
-    match = 2, mismatch = -1, baseOnly = FALSE, type = "DNA"
+    match = 1, mismatch = 0, baseOnly = FALSE, type = "DNA"
   )
 
   gap_penalty <- -2
@@ -59,9 +59,13 @@ calc_msa <- function(files, algorithm) {
 #' @param model The substitution model.
 #'
 #' @returns A phylogenetic tree plot.
-build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
+build_nj_tree <- function(alignment, 
+                          outgroup = NULL, 
+                          seed = 123, 
+                          model = model,
+                          pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = pairwise)
   nj_tree <- ape::njs(distance)
 
   if (!is.null(outgroup) && outgroup %in% nj_tree$tip.label) {
@@ -69,7 +73,7 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
   }
 
   nj_tree <- ape::ladderize(nj_tree)
-  num_sites <- nchar(as.character(alignment[[1]]))
+  num_sites <- ncol(bins)
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
     tree_plot <- ggtree(nj_tree, branch.length = "none") +
@@ -83,7 +87,7 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
   set.seed(seed)
   boots <- ape::boot.phylo(nj_tree, bins,
     FUN = function(x) {
-      tree <- ape::nj(ape::dist.dna(x, model = model))
+      tree <- ape::njs(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
 
       if (!is.null(outgroup) && outgroup %in% tree$tip.label) {
         tree <- ape::root(tree, outgroup = outgroup)
@@ -111,9 +115,13 @@ build_nj_tree <- function(alignment, outgroup = NULL, seed = 123, model = model)
 #' @inheritParams build_nj_tree
 #'
 #' @returns A phylogenetic tree plot.
-build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = model) {
+build_upgma_tree <- function(alignment, 
+                             outgroup = NULL, 
+                             seed = 123, 
+                             model = model,
+                             pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)
-  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = TRUE)
+  distance <- ape::dist.dna(bins, model = model, pairwise.deletion = pairwise)
   upgma_tree <- phangorn::upgma(distance)
 
   if (!is.null(outgroup) && outgroup %in% upgma_tree$tip.label) {
@@ -121,7 +129,7 @@ build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = mod
   }
 
   upgma_tree <- ape::ladderize(upgma_tree)
-  num_sites <- nchar(as.character(alignment[[1]]))
+  num_sites <- ncol(bins)
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
 
@@ -136,7 +144,7 @@ build_upgma_tree <- function(alignment, outgroup = NULL, seed = 123, model = mod
   set.seed(seed)
   boots <- ape::boot.phylo(upgma_tree, bins,
     FUN = function(x) {
-      tree <- phangorn::upgma(ape::dist.dna(x, model = model))
+      tree <- phangorn::upgma(ape::dist.dna(x, model = model, pairwise.deletion = TRUE))
 
       if (!is.null(outgroup) && outgroup %in% tree$tip.label) {
         tree <- ape::root(tree, outgroup = outgroup)
