@@ -1,6 +1,6 @@
 classification_server <- function(input, output, session, rv) {
-  # ================== CLASSIFICATION =====================#
-  callModule(profvis_server, "profiler_classification")
+  # ================== LOO =====================#
+
   classificationRef <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -39,7 +39,7 @@ classification_server <- function(input, output, session, rv) {
       incProgress(0.2, detail = "Loading and calculating...")
       tryCatch(
       {
-        result <- calculate_naive_bayes(input$forPredFile$datapath)
+        result <- calculate_loo(input$forPredFile$datapath)
         showNotification("Calculation complete!", type = "message")
     }, error = function(e) {
       showNotification(paste("Error:", e$message), type = "error")
@@ -135,4 +135,194 @@ classification_server <- function(input, output, session, rv) {
     req(predTable(), predModel(), predStat(), PredictionList())
     downloadButton("downloadClassification", "Download Results")
   })
+  
+  #=================CROSS VALIDATION
+  classificationRefCV <- data.frame(
+    Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
+    Population = c("POP1", "POP2", "POP3", "POP4", "..."),
+    rs101 = c("A/A", "A/T", "A/A", "T/T", "..."),
+    rs102 = c("G/G", "C/C", "G/C", "G/G", "..."),
+    rs_n = c("...", "...", "...", "...", "...")
+  )
+  
+  output$classificationRefCV_UI <- DT::renderDataTable(
+    {
+      req(classificationRefCV)
+      classificationRefCV
+    },
+    options = list(
+      scrollX = TRUE,
+      pageLength = 5
+    )
+  )
+  
+  predTableCV <- reactiveVal(NULL)
+  predStatCV <- reactiveVal(NULL)
+  predModelCV <- reactiveVal(NULL)
+  PredictionListCV <- reactiveVal(NULL)
+  modelInfoCV <- reactiveVal(NULL)
+  
+  observe({
+    file_ready <- !is.null(input$crossValFile)
+    shinyjs::toggleState("performCrossval", file_ready)
+  })
+  
+  observeEvent(input$performCrossval, {
+    disable("performCrossval")
+    req(input$crossValFile)
+    withProgress("Performing cross-validation", {
+      incProgress(0.2, detail = "Loading and validating input data...")
+      input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
+      input.file <- clean_input_data(input.file)
+      result <- tryCatch({
+        calculate_crossval(file = input.file,
+                           optimize = input$optimizeVals,
+                           k = as.integer(input$kValue))
+      }, error = function(e) {
+        showNotification(paste("Cross-validation error:", e$message), type = "error")
+      })
+      
+      if (!is.null(result)) {
+        incProgress(0.5, detail = "Processing results...")
+        stats <- as.data.frame(result$predStat)
+        stats <- data.frame(
+          Statistic = rownames(stats), stats, row.names = NULL
+        )
+        
+        other_stat <- as.data.frame(result$otherStat)
+        other_stat <- data.frame(Population = rownames(other_stat), other_stat, row.names = NULL)
+        
+        predTableCV(result$predTable)
+        predStatCV(stats)
+        predModelCV(other_stat)
+        PredictionListCV(result$preds)
+        
+        model_info <- data.frame(
+          Setting = c("Validation method", "Number of folds", "Repeats", "Optimization", "Best tuning parameters"),
+          Value = c("Repeated K-fold cross-validation", input$kValue, 3, if(isTRUE(input$optimizeVals)) "Yes" else "No",
+                    paste(names(result$bestTune), result$bestTune[1, ], sep = " = ", collapse = "; "))
+        )
+        
+        modelInfoCV(model_info)
+      }
+      
+    }
+      
+    )
+    enable("performCrossval")
+  })
+  
+  output$predictionTableResultCV <- DT::renderDataTable({
+    req(predTableCV())
+    
+    DT::datatable(predTableCV(),
+                  options = list(
+                    pageLength = 10, 
+                    autoWidth = TRUE,
+                    searchHighlight = TRUE
+                  ), filter = "top", selection = "multiple")
+  })
+  
+  output$statbyClassResultCV <- DT::renderDataTable({
+    req(predModelCV())
+    
+    DT::datatable(predModelCV(),
+                  options = list(
+                    pageLength = 10, 
+                    autoWidth = TRUE,
+                    searchHighlight = TRUE
+                  ), filter = "top", selection = "multiple")
+  })
+  
+  output$statbyStatResultCV <- DT::renderDataTable({
+    req(predStatCV())
+    
+    DT::datatable(predStatCV(),
+                  options = list(
+                    pageLength = 10, 
+                    autoWidth = TRUE,
+                    searchHighlight = TRUE
+                  ), filter = "top", selection = "multiple")
+  })
+  
+  output$predictionListCV <- DT::renderDataTable({
+    req(PredictionListCV())
+    
+    DT::datatable(PredictionListCV(),
+                  options = list(
+                    pageLength = 10, 
+                    autoWidth = TRUE,
+                    searchHighlight = TRUE
+                  ), filter = "top", selection = "multiple")
+  })
+  
+  output$modelInfoCV <- DT::renderDataTable({
+    req(modelInfoCV())
+    
+    DT::datatable(modelInfoCV(),
+                  options = list(
+                    pageLength = 10, 
+                    autoWidth = TRUE,
+                    searching = FALSE,
+                    ordering = FALSE
+                  ))
+  })
+  
+  output$downloadPredictionTableCV <- downloadHandler(
+    filename = function() {
+      paste0("CV_confusion_matrix_", format(Sys.time(), "%Y%m%d"), ".xlsx")
+    }, content = function(file) {
+      openxlsx::write.xlsx(predTableCV(), file = file)
+    }
+  )
+  
+  output$downloadPredictionTableCV_UI <- renderUI({
+    req(predTableCV())
+    
+    downloadButton("downloadPredictionTableCV", "Download Confusion matrix")
+  })
+  
+  output$downloadstatbyClassResultCV <- downloadHandler(
+    filename = function() {
+      paste0("CV_statistics_bypop_", format(Sys.time(), "%Y%m%d"), ".xlsx")
+    }, content = function(file) {
+      openxlsx::write.xlsx(predModelCV(), file = file)
+    }
+  )
+  
+  output$downloadstatbyClassResultCV_UI <- renderUI({
+    req(predModelCV())
+    
+    downloadButton("downloadstatbyClassResultCV", "Download Population Statistics")
+  })
+  
+  output$downloadoverallStatResultCV <- downloadHandler(
+    filename = function() {
+      paste0("CV_overall_statistics_", format(Sys.time(), "%Y%m%d"), ".xlsx")
+    }, content = function(file) {
+      openxlsx::write.xlsx(predStatCV(), file = file)
+    }
+  )
+  
+  output$downloadstatbyClassResultCV_UI <- renderUI({
+    req(predStatCV())
+    
+    downloadButton("downloadoverallStatResultCV", "Download Overall Statistics")
+  })
+  
+  output$downloadpredictionListCV <- downloadHandler(
+    filename = function() {
+      paste0("CV_individual_predictions_", format(Sys.time(), "%Y%m%d"), ".xlsx")
+    }, content = function(file) {
+      openxlsx::write.xlsx(PredictionListCV(), file = file)
+    }
+  )
+  
+  output$downloadpredictionListCV_UI <- renderUI({
+    req(PredictionListCV())
+    
+    downloadButton("downloadpredictionListCV", "Download Individual Predictions")
+  })
+  
+  
 }
