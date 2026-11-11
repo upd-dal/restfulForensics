@@ -15,12 +15,16 @@ get_plink_path <- function() {
 #' Get Arlecore path
 #'
 #' @returns The file path for the 64-bit arlecore executable
-get_arlecore_path <- "./arlecore64.exe"
+get_arlecore_path <- function() {
+  normalizePath("./arlecore64.exe")
+} 
 
 #' Get STRUCTURE path
 #'
-#' @returns The file path for the 64-bit arlecore executable
-get_structure_path <- "./structure.exe"
+#' @returns The file path for the 64-bit structure executable
+get_structure_path <- function() {
+  normalizePath("./structure.exe")
+  }
 
 #' Unpack compressed files
 #'

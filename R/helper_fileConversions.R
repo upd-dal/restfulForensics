@@ -1,4 +1,4 @@
-#' Homogenize data format
+#' Validate genotype file
 #'
 #' @param input The input as a dataframe.
 #'
@@ -13,6 +13,11 @@ validate_gt_df <- function(df) {
   }
 }
 
+#' Validate population file
+#'
+#' @param df The input as a dataframe.
+#'
+#' @returns A boolean indicating whether the input file contains a single population column.
 validate_file <- function(df) {
   validate_gt_df(df)
   val <- df[1, 2]
@@ -23,6 +28,11 @@ validate_file <- function(df) {
   }
 }
 
+#' Homogenize data format
+#'
+#' @param input The input as a dataframe.
+#'
+#' @returns Updated dataframe compatible for functions within restful forensics.
 clean_input_data <- function(file) {
   file <- as.data.frame(file)
   
@@ -46,7 +56,7 @@ clean_input_data <- function(file) {
     )))
   file <- as.data.frame(file)
 
-  return(as.data.frame(file))
+  return(file)
 }
 
 #' Convert dataframes to genind object
@@ -253,7 +263,7 @@ convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".
   merge_list_path <- file.path(work_dir, "merge_list.txt")
   prefixes <- c()
 
-  if (isFALSE(plink_files)){  
+  if (isFALSE(plink_files)){
     for (f in df_list) {
       base <- sub("\\.vcf(\\.gz)?$|\\.bcf$", "", basename(f), ignore.case = TRUE)
       out_pref <- file.path(work_dir, paste0(base, "_p2"))

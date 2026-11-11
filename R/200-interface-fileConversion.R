@@ -208,9 +208,6 @@ file_conversion_tab <- function() {
               accept = c(".zip", ".tar")
             ),
             helpText("*Accepts compressed files containing CSV/XLSX files."),
-#            fileInput("ref_file", "Optional Reference File (CSV or XLSX)",
-#              accept = c(".csv", ".xlsx", ".zip", ".tar")
-#            ),
             actionButton("run_uas2csv", "Run Conversion")
           ),
           tabBox(

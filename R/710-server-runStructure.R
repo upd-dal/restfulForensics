@@ -19,7 +19,7 @@ run_structure_analysis <- function(input, output, session, rv) {
     )
   )
   
-  structure_exec <- get_structure_path
+  structure_exec <- get_structure_path()
   observe({
     file_ready <- !is.null(input$structureFile) && file.exists(structure_exec)
     shinyjs::toggleState("runStructure", condition = file_ready)

@@ -161,8 +161,8 @@ msa_server <- function(input, output, session, rv) {
       }
     }
     
-    trimmed_sequences <- subseq(alignment_file, start = input$startSeq, end = input$endSeq)
-    rv$alignmentTrimmed <- trimmed_sequences
+    trimmed_sequences <- Biostrings::subseq(alignment_file, start = input$startSeq, end = input$endSeq)
+    rv$alignmentTrimmed <- Biostrings::DNAMultipleAlignment(trimmed_sequences)
   })
   
   output$downloadTrimmedFASTA <- downloadHandler(

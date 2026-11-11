@@ -45,11 +45,10 @@ calc_msa <- function(files, algorithm) {
   return(list(
     alignment = aligned_sequences,
     scores = alignment_scores,
-    adjusted = adjusted,
-    staggered = staggered
+    adjusted = Biostrings::DNAMultipleAlignment(adjusted),
+    staggered = Biostrings::DNAMultipleAlignment(staggered)
   ))
 }
-
 
 #' Build phylogenetic tree using NJ method
 #'

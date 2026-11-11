@@ -182,7 +182,6 @@ file_conversion_server <- function(input, output, session, rv) {
     downloadButton("downloadConvertedtoCSV", "Download CSV File")
   })
   
-  
 
   # =================== Add Metadata ======================#
   exampleRefCSV <- data.frame(
@@ -207,6 +206,10 @@ file_conversion_server <- function(input, output, session, rv) {
   convertedBreakdown <- reactiveVal(NULL)
   output.dir <- tempdir()
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  
+  iv_addmeta <- shinyvalidate::InputValidator$new()
+  iv_addmeta$add_rule("genotypeFile", sv_required())
+  iv_addmeta$add_rule("populationType", sv_required())
 
   observe({
     fileready <- !is.null(input$genotypeFile)
@@ -569,6 +572,13 @@ file_conversion_server <- function(input, output, session, rv) {
     tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
     if (!is.null(input$refProvided)) {
+      tryCatch({
+        validate_file(tosnipper_file)
+      }, 
+      error = function(e) {
+        showPersistent(paste("Error in conversion:", e$message), type = "error")
+        NULL
+      })
       inputPath <- tosnipper_file[, -2]
       refPath <- tosnipper_file[, 1:2]
     } else {
@@ -764,7 +774,6 @@ file_conversion_server <- function(input, output, session, rv) {
     incProgress(0.2, detail = "Loading input file...")
     for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
     for_arp <- clean_input_data(for_arp)
-    validate_file(for_arp)
     # All null values are "N", set to ""
     for_arp <- for_arp %>%
       mutate(across(everything(), ~ case_when(
@@ -777,6 +786,7 @@ file_conversion_server <- function(input, output, session, rv) {
     # create the arp file
     tryCatch(
       {
+      validate_file(for_arp)
       arp_file <- build_arp_per_population(for_arp,
       genotypic_data = as.numeric(input$genotypicData),
       gametic_phase = as.numeric(input$gameticPhase),

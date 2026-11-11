@@ -1,6 +1,5 @@
 classification_server <- function(input, output, session, rv) {
   # ================== LOO =====================#
-
   classificationRef <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -37,24 +36,29 @@ classification_server <- function(input, output, session, rv) {
     withProgress(message = "Ongoing: ", {
       
       incProgress(0.2, detail = "Loading and calculating...")
-      tryCatch(
+      result <- tryCatch(
       {
-        result <- calculate_loo(input$forPredFile$datapath)
-        showNotification("Calculation complete!", type = "message")
+        calculate_loo(input$forPredFile$datapath)
     }, error = function(e) {
       showNotification(paste("Error:", e$message), type = "error")
+      return(NULL)
     })
     
     incProgress(0.4, detail = "Processing results...")
-    stats <- as.data.frame(result$predStat)
-    stats <- data.frame(row.names(stats), stats)
-    other_stat <- t(as.data.frame(result$otherStat))
-    other_stat <- data.frame(row.names(other_stat), other_stat)
     
-    predTable(as.data.frame(result$predTable))
-    predStat(stats)
-    predModel(other_stat)
-    PredictionList(result$preds)
+    if (!is.null(result)){
+      showNotification("Calculation complete!", type = "message")
+      stats <- as.data.frame(result$predStat)
+      stats <- data.frame(row.names(stats), stats)
+      other_stat <- t(as.data.frame(result$otherStat))
+      other_stat <- data.frame(row.names(other_stat), other_stat)
+      
+      predTable(as.data.frame(result$predTable))
+      predStat(stats)
+      predModel(other_stat)
+      PredictionList(result$preds)
+    }
+
     })
     enable("runNaiveBayes")
   })
@@ -180,6 +184,7 @@ classification_server <- function(input, output, session, rv) {
                            k = as.integer(input$kValue))
       }, error = function(e) {
         showNotification(paste("Cross-validation error:", e$message), type = "error")
+        return(NULL)
       })
       
       if (!is.null(result)) {

@@ -88,6 +88,7 @@ snp_extraction_server <- function(input, output, session, rv) {
 
     variant_ids(unique(snps))
     rsID_available(length(snps) > 1 || snps[1] != ".")
+    
   })
 
   output$markerOptionsUI <- renderUI({
@@ -296,16 +297,29 @@ snp_extraction_server <- function(input, output, session, rv) {
           if (f1_ext == "vcf") {
             file1 <- vcf_to_csv(input$concordanceFile1$datapath)
             file1 <- file1$with_meta
-          } else if (f1_ext %in% c("csv", "xlsx")) {
+          } else if (f1_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             file1 <- load_csv_xlsx_files(input$concordanceFile1$datapath)
+          } else {
+            stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
           }
           
           f2_ext <- tools::file_ext(input$concordanceFile2$name)
           if (f2_ext == "vcf") {
             file2 <- vcf_to_csv(input$concordanceFile2$datapath)
             file2 <- file2$with_meta
-          } else if (f2_ext %in% c("csv", "xlsx")) {
+          } else if (f2_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             file2 <- load_csv_xlsx_files(input$concordanceFile2$datapath)
+          } else {
+            stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
+          }
+          
+          val1 <- file1[1, 2]
+          is_gt_f1 <- stringr::str_count(val1, "[A-Za-z]") == 2
+          val2 <- file2[1, 2]
+          is_gt_f2 <- stringr::str_count(val2, "[A-Za-z]") == 2
+          
+          if (isFALSE(is_gt_f1) || isFALSE(is_gt_f2)) {
+            stop("Unsupported format: Genotype should be present by the second column. Only biallelic markers are accepted.")
           }
           
           incProgress(0.4, detail = "Calculating concordance...")
