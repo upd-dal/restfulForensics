@@ -34,21 +34,18 @@ classification_server <- function(input, output, session, rv) {
     req(input$forPredFile)
 
     withProgress(message = "Ongoing: ", {
-      
+      tryCatch(
+        {
       incProgress(0.2, detail = "Loading and calculating...")
-      result <- tryCatch(
-      {
+          file_ext <- tools::file_ext(input$forPredFile$datapath)
+          if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+            stop("Unsupported file format: Should be a CSV/Excel file")
+          }
+          
         validate_file(load_csv_xlsx_files(input$forPredFile$datapath))
         calculate_loo(input$forPredFile$datapath)
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-      return(NULL)
-    })
     
     incProgress(0.4, detail = "Processing results...")
-    
-    if (!is.null(result)){
-      showNotification("Calculation complete!", type = "message")
       stats <- as.data.frame(result$predStat)
       stats <- data.frame(row.names(stats), stats)
       other_stat <- t(as.data.frame(result$otherStat))
@@ -58,8 +55,12 @@ classification_server <- function(input, output, session, rv) {
       predStat(stats)
       predModel(other_stat)
       PredictionList(result$preds)
-    }
 
+      }, error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+        return(NULL)
+      })
+      
     })
     enable("runNaiveBayes")
   })
@@ -176,21 +177,20 @@ classification_server <- function(input, output, session, rv) {
     disable("performCrossval")
     req(input$crossValFile)
     withProgress("Performing cross-validation", {
-      incProgress(0.2, detail = "Loading and validating input data...")
-
-      result <- tryCatch({
+      
+  tryCatch({
+    incProgress(0.2, detail = "Loading and validating input data...")
+    file_ext <- tools::file_ext(input$crossValFile$datapath)
+    if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+      stop("Unsupported file format: Should be a CSV/Excel file")
+    }
         input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
         input.file <- clean_input_data(input.file)
         validate_file(input.file)
         calculate_crossval(file = input.file,
                            optimize = input$optimizeVals,
                            k = as.integer(input$kValue))
-      }, error = function(e) {
-        showNotification(paste("Cross-validation error:", e$message), type = "error")
-        return(NULL)
-      })
       
-      if (!is.null(result)) {
         incProgress(0.5, detail = "Processing results...")
         stats <- as.data.frame(result$predStat)
         stats <- data.frame(
@@ -212,7 +212,11 @@ classification_server <- function(input, output, session, rv) {
         )
         
         modelInfoCV(model_info)
-      }
+    
+      }, error = function(e) {
+        showNotification(paste("Cross-validation error:", e$message), type = "error")
+        return(NULL)
+      })
       
     }
       

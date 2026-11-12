@@ -40,7 +40,7 @@ phylogeny_server <- function(input, output, session, rv) {
           }
           alignment_file <- seqinr::read.alignment(file = input$msaFileforPhylogen$datapath, format = file_ext_ref)
         } else {
-          stop("Unsupported file format. ")
+          stop("Unsupported file format.")
         }
       } else {
         stop("Please select/upload an alignment.")
@@ -58,8 +58,7 @@ phylogeny_server <- function(input, output, session, rv) {
       
     }, error = function(e) {
       distanceNAcount(NULL)
-      showNotification(paste(
-        "Validation error", e$message), type = "error")
+      showNotification(paste("Validation error", e$message), type = "error")
     })
   })
   

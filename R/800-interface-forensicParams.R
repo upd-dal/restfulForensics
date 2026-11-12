@@ -11,14 +11,15 @@ forensic_params_tab <- function() {
             helpText("See 'Sample Input File' for accepted formats. Frequency table and genotype files are accepted."),
 
             actionButton("calcIISNPs", "Calculate", icon = icon("calculator")),
-            uiOutput("downloadMetrics_UI")
+            uiOutput("downloadMetrics_UI"),
+            uiOutput("downloadAFTable_UI")
           ),
           tabBox(
             tabPanel(
               title = "Instructions",
               h4("Calculate forensic parameters specific for identity-informative SNPs"),
               tags$ul(
-                tags$li("Random match probability (PM)"),
+                tags$li("Probability of Matching (PM)"),
                 tags$li("Power of discrimination (PD)"),
                 tags$li("Polymorphism Information Content (PIC)"),
                 tags$li("Power of Exclusion (PE)"),
@@ -100,13 +101,6 @@ forensic_params_tab <- function() {
             fileInput("newPopDataFile", "Upload population reference database", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv"))
           ),
           fileInput("fileProfile", "Upload Profile", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
-          checkboxInput("floorCeiling", "Use 5/2n rule in calculating genotype frequency?", FALSE),
-          helpText("Defining the total individuals/samples assumes that the population data uploaded is from a single population
-                   with subpopulations; hence the use of theta."),
-          conditionalPanel(
-            condition = "input.floorCeiling",
-            numericInput("totalPop", "Total individuals/samples", value = 100, min = 10, )
-          ),
           numericInput("thetaValue", "Theta Value", min = 0, value = 0.01, max = 1),
           actionButton("calcRMP", "Calculate", icon = icon("calculator"))
           
@@ -114,7 +108,8 @@ forensic_params_tab <- function() {
         tabBox(
           tabPanel(
             title = "Instructions",
-            p("Calculate the RMP value for a profile."),
+            h4("Calculate the RMP value for a profile."),
+            p("Calculating the RMP of a profile uses frequencies derived under HWE assumptions."),
             p(strong("Input file:")),
             tags$ul(
               tags$li("(Reference database) CSV or Excel file containing allele frequency for a set of loci in a population"),

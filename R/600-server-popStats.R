@@ -317,10 +317,11 @@ pop_stats_server <- function(input, output, session, rv) {
   arlequinLD <- reactiveVal(NULL)
   locusData <- reactiveVal(NULL)
 
-  arlecore_path <- get_arlecore_path
+  arlecore_path <- get_arlecore_path()
   
   observe({
-    shinyjs::toggleState("runArlecore", (!is.null(input$fileForArlecoreGT) || !is.null(input$fileForArlecoreARP)))
+    fileReady <- (!is.null(input$fileForArlecoreGT) || (!is.null(input$fileForArlecoreARP))) && file.exists(arlecore_path)
+    shinyjs::toggleState("runArlecore", fileReady)
   })
 
   observeEvent(input$runArlecore, {
@@ -331,40 +332,40 @@ pop_stats_server <- function(input, output, session, rv) {
       tryCatch({
         incProgress(0.2, detail = "Loading input file...")
         
-        if (!is.null(input$fileForArlecoreGT)) {
-        for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
-        for_arp <- clean_input_data(for_arp)
-        validate_file(for_arp)
-        rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
-        rsids <- data.frame(rownames(rsids), rsids)
-        locusData(rsids)
+        file_ext <- tools::file_ext(input$fileForArlecoreGT$datapath)
         
-        # All null values are "N", set to ""
-        for_arp <- for_arp %>%
-          mutate(across(everything(), ~ case_when(
-            . == "N" ~ "",
-            TRUE ~ .x
-          )))
-        for_arp <- as.data.frame(for_arp)
-        
-        arp_file <- build_arp_per_population(for_arp,
-                                             genotypic_data = as.numeric(input$genotypicData),
-                                             gametic_phase = as.numeric(input$gameticPhase),
-                                             recessive_data = as.numeric(input$recessiveData),
-                                             locus_sep = input$locusSep,
-                                             output.prefix = "arp_file",
-                                             data_type = "STANDARD"
-        )
-      } else if (!is.null(input$fileForArlecoreARP)) {
-        arp_ext <- tools::file_path_sans_ext(input$fileForArlecoreARP$datapath)
-        
-        if (arp_ext != "arp") {
-          stop("Unsupported file format. Upload an .arp file or upload a genotype file (CSV/Excel).")
+        if ((!is.null(input$fileForArlecoreGT)) &&
+            (tools::file_ext(input$fileForArlecoreGT$datapath) %in% c("xlsx", "xlsm", "xlsb", "xls", "csv"))
+            ) {
+          for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
+          for_arp <- clean_input_data(for_arp)
+          validate_file(for_arp)
+          rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
+          rsids <- data.frame(rownames(rsids), rsids)
+          locusData(rsids)
+          
+          # All null values are "N", set to ""
+          for_arp <- for_arp %>%
+            mutate(across(everything(), ~ case_when(
+              . == "N" ~ "",
+              TRUE ~ .x
+            )))
+          for_arp <- as.data.frame(for_arp)
+          
+          arp_file <- build_arp_per_population(for_arp,
+                                               genotypic_data = as.numeric(input$genotypicData),
+                                               gametic_phase = as.numeric(input$gameticPhase),
+                                               recessive_data = as.numeric(input$recessiveData),
+                                               locus_sep = input$locusSep,
+                                               output.prefix = "arp_file",
+                                               data_type = "STANDARD"
+          )
+        } else if (!is.null(input$fileForArlecoreARP)) {
+          arp_file <- input$fileForArlecoreARP$datapath
+        } else {
+          stop("Unsupported file type: Acceptable are CSV/Excel or ARP files.")
         }
         
-        arp_file <- input$fileForArlecoreARP$datapath
-      }
-      
       arlequinFile(arp_file)
 
       incProgress(0.4, detail = "Running arlecore...")

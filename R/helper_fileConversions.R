@@ -740,17 +740,6 @@ to_snipper <- function(input,
   matched <- matched[, -ncol(matched)]
   
   last.col <- as.integer(ncol(matched))
-  #sec.last <- last.col - 1
-  #Population <- as.data.frame(matched[, last.col])
-  #Population <- as.data.frame(matched[, sec.last])
-  #Sample <- as.data.frame(matched$Sample)
-  #data <- as.data.frame(matched[, 2:ncol(matched) - 1])
-  #drops <- "Sample"
-  #data <- data[, !(names(data) %in% drops)]
-
-  #to_excel <- dplyr::bind_cols(Population, Sample, data)
-  #to_excel <- dplyr::rename(to_excel, Population = 1, Sample = 2)
-
   tosnpr_split <- split(matched, matched$Population)
   tosnpr_split <- tosnpr_split %>% map(`rownames<-`, NULL)
   tosnpr_split <- lapply(

@@ -788,12 +788,12 @@ file_conversion_server <- function(input, output, session, rv) {
       {
       validate_file(for_arp)
       arp_file <- build_arp_per_population(for_arp,
-      genotypic_data = as.numeric(input$genotypicData),
-      gametic_phase = as.numeric(input$gameticPhase),
-      recessive_data = as.numeric(input$recessiveData),
-      locus_sep = input$locusSep,
-      output.prefix = "arp_file",
-      data_type = "STANDARD"
+                                           genotypic_data = as.numeric(input$genotypicDataConv),
+                                           gametic_phase = as.numeric(input$gameticPhaseConv),
+                                           recessive_data = as.numeric(input$recessiveDataConv),
+                                           locus_sep = input$locusSepConv,
+                                           output.prefix = "arp_file",
+                                           data_type = "STANDARD"
     )
     
     arleFile(arp_file)

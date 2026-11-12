@@ -106,6 +106,7 @@ run_structure_analysis <- function(input, output, session, rv) {
       # get the q matrices
       incProgress(0.8, detail = "Extracting q matrices...")
       qmatrices_result(lapply(sr, function(x) x$q.mat))
+      analysis_done(TRUE)
       }, 
       error = function(e) {
         showNotification(paste("Error:", e$message), type = "error")
@@ -114,7 +115,6 @@ run_structure_analysis <- function(input, output, session, rv) {
       
     })
     enable("runStructure")
-    analysis_done(TRUE)
   })
   
   #   output$structure_log <- renderText({
