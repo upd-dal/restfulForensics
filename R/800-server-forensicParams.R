@@ -33,12 +33,11 @@ forensic_params_server <- function(input, output, session, rv) {
     req(input$iisnpsFile)
 
     withProgress(message = "Ongoing: ", {
-      
-    incProgress(0.2, detail = "Loading input file...")
-    fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
-    cleaned_data <- clean_input_data(fileUploaded)
-    tryCatch(
-      {
+    tryCatch({
+      incProgress(0.2, detail = "Loading input file...")
+      fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
+      cleaned_data <- clean_input_data(fileUploaded)
+      validate_file(cleaned_data)
     genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
     
     incProgress(0.4, detail = "Calculating frequencies...")

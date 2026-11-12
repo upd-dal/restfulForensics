@@ -41,7 +41,14 @@ run_structure_analysis <- function(input, output, session, rv) {
     Sys.sleep(1.5)
     
     withProgress(message = "Analysis ongoing...", {
-      incProgress(0.2, detail = "Loading input file...")
+      tryCatch({
+        incProgress(0.2, detail = "Loading input file...")
+        str_ext <- tools::file_path_sans_ext(input$structureFile$datapath)
+        
+        if (!str_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
+          stop("Unsupported file format. Input should be a CSV or Excel file.")
+        }
+        
       df <- csv_to_gtype_format(input$structureFile$datapath)
       df_gtype <- strataG::df2gtypes(df, ploidy = 2, id.col = 1, strata.col = 2, loc.col = 3)
       
@@ -99,9 +106,14 @@ run_structure_analysis <- function(input, output, session, rv) {
       # get the q matrices
       incProgress(0.8, detail = "Extracting q matrices...")
       qmatrices_result(lapply(sr, function(x) x$q.mat))
+      }, 
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+      )
       
-      enable("runStructure")
     })
+    enable("runStructure")
     analysis_done(TRUE)
   })
   

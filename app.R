@@ -1,7 +1,7 @@
 library(shiny)
 library(shinyjs)
 library(shinydashboard)
-library(shinyvalidate)
+#library(shinyvalidate)
 library(shinybusy)
 library(plotly)
 library(dplyr)

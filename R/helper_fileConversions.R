@@ -734,34 +734,36 @@ to_snipper <- function(input,
     reference$Sample <- as.character(reference$Sample)
   }
 
-  matched <- tosnipper %>% dplyr::left_join(reference, by = "Sample")
+  matched <- tosnipper %>% 
+    dplyr::left_join(reference, by = "Sample") %>%
+    dplyr::mutate(Population = `Superpopulation name`, .before = "Sample")
+  matched <- matched[, -ncol(matched)]
+  
   last.col <- as.integer(ncol(matched))
   #sec.last <- last.col - 1
-  Population <- as.data.frame(matched[, last.col])
+  #Population <- as.data.frame(matched[, last.col])
   #Population <- as.data.frame(matched[, sec.last])
-  Sample <- as.data.frame(matched$Sample)
-  data <- as.data.frame(matched[, 2:ncol(matched) - 1])
-  drops <- "Sample"
-  data <- data[, !(names(data) %in% drops)]
+  #Sample <- as.data.frame(matched$Sample)
+  #data <- as.data.frame(matched[, 2:ncol(matched) - 1])
+  #drops <- "Sample"
+  #data <- data[, !(names(data) %in% drops)]
 
-  to_excel <- dplyr::bind_cols(Population, Sample, data)
-  to_excel <- dplyr::rename(to_excel, Population = 1, Sample = 2)
+  #to_excel <- dplyr::bind_cols(Population, Sample, data)
+  #to_excel <- dplyr::rename(to_excel, Population = 1, Sample = 2)
 
-  tosnpr_split <- split(to_excel, to_excel$Population)
+  tosnpr_split <- split(matched, matched$Population)
   tosnpr_split <- tosnpr_split %>% map(`rownames<-`, NULL)
   tosnpr_split <- lapply(
     tosnpr_split,
     function(x) {
-      x$No <- rownames(x)
-      as.data.frame(x)
-      data <- as.data.frame(x[, 2:ncol(x) - 2])
-      Sample <- x[, 1]
-      x <- dplyr::bind_cols(x$No, Sample, data)
+      rownames(x) <- NULL
+      x <- dplyr::bind_cols(as.data.frame(rownames(x)), x) %>%
+        dplyr::rename(No = 1)
     }
   )
 
   merged <- plyr::ldply(tosnpr_split, data.frame)
-  merged <- merged[, -c(1, 3)]
+  merged <- merged[, -1]
 
   if (isTRUE(target.pop) == TRUE) {
     target <- merged[merged$Population == population.name, ]
@@ -783,7 +785,7 @@ to_snipper <- function(input,
   pop.count <- as.integer(nrow(pop.only))
   merged3 <- as.data.frame(merged2)
 
-  names(merged3)[names(merged3) == "...1"] <- sample.count
+  names(merged3)[names(merged3) == "No"] <- sample.count
   names(merged3)[names(merged3) == "Population"] <- markers
   names(merged3)[names(merged3) == "Sample"] <- pop.count
   names(merged3)[names(merged3) == "snpr"] <- ""

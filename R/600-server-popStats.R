@@ -33,13 +33,14 @@ pop_stats_server <- function(input, output, session, rv) {
   statsMatrix <- reactiveVal(NULL)
   hwMatrix <- reactiveVal(NULL)
   fstMatrix <- reactiveVal(NULL)
-
-  fsnps_gen <- reactive({
-    req(input$popStatsFile)
-    df <- load_csv_xlsx_files(input$popStatsFile$datapath)
-    cleaned <- clean_input_data(df)
-    convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
-  })
+  fsnps_gen <- reactiveVal(NULL)
+  
+#  fsnps_gen <- reactive({
+#    req(input$popStatsFile)
+#    df <- load_csv_xlsx_files(input$popStatsFile$datapath)
+#    cleaned <- clean_input_data(df)
+#    convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
+#  })
 
   observeEvent(input$runPopStats, {
     disable("runPopStats")
@@ -48,7 +49,12 @@ pop_stats_server <- function(input, output, session, rv) {
     withProgress(message = "Running population analysis...", value = 0, {
       tryCatch(
         {
-          req(fsnps_gen())
+          #req(fsnps_gen())
+          df <- load_csv_xlsx_files(input$popStatsFile$datapath)
+          cleaned <- clean_input_data(df)
+          validate_file(cleaned)
+          fsnpsgen <- convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
+          fsnps_gen(fsnpsgen)
 
           incProgress(0.4, detail = "Computing private alleles...")
           priv_alleles <- poppr::private_alleles(fsnps_gen())
@@ -322,12 +328,13 @@ pop_stats_server <- function(input, output, session, rv) {
     results <- NULL
     withProgress(message = "Analysis ongoing...", {
       #tryCatch({
+      tryCatch({
         incProgress(0.2, detail = "Loading input file...")
         
         if (!is.null(input$fileForArlecoreGT)) {
         for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
         for_arp <- clean_input_data(for_arp)
-        
+        validate_file(for_arp)
         rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
         rsids <- data.frame(rownames(rsids), rsids)
         locusData(rsids)
@@ -349,6 +356,12 @@ pop_stats_server <- function(input, output, session, rv) {
                                              data_type = "STANDARD"
         )
       } else if (!is.null(input$fileForArlecoreARP)) {
+        arp_ext <- tools::file_path_sans_ext(input$fileForArlecoreARP$datapath)
+        
+        if (arp_ext != "arp") {
+          stop("Unsupported file format. Upload an .arp file or upload a genotype file (CSV/Excel).")
+        }
+        
         arp_file <- input$fileForArlecoreARP$datapath
       }
       
@@ -422,6 +435,12 @@ pop_stats_server <- function(input, output, session, rv) {
       arlequinPairwise(pairwise_matrix)
       arlequinPopDiversity(population_diversity)
       arlequinLD(ld_vals)
+      
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+      )
     })
 
     enable("runArlecore")

@@ -38,6 +38,7 @@ classification_server <- function(input, output, session, rv) {
       incProgress(0.2, detail = "Loading and calculating...")
       result <- tryCatch(
       {
+        validate_file(load_csv_xlsx_files(input$forPredFile$datapath))
         calculate_loo(input$forPredFile$datapath)
     }, error = function(e) {
       showNotification(paste("Error:", e$message), type = "error")
@@ -176,9 +177,11 @@ classification_server <- function(input, output, session, rv) {
     req(input$crossValFile)
     withProgress("Performing cross-validation", {
       incProgress(0.2, detail = "Loading and validating input data...")
-      input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
-      input.file <- clean_input_data(input.file)
+
       result <- tryCatch({
+        input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
+        input.file <- clean_input_data(input.file)
+        validate_file(input.file)
         calculate_crossval(file = input.file,
                            optimize = input$optimizeVals,
                            k = as.integer(input$kValue))
