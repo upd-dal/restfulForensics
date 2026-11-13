@@ -309,7 +309,7 @@ snp_extraction_server <- function(input, output, session, rv) {
 
 
   # =============== CONCORDANCE ANALYSIS ==================#
-
+  callModule(profvis_server, "profiler_concordance")
   observe({
     toggleState("compareBtn", !is.null(input$concordanceFile1) && !is.null(input$concordanceFile2))
   })

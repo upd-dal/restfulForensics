@@ -1,5 +1,6 @@
 file_conversion_server <- function(input, output, session, rv) {
   # ================= FILE CONVERSION =====================#
+  callModule(profvis_server, "profiler_convertfiles")
   convertedVCF <- reactiveVal(NULL)
   convertedFASTA <- reactiveVal(NULL)
   convertedtoCSV <- reactiveVal(NULL)
@@ -184,6 +185,7 @@ file_conversion_server <- function(input, output, session, rv) {
   
 
   # =================== Add Metadata ======================#
+  callModule(profvis_server, "profiler_addmetadata")
   exampleRefCSV <- data.frame(
     Sample.Name = c("sample1", "sample2", "sample3", "sample4", "..."),
     Population = c("Malaysia", "Mexico", "Greece", "South Korea", "..."),
@@ -434,7 +436,7 @@ file_conversion_server <- function(input, output, session, rv) {
   })
 
   # ================== Widen GT file ====================#
-
+  callModule(profvis_server, "profiler_widen")
   convertedUAS <- reactiveVal(NULL)
   observe({
     shinyjs::toggleState("run_uas2csv", !is.null(input$uas_zip))
@@ -505,6 +507,7 @@ file_conversion_server <- function(input, output, session, rv) {
   )
 
   # ==================== To SNIPPER =======================#
+  callModule(profvis_server, "profiler_snipper")
   exampleTableSnipper1 <- data.frame(
     Ind = c("sample1", "sample2", "sample3", "sample4", "..."),
     rs101 = c("A/A", "A/T", "T/T", "A/T", "..."),
@@ -638,6 +641,7 @@ file_conversion_server <- function(input, output, session, rv) {
   )
 
   # ==================== CSV to STR =======================#
+  callModule(profvis_server, "profiler_structure")
   examplePop_STR <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -737,6 +741,7 @@ file_conversion_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
+  callModule(profvis_server, "profiler_arle")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
