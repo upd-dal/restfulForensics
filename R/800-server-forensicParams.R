@@ -153,6 +153,8 @@ forensic_params_server <- function(input, output, session, rv) {
   
 
   #================= Matching Profile
+  callModule(profvis_server, "profiler_profile")
+  
   forensicParamInput <- data.frame(
     markers = c("rs101.A", "rs101.T", "rs102.C", "rs102.G", "..."),
     pop1 = c("0.185185185	", "0.814814815", "0.777777778", "0.222222222", "..."),
@@ -187,8 +189,6 @@ forensic_params_server <- function(input, output, session, rv) {
   )
   
   rmpResult <- reactiveVal(NULL)
-  callModule(profvis_server, "profiler_profile")
-  
   observe({
     shinyjs::toggleState("calcRMP", !is.null(input$fileProfile))
   })

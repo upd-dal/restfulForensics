@@ -5,6 +5,7 @@ classification_tab <- function() {
     tabsetPanel(
       tabPanel(
         title = "Leave-one-out",
+        profvis::profvis_ui("profiler_loo"),
         fluidRow(
           box(
             fileInput("forPredFile", "Upload file", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
@@ -83,6 +84,7 @@ classification_tab <- function() {
       ),
       tabPanel(
         title = "Cross-validation",
+        profvis::profvis_ui("profiler_cval"),
         fluidRow(
           box(
             fileInput("crossValFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),

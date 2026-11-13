@@ -1,5 +1,6 @@
 classification_server <- function(input, output, session, rv) {
   # ================== LOO =====================#
+  callModule(profvis_server, "profiler_loo")
   classificationRef <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -143,6 +144,7 @@ classification_server <- function(input, output, session, rv) {
   })
   
   #=================CROSS VALIDATION
+  callModule(profvis_server, "profiler_cval")
   classificationRefCV <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

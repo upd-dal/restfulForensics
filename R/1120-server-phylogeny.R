@@ -1,5 +1,6 @@
 phylogeny_server <- function(input, output, session, rv) {
   # =========== PHYLOGENETIC TREE CONSTRUCTION ============#
+  callModule(profvis_server, "profiler_tree")
   tree_plot <- reactiveVal(NULL)
   tree_path <- reactiveVal(NULL)
   tree_model <- reactiveVal(NULL)

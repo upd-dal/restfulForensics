@@ -6,6 +6,7 @@ msa_tab <- function() {
     tabsetPanel(
       tabPanel(
         title = "Multiple Sequence Alignment",
+        profvis::profvis_ui("profiler_msa"),
         fluidRow(
           box(
             fileInput("fastaFile", "Upload zipped FASTA files", accept = c(".zip", ".tar")),
@@ -76,6 +77,7 @@ msa_tab <- function() {
       ),
       tabPanel(
         title = "Trim Sequences",
+        profvis::profvis_ui("profiler_trim"),
         box(
           checkboxInput("uploadMSATrim", "Use results from the MSA tab?", value = FALSE),
           conditionalPanel(
@@ -123,6 +125,7 @@ phylogeny_tab <- function() {
     tabName = "PhylogenAnalysis",
     tabPanel(
       title = "Phylogenetic Tree Analysis",
+      profvis::profvis_ui("profiler_tree"),
       fluidRow(
         box(
           checkboxInput("uploadMSA", "Use results from the MSA tab?", value = FALSE),
@@ -189,6 +192,7 @@ barcoding_tab <- function() {
     tabName = "BarcodingTab",
     tabPanel(
       title = "Barcoding",
+      profvis::profvis_ui("profiler_barcoding"),
       tabsetPanel(
         # Species Identification submodule =========================================
         tabPanel(
