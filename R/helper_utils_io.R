@@ -15,12 +15,23 @@ get_plink_path <- function() {
 #' Get Arlecore path
 #'
 #' @returns The file path for the 64-bit arlecore executable
-get_arlecore_path <- "./arlecore64.exe"
+get_arlecore_path <- function() {
+  normalizePath("./arlecore64.exe")
+} 
 
 #' Get STRUCTURE path
 #'
-#' @returns The file path for the 64-bit arlecore executable
-get_structure_path <- "./structure.exe"
+#' @returns The file path for the 64-bit structure executable
+get_structure_path <- function() {
+  normalizePath("./structure.exe")
+}
+
+#' Get CLUMPP path
+#'
+#' @returns The file path for the 64-bit structure executable
+get_clumpp_path <- function() {
+  normalizePath("./CLUMPP.exe", mustWork = FALSE)
+}
 
 #' Unpack compressed files
 #'
@@ -142,6 +153,11 @@ read_fasta <- function(zipped, directory) {
   data_path <- file.path(directory, "fasta_files")
   fasta_patterns <- paste("\\.fasta$", "\\.fa$", "\\.fna$", "\\fas$", "\\.txt", sep = "|")
   fasta_files <- list.files(path = data_path, pattern = fasta_patterns, full.names = TRUE)
+  
+  if (length(fasta_files) == 0) {
+    stop("No fasta files found in the zipped folder.")
+  }
+  
   dna_sequences <- Biostrings::readDNAStringSet(fasta_files)
 
   return(dna_sequences)

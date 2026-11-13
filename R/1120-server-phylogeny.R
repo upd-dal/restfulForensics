@@ -1,6 +1,5 @@
 phylogeny_server <- function(input, output, session, rv) {
   # =========== PHYLOGENETIC TREE CONSTRUCTION ============#
-  callModule(profvis_server, "profiler_tree")
   tree_plot <- reactiveVal(NULL)
   tree_path <- reactiveVal(NULL)
   tree_model <- reactiveVal(NULL)
@@ -24,7 +23,8 @@ phylogeny_server <- function(input, output, session, rv) {
           input$treeAlignmentType,
           initial = rv$alignmentMSA,
           adjusted = rv$alignmentAdjusted,
-          staggered = rv$alignmentStaggered
+          staggered = rv$alignmentStaggered,
+          trimmed = rv$alignmentTrimmed
         )
       } else if (!is.null(input$msaFileforPhylogen)) {
         file_ext_ref <- tools::file_ext(
@@ -40,7 +40,7 @@ phylogeny_server <- function(input, output, session, rv) {
           }
           alignment_file <- seqinr::read.alignment(file = input$msaFileforPhylogen$datapath, format = file_ext_ref)
         } else {
-          stop("Unsupported file format. ")
+          stop("Unsupported file format.")
         }
       } else {
         stop("Please select/upload an alignment.")
@@ -58,8 +58,7 @@ phylogeny_server <- function(input, output, session, rv) {
       
     }, error = function(e) {
       distanceNAcount(NULL)
-      showNotification(paste(
-        "Validation error", e$message), type = "error")
+      showNotification(paste("Validation error", e$message), type = "error")
     })
   })
   
@@ -108,7 +107,7 @@ phylogeny_server <- function(input, output, session, rv) {
     outgroup <- input$outgroup
     bs <- input$bootstrapSamples
     model <- input$model
-    aligned <- alignmentFile()
+    #aligned <- alignmentFile()
     directory <- tempdir()
     
     withProgress(message = "Building phylogenetic tree...", value = 0, {
@@ -121,22 +120,22 @@ phylogeny_server <- function(input, output, session, rv) {
           }
 
           if (tree_type == "NJ") {
-            plot_obj <- build_nj_tree(aligned, outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
+            plot_obj <- build_nj_tree(alignmentFile(), outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
             tree_plot(plot_obj)
             tree_path(NULL)
             tree_model(paste("NJ C", model, ")", sep = ""))
           } else if (tree_type == "UPGMA") {
-            plot_obj <- build_upgma_tree(aligned, outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
+            plot_obj <- build_upgma_tree(alignmentFile(), outgroup = outgroup, model = model, seed = seed, pairwise = input$pairwiseDeletion)
             tree_plot(plot_obj)
             tree_path(NULL)
             tree_model(paste("UPGMA (", model, ")", sep = ""))
           } else if (tree_type == "Parsimony") {
-            path <- build_max_parsimony(aligned, outgroup = outgroup, directory = directory, seed = seed)
+            path <- build_max_parsimony(alignmentFile(), outgroup = outgroup, directory = directory, seed = seed)
             tree_plot(NULL)
             tree_path(path)
             tree_model("Parsimony")
           } else if (tree_type == "Maximum Likelihood") {
-            results <- build_ml_tree(aligned, outgroup = outgroup, directory = directory, seed = seed, bs = bs)
+            results <- build_ml_tree(alignmentFile(), outgroup = outgroup, directory = directory, seed = seed, bs = bs)
             tree_plot(NULL)
             tree_path(results$filename)
             tree_model(results$best_model)

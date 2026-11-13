@@ -280,7 +280,7 @@ barcoding_tab <- function() {
               tabPanel(
                 title = "Overview",
                 h4("Calculate the optimal kmer values using BarcodingR (Zhang et al., 2016)"),
-                p(strong("Input file/s:"), "Aligned sequences of the reference dataset (FASTA file)"),
+                p(strong("Input file/s:"), "Aligned sequences (.msa, .fasta, .msf, .aln, .faa, .fas)"),
                 p(strong("Parameter/s:"), "Length of maximum kmer value"),
                 p(strong("Expected output file:"), "Kmer plot (.png)")
               )
@@ -320,7 +320,7 @@ barcoding_tab <- function() {
               tabPanel(
                 title = "Overview",
                 h4("Calculate the barcoding gap using BarcodingR (Zhang et al., 2016)"),
-                p(strong("Input file:"), "VCF file"),
+                p(strong("Input file:"), "Aligned reference sequences (.msa, .fasta, .msf, .aln, .faa, .fas)."),
                 p(strong("Parameter/s:"), "Distance (raw, K80, euclidean)"),
                 p(strong("Expected output file:"), "Barcoding gap plot (.png)")
               )
@@ -354,7 +354,7 @@ barcoding_tab <- function() {
             tabBox(
               title = "Instructions",
               h4("Evaluate barcodes using species identification success rate criteria (Zhang et al., 2016)"),
-              p(strong("Input file/s:"), ".csv or .xlsx."),
+              p(strong("Input file/s:"), "Aligned sequences (.msa, .fasta, .msf, .aln, .faa, .fas)."),
               p(strong("Parameter/s:"), "Length of kmer for barcode 1 and barcode 2 (separate)")
             ),
             tabBox(
@@ -380,7 +380,7 @@ barcoding_tab <- function() {
               title = "Instructions",
               h4("Calculate the Species Membership Value in terms of
                                                   Two-Dimensional non-parametric resampling (TDR) using BarcodingR (Zhang et al., 2016)"),
-              p(strong("Input file/s:"), "CSV file with marker and population data."),
+              p(strong("Input file/s:"), "Aligned sequences (.msa, .fasta, .msf, .aln, .faa, .fas)."),
               p(strong("Parameter/s:"), "Bootstrap value for query and reference samples.")
             ),
             tabBox(

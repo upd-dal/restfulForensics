@@ -42,7 +42,8 @@ filtering_server <- function(input, output, session, rv) {
     }
 
   withProgress(message = "Ongoing...", {
-    incProgress(0.2, detail = "Loading input file...")
+  tryCatch({    
+  incProgress(0.2, detail = "Loading input file...")
   if (tolower(ext) == "vcf" && input$enableDP) {
       dp <- depth_from_vcf(
         vcf = vcf_path,
@@ -56,9 +57,29 @@ filtering_server <- function(input, output, session, rv) {
     incProgress(0.4, detail = "Preparing file for filtering...")
     pgen_prefix <- file.path(temp_dir, "convert_to_plink2")
     if (!is.null(input$markerFileFilter)) {
+      fext <- tools::file_path_sans_ext(input$markerFileFilter$datapath)
+      if (!fext %in% c("vcf", "gz", "bcf")) {
+        stop("Unsupported file format. Should provide VCF or BCF files or upload bed/bim/fam files.")
+      }
+      
       convert_to_plink2(input$markerFileFilter$datapath, original_name = input$markerFileFilter$name, name = pgen_prefix)
     } else if (is.null(input$markerFileFilter) & !is.null(input$bedFileFilter)) {
       bed_prefix <- tools::file_path_sans_ext(input$bedFileFilter$datapath)
+      bim_prefix <- tools::file_path_sans_ext(input$bimFileFilter$datapath)
+      fam_prefix <- tools::file_path_sans_ext(input$famFileFilter$datapath)
+      
+      if (bed_prefix != "bed") {
+        stop("Unsupported file format. Should be a BED file")
+      }
+      
+      if (bim_prefix != "bim") {
+        stop("Unsupported file format. Should be a BIM file")
+      }
+      
+      if (fam_prefix != "fam") {
+        stop("Unsupported file format. Should be a FAM file")
+      }
+      
       convert_to_plink2(bed_prefix, original_name = NULL, name = pgen_prefix)
     }
 
@@ -109,7 +130,12 @@ filtering_server <- function(input, output, session, rv) {
     if (file.exists(filtered_path)) {
       filtered_plink_file(filtered_path)
     }
-})
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+ )
+
+    })
     output$plinkCommandPreview <- renderText({
       paste("plink", paste(plink_cmds, collapse = " "))
     })

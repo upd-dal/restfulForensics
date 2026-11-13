@@ -4,9 +4,9 @@
 #'
 #' @returns A list containing the prediction rate and other model metrics.
 calculate_loo <- function(file) {
-  #data_fsnps <- load_csv_xlsx_files(file)
-  #data_fsnps <- clean_input_data(data_fsnps)
-  validate_file(file)
+  data_fsnps <- load_csv_xlsx_files(file)
+  data_fsnps <- clean_input_data(data_fsnps)
+  #validate_file(file)
   data_fsnps <- dplyr::rename(data_fsnps, Sample = 1, Pop = 2)
   data_fsnps[] <- lapply(data_fsnps, factor)
   predictors <- !grepl("Pop", colnames(data_fsnps))
@@ -58,7 +58,6 @@ calculate_loo <- function(file) {
 }
 
 calculate_crossval <- function(file, optimize = FALSE, k = 5) {
-  validate_file(file)
   data_fsnps <- dplyr::rename(file, Sample = 1, Pop = 2)
   data_fsnps$Pop <- factor(data_fsnps$Pop)
   predictor_cols <- setdiff(colnames(data_fsnps), c("Sample", "Pop"))

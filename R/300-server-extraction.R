@@ -37,30 +37,60 @@ snp_extraction_server <- function(input, output, session, rv) {
   plink2_path <- get_plink2_path()
 
   observeEvent(input$validateBtn, {
-    if (!is.null(input$zippedPLINK)) {
+    shinyjs::disable("validateBtn")
+    
+    tryCatch({
+      plink_prefixes <- NULL
+      if (!is.null(input$zippedPLINK)) {
       plink_prefixes <- prepare_input_dataset(
         input_file = input$zippedPLINK$datapath,
         output.dir = tempdir()
       )
       plink_prefixes <- tools::file_path_sans_ext(plink_prefixes)
     } else if (!is.null(input$bedFile)) {
+      bed_prefix <- tools::file_path_sans_ext(input$bedFile$datapath)
+      bim_prefix <- tools::file_path_sans_ext(input$bimFile$datapath)
+      fam_prefix <- tools::file_path_sans_ext(input$famFile$datapath)
+      
+      if (bed_prefix != "bed") {
+        stop("Unsupported file format. Should be a BED file")
+      }
+      
+      if (bim_prefix != "bim") {
+        stop("Unsupported file format. Should be a BIM file")
+      }
+      
+      if (fam_prefix != "fam") {
+        stop("Unsupported file format. Should be a FAM file")
+      }
+      
       plink_prefixes <- tools::file_path_sans_ext(input$bedFile$datapath)
     }
 
     temp_snplist <- file.path(tempdir(), "temp_snplist.txt")
     input_type <- if (!is.null(input$markerFile)) {
+      file_ext <- tools::file_path_sans_ext(input$markerFile$datapath)
+      
+      if (!file_ext %in% c("vcf", "gz", "bcf")) {
+        stop("Unsupported file format. Upload a VCF/BCF file or use PLINK files.")
+      }
+      
       if (grepl("\\.bcf$", input$markerFile$name, ignore.case = TRUE)) {
         "bcf"
       } else {
         "vcf"
       }
     } else {
+      if (is.null(plink_prefixes)) {
+        stop("Unsupported file format. No valid PLINK files uploaded.")
+      }
+
       "bfile"
     }
 
     snps <- character(0)
 
-    if (input_type %in% c("vcf", "bcf")) {
+    if (input_type %in% c("vcf", "bcf", "gz")) {
       cmd <- paste(
         shQuote(plink2_path),
         paste0("--", input_type), shQuote(input$markerFile$datapath),
@@ -88,6 +118,12 @@ snp_extraction_server <- function(input, output, session, rv) {
 
     variant_ids(unique(snps))
     rsID_available(length(snps) > 1 || snps[1] != ".")
+    },
+    error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+    )
+    
   })
 
   output$markerOptionsUI <- renderUI({
@@ -296,16 +332,29 @@ snp_extraction_server <- function(input, output, session, rv) {
           if (f1_ext == "vcf") {
             file1 <- vcf_to_csv(input$concordanceFile1$datapath)
             file1 <- file1$with_meta
-          } else if (f1_ext %in% c("csv", "xlsx")) {
+          } else if (f1_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             file1 <- load_csv_xlsx_files(input$concordanceFile1$datapath)
+          } else {
+            stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
           }
           
           f2_ext <- tools::file_ext(input$concordanceFile2$name)
           if (f2_ext == "vcf") {
             file2 <- vcf_to_csv(input$concordanceFile2$datapath)
             file2 <- file2$with_meta
-          } else if (f2_ext %in% c("csv", "xlsx")) {
+          } else if (f2_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             file2 <- load_csv_xlsx_files(input$concordanceFile2$datapath)
+          } else {
+            stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
+          }
+          
+          val1 <- file1[1, 2]
+          is_gt_f1 <- stringr::str_count(val1, "[A-Za-z]") == 2
+          val2 <- file2[1, 2]
+          is_gt_f2 <- stringr::str_count(val2, "[A-Za-z]") == 2
+          
+          if (isFALSE(is_gt_f1) || isFALSE(is_gt_f2)) {
+            stop("Unsupported format: Genotype should be present by the second column. Only biallelic markers are accepted.")
           }
           
           incProgress(0.4, detail = "Calculating concordance...")

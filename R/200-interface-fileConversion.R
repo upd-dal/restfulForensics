@@ -117,7 +117,7 @@ file_conversion_tab <- function() {
         profvis::profvis_ui("profiler_addmetadata"),
         fluidRow(
           box(
-            fileInput("genotypeFile", "Genotype File or zipped files", accept = c(".vcf", ".bcf", ".gz", ".zip", ".tar")),
+            fileInput("genotypeFile", "Genotype File or zipped files", accept = c(".vcf", ".bcf", ".gz", ".zip", ".tar", "csv", "xlsx", "xlsm", "xlsb", "xls", "vcf")),
             radioButtons("populationType", "Do samples come from a single population?",
               choices = c("Yes" = "single", "No" = "multiplepop")
             ),
@@ -149,7 +149,7 @@ file_conversion_tab <- function() {
               h4("Merge select metadata to genotype/sample data"),
               p(strong("Input file/s:")),
               tags$ul(
-                tags$li("Genotype data (.vcf, .vcf.gz, .bcf, or PLINK 1.9 files) or CSV/Excel genotype data. Zipped files are also accepted as long as it consists a single file type."),
+                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data. Zipped files are also accepted as long as it consists a single file type."),
                 tags$li("Sample metadata (CSV/Excel file). Select column names to be merged with the genotype data. Ensure sample IDs are the same.")
               ),
               p(strong("Expected output file/s:"), "CSV file of sample with metadata.")
@@ -211,9 +211,6 @@ file_conversion_tab <- function() {
               accept = c(".zip", ".tar")
             ),
             helpText("*Accepts compressed files containing CSV/XLSX files."),
-#            fileInput("ref_file", "Optional Reference File (CSV or XLSX)",
-#              accept = c(".csv", ".xlsx", ".zip", ".tar")
-#            ),
             actionButton("run_uas2csv", "Run Conversion")
           ),
           tabBox(
@@ -417,10 +414,10 @@ file_conversion_tab <- function() {
             width = 6,
             fileInput("toArleFile", "Upload Genotype file", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
             helpText("Use the 'Convert files' submodule if using VCF, BCF, or PLINK files. Population data is necessary."),
-            checkboxInput("genotypicData", "Using Genotypic Data? (Untick if haplotypic data)", value = TRUE),
-            checkboxInput("gameticPhase", "Gametic Phase known?", value = FALSE),
-            checkboxInput("recessiveData", "Using co-dominant data?", value = FALSE),
-            textInput("locusSep", "Symbol that separates alleles", value = "/"),
+            checkboxInput("genotypicDataConv", "Using Genotypic Data? (Untick if haplotypic data)", value = TRUE),
+            checkboxInput("gameticPhaseConv", "Gametic Phase known?", value = FALSE),
+            checkboxInput("recessiveDataConv", "Using co-dominant data?", value = FALSE),
+            textInput("locusSepConv", "Symbol that separates alleles", value = "/"),
             # selectInput("dataTypeArlecore", "Type of Data to be Analyzed",
             #            choices = c(
             #               "DNA" = "DNA",

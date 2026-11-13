@@ -19,15 +19,15 @@ msa_server <- function(input, output, session, rv) {
       algorithm = input$substitutionMatrix
     )
     showNotification("Alignment complete!", type = "message")
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
-      )
 
     rv$alignmentMSA <- aligned$alignment
     rv$alignmentAdjusted <- aligned$adjusted
     rv$alignmentStaggered <- aligned$staggered
     alignment_scores(aligned$scores)
+    }, error = function(e) {
+      showNotification(paste("Error:", e$message), type = "error")
+    }
+    )
   })
 
   output$msaView <- msaR::renderMsaR({
@@ -142,7 +142,8 @@ msa_server <- function(input, output, session, rv) {
   observeEvent(input$trimSequences, {
     disable(input$trimSequences)
     
-    if (isTRUE(input$uploadMSATrim)) {
+    tryCatch({
+      if (isTRUE(input$uploadMSATrim)) {
       alignment <- switch(input$sequenceToTrim,
                           initial = rv$alignmentMSA,
                           adjusted = rv$alignmentAdjusted,
@@ -156,13 +157,19 @@ msa_server <- function(input, output, session, rv) {
       } else if (file_ext_ref %in% c("fasta", "fa", "fas", "msf", "aln")) {
         if (file_ext_ref == "aln") {
           file_ext_ref <- "clustal"
+        } else {
+          stop("Unsupported alignment file. Should be any of the ff: 'msa', 'fasta', 'fa', 'fas', 'msf', 'aln'.")
         }
         alignment_file <- seqinr::read.alignment(file = input$fileForTrim$datapath, format = file_ext_ref)
       }
     }
     
-    trimmed_sequences <- subseq(alignment_file, start = input$startSeq, end = input$endSeq)
-    rv$alignmentTrimmed <- trimmed_sequences
+    trimmed_sequences <- Biostrings::subseq(alignment_file, start = input$startSeq, end = input$endSeq)
+    rv$alignmentTrimmed <- Biostrings::DNAMultipleAlignment(trimmed_sequences)
+
+  }, error = function(e) {
+    showNotification(paste("Error:", e$message), type = "error")
+  })
   })
   
   output$downloadTrimmedFASTA <- downloadHandler(

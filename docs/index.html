@@ -144,6 +144,7 @@
                      (should be compatible with R versions above 4.5.0)</p></li>
                   <li><p>Integrated Development Environment such as  
                   <a href="https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads">RStudio</a></p></li>
+                  <p>For complete functionalities, to be placed in the root folder:</p>
                   <li><p><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">
                      STRUCTURE v2.3.4 (Windows without front end)</a></p></li>
                   <li><p><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">
@@ -184,7 +185,7 @@
                      <li>Ensure that Git is installed in your system. Check by performing <code>git --version</code>.</li>
                      <li>Open the R terminal (beside the Console) and run: <code>git clone https://github.com/upd-dal/restfulForensics</code></li>
                   </ul>
-                  
+                  <br>
                   <p>2. Launch the application</p>
                   <ul>
                      <li><p>Change directory in R to where the repository was copied.</p></li>
@@ -195,6 +196,9 @@
                      </code></pre>
                      </p></li>
                   </ul>
+                  <p>Automatically install dependencies using source("install.R")</p>
+                  <p>To be installed by the user: STRUCTURE, Arlecore, and CLUMPP</p>
+                  
            </section>
            
             <div class="page-navigation">
@@ -929,11 +933,10 @@
             (eg. rs101.A) while the succeeding columns are the frequencies per population.</p>
             <p><strong>Parameters/Options</strong>: 
             <ul>
-               <li><p>Use 5/2n rule in the calculation of genotype frequencies</p></li>
                <li><p>Upload an individual's marker profile for identification</p></li>
             </ul>
             </p>
-            <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file. The information
+            <p><strong>Expected output</strong>: Tabled results in an excel file. The information
             per sheet is as follows:
             <ul>
                <li><p>Overall results with all markers and populations</p></li>
@@ -958,9 +961,9 @@
             </p>
             <p>This calculation returns the genotype frequencies for each marker per population</p>
             <br>
-            <h4 class="section-title">Random Match Probability</h4>
+            <h4 class="section-title">Probability of Matching</h4>
             <p>
-               The random match probability (RMP), also known as matching probability or probability of match, 
+               The Probability of Matching (PM), also known as matching probability or random matching probability, 
                estimates the probability of observing two identical genotypes in a population. 
                It is calculated by adding the squared frequencies per loci:
                $$RMP=\sum_{i}^n(P_{i})^2$$ or in plainer terms: $RMP=p^2 + 2pq + q^2$ for each loci.
@@ -1004,6 +1007,21 @@
                individual is the biological father compared to a random individual.
                $$ TPI=\frac{1}{2H}$$
                where $H$ is the proportion of homozygous individuals, $H=p^2+q^2$.
+            </p>
+            <br>
+            <h4 class="section-title">Random Match Probability Given a Profile</h4>
+            <p>
+               The polymorphism information content (PIC) is the measure of a marker's ability 
+               to detect polymorphisms among individuals in a population
+               <a href="https://www.sciencedirect.com/science/article/pii/S0378111919308340">(Serrote et al., 2020)</a>.
+               
+               RMP of a profile with theta is calculated based on the NRC Recommendation
+               using the Hardy-Weinberg with a theta 
+               is calculated using:
+               $$ PIC=1-\sum_{i=1}^n p_i^2 - \sum_{i=1}^{n-1}\sum_{j=i+1}^n 2p_i^2p_j^2 $$
+               where $p_i$ and $p_j$ are frequencies of alleles $i$ and $j$.
+               This is interpreted as:
+               $$PIC=1-(p^2+q^2) - 2*(p^2*q^2)$$
             </p>
             
             <div class="page-navigation">
@@ -1240,12 +1258,6 @@
                      <td>Population Structure Analysis</td>
                      <td>Run STRUCTURE v2.3.4</td>
                      <td>Same limited parameters as set in the strataG R package</td>
-                  </tr>
-                  
-                  <tr>
-                     <td>Forensic Paramaters</td>
-                     <td>Forensic Paramaters</td>
-                     <td>Calculation of Random Match Probability given a profile is untested</td>
                   </tr>
                   
                   <tr>

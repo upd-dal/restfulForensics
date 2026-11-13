@@ -134,14 +134,19 @@ git config --global user.email "you@example.com"
 - Ensure that Git is installed in your system. Check by performing ```git --version```  
 - Open the R terminal (beside the Console) and run: ```git clone https://github.com/upd-dal/restfulForensics```  
 
+
+
 2. Launch the application  
 - Change directory in R to where the repository was copied  
-- Launch the application by copying and pasting the following commands to the console:  
+- Launch the application by copying and pasting the following commands to the console: 
 ```
 source("install.R")
 shiny::runApp()
 ```  
   
+> Automatically installed dependencies > using ```source(install.R)```  
+> To be installed by the user: STRUCTURE, Arlecore, CLUMPP
+
 ## Example Workflow
 The modules within restful forensics can be run independently or as part of a workflow. For certain marker panels,
 a sample workflow can be visualized as follows:
@@ -165,6 +170,16 @@ R files for each feature. The ui section is responsible for input requests
 which are then read and processed into the associated server files and exposed 
 by the ui. The pipeline is presented in Figures 1 and 2.
 
+
+| Component | Tested version | 
+| :---: | :--- |
+| R | 4.6.1 | 
+| Rtools | 4.5 | 
+| shiny | 1.14.0 | 
+| shinydashboard | 0.7.3 | 
+| OS/Version | Windows 11 | 
+
+
 ## Limitations
 
 ### Known Limitations
@@ -174,7 +189,6 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
 | 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
-| 5 | Forensic Parameters | Forensic Parameters | Calculation of Random Match Probability given a profile is untested |
 | 6 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
 
 ### Planned Enhancements

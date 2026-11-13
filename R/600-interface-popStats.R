@@ -116,7 +116,11 @@ popstats_tab <- function() {
                                                                              "ARP file (.arp)" = "arpFile")),
               conditionalPanel(
                 condition = "input.inputArlecore == 'gtFile'",
-                fileInput("fileForArlecoreGT", "Upload Genotype File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv"))
+                fileInput("fileForArlecoreGT", "Upload Genotype File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv")),
+                checkboxInput("genotypicData", "Using Genotypic Data? (Untick if haplotypic data)", value = TRUE),
+                checkboxInput("gameticPhase", "Gametic Phase known?", value = FALSE),
+                checkboxInput("recessiveData", "Using co-dominant data?", value = FALSE),
+                textInput("locusSep", "Symbol that separates alleles", value = "/"),
               ),
               conditionalPanel(
                 condition = "input.inputArlecore == 'arpFile'",

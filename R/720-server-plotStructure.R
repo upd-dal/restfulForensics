@@ -155,10 +155,12 @@ plot_structure_server <- function(input, output, session, rv) {
   clumppResults <- reactiveVal(NULL)
   strPlot <- reactiveVal(NULL)
   
+  clumpp_path <- get_clumpp_path()
+  
   observe({
     inhouse_res <- !is.null(rv$structureRes) && (isTRUE(input$plotSR))
     new_files <- (!isTRUE(input$plotSR)) && !is.null(input$structureFilesZipped)
-    file_ready <- inhouse_res || new_files
+    file_ready <- (inhouse_res || new_files) && file.exists(clumpp_path)
     shinyjs::toggleState("plotStructureResults", condition = file_ready)
   })
   

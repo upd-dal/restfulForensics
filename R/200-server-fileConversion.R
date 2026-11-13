@@ -48,8 +48,6 @@ file_conversion_server <- function(input, output, session, rv) {
       "csv1" = "vcf2"
     )
   }
-  
-  callModule(profvis_server, "profiler_convertfiles")
 
   observeEvent(input$ConvertFILES, {
     disable("ConvertFILES")
@@ -184,7 +182,6 @@ file_conversion_server <- function(input, output, session, rv) {
     downloadButton("downloadConvertedtoCSV", "Download CSV File")
   })
   
-  
 
   # =================== Add Metadata ======================#
   exampleRefCSV <- data.frame(
@@ -209,6 +206,10 @@ file_conversion_server <- function(input, output, session, rv) {
   convertedBreakdown <- reactiveVal(NULL)
   output.dir <- tempdir()
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  
+  iv_addmeta <- shinyvalidate::InputValidator$new()
+  iv_addmeta$add_rule("genotypeFile", sv_required())
+  iv_addmeta$add_rule("populationType", sv_required())
 
   observe({
     fileready <- !is.null(input$genotypeFile)
@@ -249,8 +250,6 @@ file_conversion_server <- function(input, output, session, rv) {
     )
   })
 
-  callModule(profvis_server, "profiler_addmetadata")
-  
   output.dir <- tempdir()
 
   observeEvent(input$addMetadata, {
@@ -459,6 +458,10 @@ file_conversion_server <- function(input, output, session, rv) {
     withProgress(message = "Converting file...", value = 0, {
       tryCatch(
         {
+          if (!tools::file_ext(input_path) %in% c("zip", "tar")) {
+            stop("Unsupported file format: Should be a zipped or tar file.")
+          }
+          
           widened.file <- widen_genotype_file(
             files = input_path,
             output.dir = temp_dir
@@ -473,7 +476,7 @@ file_conversion_server <- function(input, output, session, rv) {
     })
     enable("run_uas2csv")
   })
-  callModule(profvis_server, "profiler_widen")
+
   outputName <- "merged_typed_data.csv"
 
   output$downloadUAScsv <- downloadHandler(
@@ -556,7 +559,7 @@ file_conversion_server <- function(input, output, session, rv) {
       pageLength = 10
     )
   )
-  callModule(profvis_server, "profiler_snipper")
+
   convertedSNIPPER <- reactiveVal(NULL)
   outputName <- "snipper.xlsx"
 
@@ -569,10 +572,16 @@ file_conversion_server <- function(input, output, session, rv) {
   observeEvent(input$convertBtn, {
     disable("convertBtn")
 
-    tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
-    tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
+    withProgress(message = "Converting to SNIPPER-analysis ready file...", value = 0, {
+      
+    tryCatch({
+      tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
+      validate_file(tosnipper_file)
+      tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
     if (!is.null(input$refProvided)) {
+        validate_file(tosnipper_file)
+
       inputPath <- tosnipper_file[, -2]
       refPath <- tosnipper_file[, 1:2]
     } else {
@@ -584,28 +593,21 @@ file_conversion_server <- function(input, output, session, rv) {
     targetName <- if (targetSet) input$targetPopName else NULL
     inputData <- colnames(inputPath)
     numMarkers <- length(inputData) - 1
-
-    withProgress(message = "Converting to SNIPPER-analysis ready file...", value = 0, {
-      snipper.file <- tryCatch(
-        {
-          to_snipper(
+    
+      snipper.file <- to_snipper(
             input = inputPath,
             references = refPath,
             target.pop = targetSet,
             population.name = targetName,
             markers = numMarkers
           )
-        },
-        error = function(e) {
-          showNotification(paste("Conversion failed:", e$message), type = "error")
-          NULL
-        }
-      )
-
-      if (!is.null(snipper.file)) {
         convertedSNIPPER(snipper.file)
-        enable("convertBtn")
+
+      },error = function(e) {
+        showNotification(paste("Error during SNIPPER conversion: ", e$message), type = "error", duration = 20)
       }
+    )
+    
       enable("convertBtn")
     })
   })
@@ -658,7 +660,7 @@ file_conversion_server <- function(input, output, session, rv) {
   observe({
     toggleState("csv2str", !is.null(input$tostrFile) && !is.null(input$systemFile))
   })
-  callModule(profvis_server, "profiler_structure")
+
   csv_revised <- reactiveVal(NULL)
   strconvert <- reactiveVal(NULL)
   str_file <- reactiveVal(NULL)
@@ -679,7 +681,7 @@ file_conversion_server <- function(input, output, session, rv) {
         str_path <- revise_structure_file(strconvert(), directory, system = input$systemFile)
         str_file(str_path)
       }, error = function(e) {
-        showNotification(paste("Error during STRUCTURE conversion", e$message), type = "error", duration = 20)
+        showNotification(paste("Error during STRUCTURE conversion: ", e$message), type = "error", duration = 20)
       }, finally = {
         enable("csv2str")
       })
@@ -759,7 +761,7 @@ file_conversion_server <- function(input, output, session, rv) {
   observe({
     shinyjs::toggleState("convert2Arle", !is.null(input$toArleFile))
   })
-  callModule(profvis_server, "profiler_arle")
+
   observeEvent(input$convert2Arle, {
     disable("convert2Arle")
 
@@ -768,7 +770,7 @@ file_conversion_server <- function(input, output, session, rv) {
     incProgress(0.2, detail = "Loading input file...")
     for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
     for_arp <- clean_input_data(for_arp)
-    validate_file(for_arp)
+    # All null values are "N", set to ""
     for_arp <- for_arp %>%
       mutate(across(everything(), ~ case_when(
         . == "N" ~ "",
@@ -780,13 +782,14 @@ file_conversion_server <- function(input, output, session, rv) {
     # create the arp file
     tryCatch(
       {
+      validate_file(for_arp)
       arp_file <- build_arp_per_population(for_arp,
-      genotypic_data = as.numeric(input$genotypicData),
-      gametic_phase = as.numeric(input$gameticPhase),
-      recessive_data = as.numeric(input$recessiveData),
-      locus_sep = input$locusSep,
-      output.prefix = "arp_file",
-      data_type = "STANDARD"
+                                           genotypic_data = as.numeric(input$genotypicDataConv),
+                                           gametic_phase = as.numeric(input$gameticPhaseConv),
+                                           recessive_data = as.numeric(input$recessiveDataConv),
+                                           locus_sep = input$locusSepConv,
+                                           output.prefix = "arp_file",
+                                           data_type = "STANDARD"
     )
     
     arleFile(arp_file)

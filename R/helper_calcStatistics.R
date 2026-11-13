@@ -631,7 +631,7 @@ prep_af_table <- function(af_table){
     )
 }
 
-calc_rmp <- function(profile, af_table, n_ref = 100, theta = 0.01) {
+calc_rmp <- function(profile, af_table, theta = 0.01) {
   names(profile)[1:2] <- c("marker", "genotype")
   
   profile <- profile %>% dplyr::mutate(
@@ -668,7 +668,6 @@ calc_rmp <- function(profile, af_table, n_ref = 100, theta = 0.01) {
   
   profile <- profile[!incomplete,]
   
-  freq_floor <- 5/(2*n_ref)
   
   af_table <- af_table %>%
     dplyr::mutate(
@@ -678,37 +677,40 @@ calc_rmp <- function(profile, af_table, n_ref = 100, theta = 0.01) {
       freq = as.numeric(freq)
     ) %>% 
     dplyr::group_by(population, marker_std) %>%
-    dplyr::mutate(
-      freq_adj = pmax(freq, freq_floor),
-      freq_adj = freq_adj/sum(freq_adj)
-    ) %>%
     dplyr::ungroup()
   
   af_by_pop <- split(af_table, af_table$population)
   
   calc_locus <- function(af_pop) {
+    lookup <- af_pop %>%
+      dplyr::group_by(marker_std) %>%
+      dplyr::summarise(
+        allele_A = dplyr::first(allele),
+        freq_A = dplyr::first(freq),
+        allele_B = dplyr::last(allele),
+        freq_B = dplyr::last(freq),
+        .groups = "drop"
+      )
+    
     locus_res <- profile %>%
-      dplyr::rowwise() %>%
+      dplyr::left_join(lookup, by = "marker_std") %>%
       dplyr::mutate(
-        p = af_pop$freq_adj[
-          match(
-            paste(marker_std, allele1),
-            paste(af_pop$marker_std, af_pop$allele)
-          )
-        ],
-        q = af_pop$freq_adj[
-          match(
-            paste(marker_std, allele2),
-            paste(af_pop$marker_std, af_pop$allele)
-          )
-        ],
         gen_prob = dplyr::case_when(
-          is.na(p) | is.na(q) ~ NA_real_,
-          allele1 == allele2 ~ p^2 + theta * p * (1 - p),
-          TRUE ~ 2 * p * q * (1 - theta)
+          is.na(freq_A) | is.na(freq_B) ~ NA_real_,
+          
+          allele1 == allele_A & allele2 == allele_A ~ 
+            (((2*theta) + (1-theta)*freq_A) * ((3*theta) + (1-theta)*freq_A))/((1+theta)*(1+(2*theta))),
+          
+          allele1 == allele_B & allele2 == allele_B ~
+            (((2*theta) + (1-theta)*freq_B) * ((3*theta) + (1-theta)*freq_B))/((1+theta)*(1+(2*theta))),
+          
+          (allele1 == allele_A & allele2 == allele_B) | (allele1 == allele_B & allele2 == allele_A) ~
+            ((2*(theta + (1-theta)*freq_A)) * (theta + (1-theta)*freq_B))/((1 + theta)*(1 + (2*theta))),
+          
+          TRUE ~ NA_real_
         )
-      ) %>%
-      dplyr::ungroup()
+      )
+    
     locus_res
   }
   

@@ -1,6 +1,5 @@
 pop_stats_server <- function(input, output, session, rv) {
   # =============== POPULATION STATISTICS =================#
-  callModule(profvis_server, "profiler_rpop")
   examplePop <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -34,13 +33,14 @@ pop_stats_server <- function(input, output, session, rv) {
   statsMatrix <- reactiveVal(NULL)
   hwMatrix <- reactiveVal(NULL)
   fstMatrix <- reactiveVal(NULL)
-
-  fsnps_gen <- reactive({
-    req(input$popStatsFile)
-    df <- load_csv_xlsx_files(input$popStatsFile$datapath)
-    cleaned <- clean_input_data(df)
-    convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
-  })
+  fsnps_gen <- reactiveVal(NULL)
+  
+#  fsnps_gen <- reactive({
+#    req(input$popStatsFile)
+#    df <- load_csv_xlsx_files(input$popStatsFile$datapath)
+#    cleaned <- clean_input_data(df)
+#    convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
+#  })
 
   observeEvent(input$runPopStats, {
     disable("runPopStats")
@@ -49,7 +49,12 @@ pop_stats_server <- function(input, output, session, rv) {
     withProgress(message = "Running population analysis...", value = 0, {
       tryCatch(
         {
-          req(fsnps_gen())
+          #req(fsnps_gen())
+          df <- load_csv_xlsx_files(input$popStatsFile$datapath)
+          cleaned <- clean_input_data(df)
+          validate_file(cleaned)
+          fsnpsgen <- convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
+          fsnps_gen(fsnpsgen)
 
           incProgress(0.4, detail = "Computing private alleles...")
           priv_alleles <- poppr::private_alleles(fsnps_gen())
@@ -96,14 +101,8 @@ pop_stats_server <- function(input, output, session, rv) {
           enable("runPopStats")
         }
       )
-
-      stats_matrix <- compute_pop_stats(fsnps_gen())
-      hw_matrix <- compute_hwe(fsnps_gen())
-      fst_matrix <- compute_fst(fsnps_gen())
-      statsMatrix(stats_matrix)
-      hwMatrix(hw_matrix)
-      fstMatrix(fst_matrix)
     })
+    enable("runPopStats")
   })
 
   output$privateAlleleTable <- DT::renderDataTable(
@@ -269,7 +268,7 @@ pop_stats_server <- function(input, output, session, rv) {
       paste0("population-statistics-results_", timestamp, ".xlsx")
     },
     content = function(file) {
-      req(statsMatrix(), hwMatrix(), fstMatrix(), privAlleles(), afData())
+      req(popStats(), hardyWeinberg(), fstStats(), privAlleles(), afData())
       path <- export_pop_results(
         allele_freq = afData(),
         priv_alleles = privAlleles(),
@@ -306,7 +305,7 @@ pop_stats_server <- function(input, output, session, rv) {
       pageLength = 10
     )
   )
-  callModule(profvis_server, "profiler_arlecore")
+
   arlequinFile <- reactiveVal(NULL)
   arlequinResult <- reactiveVal(NULL)
   arlequinPopLabels <- reactiveVal(NULL)
@@ -318,58 +317,67 @@ pop_stats_server <- function(input, output, session, rv) {
   arlequinLD <- reactiveVal(NULL)
   locusData <- reactiveVal(NULL)
 
-  arlecore_path <- get_arlecore_path
+  arlecore_path <- get_arlecore_path()
   
   observe({
-    shinyjs::toggleState("runArlecore", (!is.null(input$fileForArlecoreGT) || !is.null(input$fileForArlecoreARP)) && file.exists(arlecore_path))
+    fileReady <- (!is.null(input$fileForArlecoreGT) || (!is.null(input$fileForArlecoreARP))) && file.exists(arlecore_path)
+    shinyjs::toggleState("runArlecore", fileReady)
   })
 
   observeEvent(input$runArlecore, {
     disable("runArlecore")
-
+    results <- NULL
     withProgress(message = "Analysis ongoing...", {
+      #tryCatch({
       tryCatch({
         incProgress(0.2, detail = "Loading input file...")
         
-        if (!is.null(input$fileForArlecoreGT)) {
-        for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
-        for_arp <- clean_input_data(for_arp)
+        file_ext <- tools::file_ext(input$fileForArlecoreGT$datapath)
         
-        rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
-        rsids <- data.frame(rownames(rsids), rsids)
-        locusData(rsids)
+        if ((!is.null(input$fileForArlecoreGT)) &&
+            (tools::file_ext(input$fileForArlecoreGT$datapath) %in% c("xlsx", "xlsm", "xlsb", "xls", "csv"))
+            ) {
+          for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
+          for_arp <- clean_input_data(for_arp)
+          validate_file(for_arp)
+          rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
+          rsids <- data.frame(rownames(rsids), rsids)
+          locusData(rsids)
+          
+          # All null values are "N", set to ""
+          for_arp <- for_arp %>%
+            mutate(across(everything(), ~ case_when(
+              . == "N" ~ "",
+              TRUE ~ .x
+            )))
+          for_arp <- as.data.frame(for_arp)
+          
+          arp_file <- build_arp_per_population(for_arp,
+                                               genotypic_data = as.numeric(input$genotypicData),
+                                               gametic_phase = as.numeric(input$gameticPhase),
+                                               recessive_data = as.numeric(input$recessiveData),
+                                               locus_sep = input$locusSep,
+                                               output.prefix = "arp_file",
+                                               data_type = "STANDARD"
+          )
+        } else if (!is.null(input$fileForArlecoreARP)) {
+          arp_file <- input$fileForArlecoreARP$datapath
+        } else {
+          stop("Unsupported file type: Acceptable are CSV/Excel or ARP files.")
+        }
         
-        # All null values are "N", set to ""
-        for_arp <- for_arp %>%
-          mutate(across(everything(), ~ case_when(
-            . == "N" ~ "",
-            TRUE ~ .x
-          )))
-        for_arp <- as.data.frame(for_arp)
-        
-        arp_file <- build_arp_per_population(for_arp,
-                                             genotypic_data = as.numeric(input$genotypicData),
-                                             gametic_phase = as.numeric(input$gameticPhase),
-                                             recessive_data = as.numeric(input$recessiveData),
-                                             locus_sep = input$locusSep,
-                                             output.prefix = "arp_file",
-                                             data_type = "STANDARD"
-        )
-      } else if (!is.null(input$fileForArlecoreARP)) {
-        arp_file <- input$fileForArlecoreARP$datapath
-      }
-      
       arlequinFile(arp_file)
 
       incProgress(0.4, detail = "Running arlecore...")
       # returns path of res folder
       ld_value <- input$calcLD
       hwe_value <- input$calcHWE
-      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arlecore_path = arlecore_path)
-      }, error = function(e) {
-        showNotification(paste("Error:", e$message), type = "error")
-      }
-      )
+      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
+      #}, error = function(e) {
+      #  showNotification(paste("Error:", e$message), type = "error")
+      #  return(NULL)
+      #}
+      #)
 
       incProgress(0.8, detail = "Loading report...")
       # get report file
@@ -386,16 +394,16 @@ pop_stats_server <- function(input, output, session, rv) {
 
       # run it separately
       pop_labels <- parse_pop_labels(doc)
-      heterozygosity <- parse_sections_arlequin(doc, "sumExpHeterozygosity", sumExpectedHeterozygosity) # bar plot
+      heterozygosity <- parse_sections_arlequin(doc, "helper_sumExpHeterozygosity", sumExpectedHeterozygosity) # bar plot
       hwe <- heterozygosity[["data"]]
       hwe$Locus <- rsids[[2]][
         match(as.numeric(hwe$Locus), as.numeric(rsids[[1]]))
       ]
       heterozygosity[["data"]] <- hwe
 
-      fst_matrix <- parse_sections_arlequin(doc, "PairFstMat", pairFstMatrix) # matrix of pairwise fst
-      coancestry_coeff <- parse_sections_arlequin(doc, "coancestryCoefficients", coancestryCoeff) # pairwise of fst and reynolds
-      pairwise_matrix <- parse_sections_arlequin(doc, "pairwiseDifferenceMatrix", pairwiseDiffMatrix)
+      fst_matrix <- parse_sections_arlequin(doc, "helper_PairFstMat", pairFstMatrix) # matrix of pairwise fst
+      coancestry_coeff <- parse_sections_arlequin(doc, "helper_coancestryCoefficients", coancestryCoeff) # pairwise of fst and reynolds
+      pairwise_matrix <- parse_sections_arlequin(doc, "helper_pairwiseDifferenceMatrix", pairwiseDiffMatrix)
 
       
       if (isTRUE(input$calcHWE)) {
@@ -428,6 +436,12 @@ pop_stats_server <- function(input, output, session, rv) {
       arlequinPairwise(pairwise_matrix)
       arlequinPopDiversity(population_diversity)
       arlequinLD(ld_vals)
+      
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+      )
     })
 
     enable("runArlecore")

@@ -33,12 +33,11 @@ forensic_params_server <- function(input, output, session, rv) {
     req(input$iisnpsFile)
 
     withProgress(message = "Ongoing: ", {
-      
-    incProgress(0.2, detail = "Loading input file...")
-    fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
-    cleaned_data <- clean_input_data(fileUploaded)
-    tryCatch(
-      {
+    tryCatch({
+      incProgress(0.2, detail = "Loading input file...")
+      fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
+      cleaned_data <- clean_input_data(fileUploaded)
+      validate_file(cleaned_data)
     genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
     
     incProgress(0.4, detail = "Calculating frequencies...")
@@ -102,6 +101,18 @@ forensic_params_server <- function(input, output, session, rv) {
                     scrollX = TRUE
                   ))
   })
+  
+  output$downloadAFTable <- downloadHandler(
+    filename = function() {
+      paste0("allele_frequencies_", Sys.Date(), ".xlsx")
+    },
+    content = function(file) {
+      req(afTable())
+      
+      af_table <- afTable()
+      writexl::write_xlsx(af_table, path = file)
+    }
+  )
 
   output$downloadMetrics <- downloadHandler(
     filename = function() {
@@ -132,7 +143,14 @@ forensic_params_server <- function(input, output, session, rv) {
     req(forenParams(), genoFreq())
     downloadButton("downloadMetrics", "Download Forensic Parameters")
   })
+  
+  output$downloadAFTable_UI <- renderUI({
+    req(afTable())
+    downloadButton("downloadAFTable", "Download Allele Frequency Table")
+  })
 
+
+  
 
   #================= Matching Profile
   forensicParamInput <- data.frame(
@@ -180,12 +198,9 @@ forensic_params_server <- function(input, output, session, rv) {
     disable("calcRMP")
     
     withProgress(message = "Ongoing: ", {
-      
-    incProgress(0.2, detail = "Loading input file...")
-    profile <- load_csv_xlsx_files(input$fileProfile$datapath)
-    
     tryCatch({
-      
+      incProgress(0.2, detail = "Loading input file...")
+      profile <- load_csv_xlsx_files(input$fileProfile$datapath)
       incProgress(0.4, detail = "Loading reference database...")
       if (isFALSE(input$newPopDatabase)) {
       req(afTable())
@@ -201,7 +216,6 @@ forensic_params_server <- function(input, output, session, rv) {
     result <- calc_rmp(
       profile = profile,
       af_table = af_long,
-      n_ref = input$totalPop,
       theta = input$thetaValue
     )
     rmpResult(result)
