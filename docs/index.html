@@ -1008,6 +1008,21 @@
                $$ TPI=\frac{1}{2H}$$
                where $H$ is the proportion of homozygous individuals, $H=p^2+q^2$.
             </p>
+            <br>
+            <h4 class="section-title">Random Match Probability Given a Profile</h4>
+            <p>
+               The polymorphism information content (PIC) is the measure of a marker's ability 
+               to detect polymorphisms among individuals in a population
+               <a href="https://www.sciencedirect.com/science/article/pii/S0378111919308340">(Serrote et al., 2020)</a>.
+               
+               RMP of a profile with theta is calculated based on the NRC Recommendation
+               using the Hardy-Weinberg with a theta 
+               is calculated using:
+               $$ PIC=1-\sum_{i=1}^n p_i^2 - \sum_{i=1}^{n-1}\sum_{j=i+1}^n 2p_i^2p_j^2 $$
+               where $p_i$ and $p_j$ are frequencies of alleles $i$ and $j$.
+               This is interpreted as:
+               $$PIC=1-(p^2+q^2) - 2*(p^2*q^2)$$
+            </p>
             
             <div class="page-navigation">
                <a href="#" onclick="showPage('popstructure'); return false;">← Previous</a>

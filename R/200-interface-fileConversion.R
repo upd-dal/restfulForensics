@@ -115,7 +115,7 @@ file_conversion_tab <- function() {
         title = "Add Metadata",
         fluidRow(
           box(
-            fileInput("genotypeFile", "Genotype File or zipped files", accept = c(".vcf", ".bcf", ".gz", ".zip", ".tar")),
+            fileInput("genotypeFile", "Genotype File or zipped files", accept = c(".vcf", ".bcf", ".gz", ".zip", ".tar", "csv", "xlsx", "xlsm", "xlsb", "xls", "vcf")),
             radioButtons("populationType", "Do samples come from a single population?",
               choices = c("Yes" = "single", "No" = "multiplepop")
             ),
@@ -147,7 +147,7 @@ file_conversion_tab <- function() {
               h4("Merge select metadata to genotype/sample data"),
               p(strong("Input file/s:")),
               tags$ul(
-                tags$li("Genotype data (.vcf, .vcf.gz, .bcf, or PLINK 1.9 files) or CSV/Excel genotype data. Zipped files are also accepted as long as it consists a single file type."),
+                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data. Zipped files are also accepted as long as it consists a single file type."),
                 tags$li("Sample metadata (CSV/Excel file). Select column names to be merged with the genotype data. Ensure sample IDs are the same.")
               ),
               p(strong("Expected output file/s:"), "CSV file of sample with metadata.")

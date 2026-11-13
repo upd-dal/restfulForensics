@@ -144,7 +144,7 @@ source("install.R")
 shiny::runApp()
 ```  
   
-> Automatically installed dependencies > using ```source(install.R)```
+> Automatically installed dependencies > using ```source(install.R)```  
 > To be installed by the user: STRUCTURE, Arlecore, CLUMPP
 
 ## Example Workflow
@@ -170,8 +170,9 @@ R files for each feature. The ui section is responsible for input requests
 which are then read and processed into the associated server files and exposed 
 by the ui. The pipeline is presented in Figures 1 and 2.
 
+
 | Component | Tested version | 
-| :---: | :--- | :--- | :---: |
+| :---: | :--- |
 | R | 4.6.1 | 
 | Rtools | 4.5 | 
 | shiny | 1.14.0 | 

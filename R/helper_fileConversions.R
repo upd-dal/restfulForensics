@@ -51,7 +51,7 @@ clean_input_data <- function(file) {
   file <- file %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::case_when(
-      .x %in% c("N/A", "NA", ".") ~ "N",
+      .x %in% c("N/A", "NA", "N/N", "./.", "NN", ".") ~ "N",
       TRUE ~ .x
     )))
   file <- as.data.frame(file)
@@ -307,6 +307,10 @@ convert_files <- function(input_file, output.dir = ".", original_name = NULL) {
       if (!is.null(original_name)) original_name else input_file
     )
   )
+  
+  if (!file_extension %in% c("zip", "tar", "bed", "bim", "fam", "vcf", "gz", "bcf")) {
+    stop("Unsupported file type. Should be VCF, BCF, PLINK or zipped files.")
+  }
   
   if (file_extension %in% c("zip", "tar")) {
     unpacked <- unpack_input_file(input_file, output.dir)

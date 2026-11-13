@@ -458,6 +458,10 @@ file_conversion_server <- function(input, output, session, rv) {
     withProgress(message = "Converting file...", value = 0, {
       tryCatch(
         {
+          if (!tools::file_ext(input_path) %in% c("zip", "tar")) {
+            stop("Unsupported file format: Should be a zipped or tar file.")
+          }
+          
           widened.file <- widen_genotype_file(
             files = input_path,
             output.dir = temp_dir
@@ -568,17 +572,16 @@ file_conversion_server <- function(input, output, session, rv) {
   observeEvent(input$convertBtn, {
     disable("convertBtn")
 
-    tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
-    tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
+    withProgress(message = "Converting to SNIPPER-analysis ready file...", value = 0, {
+      
+    tryCatch({
+      tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
+      validate_file(tosnipper_file)
+      tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
     if (!is.null(input$refProvided)) {
-      tryCatch({
         validate_file(tosnipper_file)
-      }, 
-      error = function(e) {
-        showPersistent(paste("Error in conversion:", e$message), type = "error")
-        NULL
-      })
+
       inputPath <- tosnipper_file[, -2]
       refPath <- tosnipper_file[, 1:2]
     } else {
@@ -590,28 +593,21 @@ file_conversion_server <- function(input, output, session, rv) {
     targetName <- if (targetSet) input$targetPopName else NULL
     inputData <- colnames(inputPath)
     numMarkers <- length(inputData) - 1
-
-    withProgress(message = "Converting to SNIPPER-analysis ready file...", value = 0, {
-      snipper.file <- tryCatch(
-        {
-          to_snipper(
+    
+      snipper.file <- to_snipper(
             input = inputPath,
             references = refPath,
             target.pop = targetSet,
             population.name = targetName,
             markers = numMarkers
           )
-        },
-        error = function(e) {
-          showNotification(paste("Conversion failed:", e$message), type = "error")
-          NULL
-        }
-      )
-
-      if (!is.null(snipper.file)) {
         convertedSNIPPER(snipper.file)
-        enable("convertBtn")
+
+      },error = function(e) {
+        showNotification(paste("Error during SNIPPER conversion: ", e$message), type = "error", duration = 20)
       }
+    )
+    
       enable("convertBtn")
     })
   })
@@ -685,7 +681,7 @@ file_conversion_server <- function(input, output, session, rv) {
         str_path <- revise_structure_file(strconvert(), directory, system = input$systemFile)
         str_file(str_path)
       }, error = function(e) {
-        showNotification(paste("Error during STRUCTURE conversion", e$message), type = "error", duration = 20)
+        showNotification(paste("Error during STRUCTURE conversion: ", e$message), type = "error", duration = 20)
       }, finally = {
         enable("csv2str")
       })
