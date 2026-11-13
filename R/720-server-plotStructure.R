@@ -15,7 +15,8 @@ plot_structure_server <- function(input, output, session, rv) {
     
     withProgress(message = "Analysis ongoing...", {
       incProgress(0.2, detail = "Loading input file...")
-      if (isTRUE(input$useSR)) {
+      tryCatch({
+        if (isTRUE(input$useSR)) {
         sr <- rv$structureRes
       } else if (!is.null(input$structureFilesEvanno)) {
         str_results <- unpack_input_file(input$structureFilesEvanno$datapath, output.dir = output.dir)
@@ -36,6 +37,10 @@ plot_structure_server <- function(input, output, session, rv) {
       
       evanno_res <- strataG::evanno(sr, plot = TRUE)
       evannoRes(evanno_res)
+      }, 
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      })
     })
   })
   
@@ -171,7 +176,8 @@ plot_structure_server <- function(input, output, session, rv) {
     withProgress(message = "Analysis ongoing...", {
       incProgress(0.2, detail = "Loading input file...")
       
-      if (isTRUE(input$plotSR)) {
+      tryCatch({
+        if (isTRUE(input$plotSR)) {
         sr <- rv$structureRes
       } else if (!is.null(input$structureFilesZipped)) {
         str_results <- unpack_input_file(input$structureFilesZipped$datapath, output.dir = output.dir)
@@ -208,6 +214,10 @@ plot_structure_server <- function(input, output, session, rv) {
       )
       
       clumppResults(clumpp_res)
+      }, 
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      })
 
     })
     
