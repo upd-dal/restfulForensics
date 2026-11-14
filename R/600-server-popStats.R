@@ -67,10 +67,11 @@ pop_stats_server <- function(input, output, session, rv) {
             rownames(priv_alleles) <- NULL
           }
           privAlleles(priv_alleles)
-
+          
           incProgress(0.6, detail = "Computing population statistics...")
           population_stats <- compute_pop_stats(fsnps_gen())
           popStats(population_stats)
+          statsMatrix(population_stats)
 
           ## AF
           af_stats <- compute_af(fsnps_gen())
@@ -84,11 +85,13 @@ pop_stats_server <- function(input, output, session, rv) {
           }
           hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = corr_model, alpha = input$alphaValue, chains = input$markovHWE)
           hardyWeinberg(hardy_weinberg_stats)
+          hwMatrix(hardy_weinberg_stats)
 
           ## FST
           incProgress(1.0, detail = "Running FST calculations...")
           fst_stats <- compute_fst(fsnps_gen())
           fstStats(fst_stats)
+          fstMatrix(fst_stats)
           fst_data <- fstStats()$fst_dataframe
           fstData(fst_data)
 
