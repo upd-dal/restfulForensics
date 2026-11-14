@@ -69,7 +69,7 @@ snp_extraction_server <- function(input, output, session, rv) {
 
     temp_snplist <- file.path(tempdir(), "temp_snplist.txt")
     input_type <- if (!is.null(input$markerFile)) {
-      file_ext <- tools::file_path_sans_ext(input$markerFile$datapath)
+      file_ext <- tools::file_ext(input$markerFile$datapath)
       
       if (!file_ext %in% c("vcf", "gz", "bcf")) {
         stop("Unsupported file format. Upload a VCF/BCF file or use PLINK files.")
