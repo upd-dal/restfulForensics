@@ -57,16 +57,16 @@ filtering_server <- function(input, output, session, rv) {
     incProgress(0.4, detail = "Preparing file for filtering...")
     pgen_prefix <- file.path(temp_dir, "convert_to_plink2")
     if (!is.null(input$markerFileFilter)) {
-      fext <- tools::file_path_sans_ext(input$markerFileFilter$datapath)
+      fext <- tools::file_ext(input$markerFileFilter$datapath)
       if (!fext %in% c("vcf", "gz", "bcf")) {
         stop("Unsupported file format. Should provide VCF or BCF files or upload bed/bim/fam files.")
       }
       
       convert_to_plink2(input$markerFileFilter$datapath, original_name = input$markerFileFilter$name, name = pgen_prefix)
     } else if (is.null(input$markerFileFilter) & !is.null(input$bedFileFilter)) {
-      bed_prefix <- tools::file_path_sans_ext(input$bedFileFilter$datapath)
-      bim_prefix <- tools::file_path_sans_ext(input$bimFileFilter$datapath)
-      fam_prefix <- tools::file_path_sans_ext(input$famFileFilter$datapath)
+      bed_prefix <- tools::file_ext(input$bedFileFilter$datapath)
+      bim_prefix <- tools::file_ext(input$bimFileFilter$datapath)
+      fam_prefix <- tools::file_ext(input$famFileFilter$datapath)
       
       if (bed_prefix != "bed") {
         stop("Unsupported file format. Should be a BED file")
