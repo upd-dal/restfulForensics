@@ -1,5 +1,6 @@
 pop_stats_server <- function(input, output, session, rv) {
   # =============== POPULATION STATISTICS =================#
+  callModule(profvis_server, "profiler_rpop")
   examplePop <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -287,6 +288,7 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
+  callModule(profvis_server, "profiler_arlecore")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

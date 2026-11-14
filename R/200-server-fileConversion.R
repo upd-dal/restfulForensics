@@ -209,10 +209,6 @@ file_conversion_server <- function(input, output, session, rv) {
   output.dir <- tempdir()
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   
-  iv_addmeta <- shinyvalidate::InputValidator$new()
-  iv_addmeta$add_rule("genotypeFile", sv_required())
-  iv_addmeta$add_rule("populationType", sv_required())
-
   observe({
     fileready <- !is.null(input$genotypeFile)
     singlePop <- nzchar(input$typePop_meta)
