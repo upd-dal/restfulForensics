@@ -40,12 +40,14 @@ clean_input_data <- function(file) {
     file[, 3:ncol(file), drop = FALSE],
     function(x) {
       x <- as.character(x)
+      x <- trimws(x)
       x[is.na(x)] <- "N"
       x <- gsub("|", "/", x, fixed = TRUE)
       x <- sub("^([A-Za-z])([A-Za-z])$", "\\1/\\2", x)
       x
     }
   )
+  
   
   file[is.na(file)] <- "N"
   file <- file %>%
@@ -390,12 +392,12 @@ convert_from_plink2 <- function(prefix,
 
   if (output_type == "csv2") {
     vcf_file <- convert_from_plink2(prefix, "vcf2", output.dir)
-    csv <- vcf_to_csv(
+    df <- vcf_to_df(
       vcf_file,
       ref = ref,
       output.dir = output.dir
     )
-    return(csv)
+    return(df)
   }
 }
 
@@ -436,7 +438,7 @@ merge_plink2_files <- function(base_prefix, merge_list, output_prefix) {
 #' @param output.dir (optional) The output directory to save input files if zipped. Default is working directory.
 #'
 #' @returns The dataframe of merged metadata with genotype information.
-vcf_to_csv <- function(files, ref = NULL, output.dir = ".") {
+vcf_to_df <- function(files, ref = NULL, output.dir = ".") {
   extension <- tools::file_ext(files)
 
   if (extension %in% c("vcf", "gz")) {
@@ -621,7 +623,6 @@ widen_genotype_file <- function(files = files,
   data_list <- files_raw$data_files
   all.list <- list()
 
-  # check file extension
   f_ext <- tools::file_ext(data_list[1])
   
   if (f_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
@@ -709,15 +710,13 @@ to_snipper <- function(input,
   
   validate_gt_df(input.file)
   
-  input.file <- input.file %>% dplyr::mutate(
-    dplyr::across(tidyselect::everything(), as.character)) %>%
-    dplyr::mutate(dplyr::across(
-      tidyselect::everything(), ~ {
-        x <- trimws(.x)
-        x[is.na(x) | x == "" | x %in% c("N/A", "NA", "N")] <- "NN"
-        x
-      }
-    ))
+  input.file <- input.file %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::case_when(
+      .x == "N" ~ "N/N",
+      TRUE ~ .x
+    )))
+  input.file <- as.data.frame(input.file)
 
   tosnipper <- lapply(
     input.file,

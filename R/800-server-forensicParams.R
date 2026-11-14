@@ -149,9 +149,6 @@ forensic_params_server <- function(input, output, session, rv) {
     downloadButton("downloadAFTable", "Download Allele Frequency Table")
   })
 
-
-  
-
   #================= Matching Profile
   forensicParamInput <- data.frame(
     markers = c("rs101.A", "rs101.T", "rs102.C", "rs102.G", "..."),

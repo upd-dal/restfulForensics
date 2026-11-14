@@ -74,7 +74,11 @@ file_conversion_tab <- function() {
               ),
               p(strong("Expected output file/s:"), "VCF, PLINK-associated files, or CSV."),
               br(),
-              p("Maximum accepted file size: 5GB. It is recommended to split files with sizes larger than 5GB into multiple smaller files.")
+              p(strong("Notes:")),
+              tags$ul(
+                tags$li("Missing values will appear as empty cells."),
+                tags$li("Maximum accepted file size: 5GB. It is recommended to split files with sizes larger than 5GB into multiple smaller files.")
+              )
             ),
             tabPanel(
               title = "Sample Input Format/s",
@@ -147,15 +151,24 @@ file_conversion_tab <- function() {
               h4("Merge select metadata to genotype/sample data"),
               p(strong("Input file/s:")),
               tags$ul(
-                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data. Zipped files are also accepted as long as it consists a single file type."),
-                tags$li("Sample metadata (CSV/Excel file). Select column names to be merged with the genotype data. Ensure sample IDs are the same.")
+                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data. 
+                        Zipped files are also accepted but should consist a single file type for merging.
+                        To merge a VCF and CSV/Excel file, convert one file to the other.
+                        "),
+                tags$li("Sample metadata (CSV/Excel file). Metadata file should contain all information on samples if using zipped files.
+                        Select column names to be merged with the genotype data. Ensure sample IDs are the same.")
               ),
-              p(strong("Expected output file/s:"), "CSV file of sample with metadata.")
+              p(strong("Expected output file/s:"), "CSV file of sample with metadata."),
+              br(),
+              p(strong("Notes:")),
+              p("Missing values from VCF/BCF files will appear as empty cells while
+                original representation of missing values from CSV/Excel files will be kept.")
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              h4("To convert to a CSV file with population metadata:"),
-              DT::dataTableOutput("ExampleRefFile")
+              h4("Sample metadata file:"),
+              DT::dataTableOutput("ExampleRefFile"),
+              p("Sample column should match sample IDs in the genotype file.")
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -215,7 +228,10 @@ file_conversion_tab <- function() {
               title = "Instructions",
               h4("Convert zipped files (CSV/Excel file) containing SNP calls in long format into a single .xslx file in a wide format"),
               p(strong("Input file/s:"), "Compressed folder (.zip or .tar) containing CSV/Excel files."),
-              p(strong("Expected output file/s:"), "Single CSV file (merged CSV/Excel files).")
+              p(strong("Expected output file/s:"), "Single CSV file (merged CSV/Excel files)."),
+              br(),
+              p(strong("Notes:")),
+              p("Input files are assumed to contain biallelic markers without dropouts.")
             ),
             tabPanel(
               title = "Sample Input Format/s",
@@ -269,6 +285,9 @@ file_conversion_tab <- function() {
               p(strong("Input file/s:"), "CSV or Excel file"),
               p(strong("Parameter/s:"), "(optional) Target population name for classification."),
               p(strong("Expected output file/s:"), "Excel (.xslx) file"),
+              p(strong("Notes:")),
+              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'NN' as recognized by the SNIPPER tool."),
               hr(),
               p(
                 "The ",
@@ -356,6 +375,9 @@ file_conversion_tab <- function() {
                 tags$li("structure (.str) file"),
                 tags$li("revised input file")
               ),
+              p(strong("Notes:")),
+              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '?' as recognized by the STRUCTURE tool."),
               hr(),
               p(tags$a("STRUCTURE",
                 href = "https://web.stanford.edu/group/pritchardlab/structure.html",
