@@ -43,7 +43,7 @@ classification_server <- function(input, output, session, rv) {
           }
           
         validate_file(load_csv_xlsx_files(input$forPredFile$datapath))
-        calculate_loo(input$forPredFile$datapath)
+        result <- calculate_loo(input$forPredFile$datapath)
     
     incProgress(0.4, detail = "Processing results...")
       stats <- as.data.frame(result$predStat)

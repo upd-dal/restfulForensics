@@ -90,6 +90,7 @@ plot_structure_runs <- function() {
                 numericInput("repeatsClumpp", "Number of input orders of runs for testing", value = 100, min = 0)
               ),
               numericInput("orderRun", "Permute clusters according to cluster order?", value = 0),
+              helpText("Run button will remain unavailable if CLUMPP executable is not found in the root directory."),
               actionButton("plotStructureResults", "Run CLUMPP", icon = icon("play"))
             ),
             tabBox(

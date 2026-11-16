@@ -287,6 +287,7 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
+  callModule(profvis_server, "profiler")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -369,15 +370,18 @@ pop_stats_server <- function(input, output, session, rv) {
       arlequinFile(arp_file)
 
       incProgress(0.4, detail = "Running arlecore...")
-      # returns path of res folder
-      ld_value <- input$calcLD
-      hwe_value <- input$calcHWE
-      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
-      #}, error = function(e) {
-      #  showNotification(paste("Error:", e$message), type = "error")
-      #  return(NULL)
-      #}
-      #)
+      
+      if (input$uploadARS) {
+        ars_file <- input$arsFile$datapath
+        ld_value <- FALSE
+        hwe_value <- FALSE
+      } else if (isFALSE(input$uploadARS)) {
+        ars_file <- NULL
+        ld_value <- input$calcLD
+        hwe_value <- input$calcHWE
+      }
+      
+      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arsFile = ars_file)
 
       incProgress(0.8, detail = "Loading report...")
       # get report file

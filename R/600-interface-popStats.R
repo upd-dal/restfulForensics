@@ -108,6 +108,7 @@ popstats_tab <- function() {
         ),
         tabPanel(
           title = "Arlecore",
+          profvis::profvis_ui("profiler"),
           fluidRow(
             box(
               radioButtons("inputArlecore", "Choose input type", choices = c("Genotype File" = "gtFile",
@@ -124,22 +125,33 @@ popstats_tab <- function() {
                 condition = "input.inputArlecore == 'arpFile'",
                 fileInput("fileForArlecoreARP", "Upload .arp File", accept = "arp")
               ),
-              checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
+              hr(),
+              checkboxInput("uploadARS", "Upload own parameter file (.ars)?", value = FALSE),
               conditionalPanel(
-                condition = "input.calcLD",
-                helpText("The Markov Chains are automatically set to 10,000 steps")
+                condition = "input.uploadARS",
+                fileInput("arsFile", "Upload .ars file", accept = "ars")
+              ),
+              conditionalPanel(
+                condition = "!input.uploadARS",
+                helpText("Options if using standard ars file included in restful forensics:"),
+                checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
+                conditionalPanel(
+                  condition = "input.calcLD",
+                  helpText("The Markov Chains are automatically set to 10,000 steps")
+                ),
+                
+                checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
+                conditionalPanel(
+                  condition = "input.calcHWE",
+                  helpText("The Markov Chains are automatically set to 1,000,000 steps")
+                ),
+                
+                conditionalPanel(
+                  condition = "input.calcHWE || input.calcLD",
+                  helpText("Running will take some time and will take longer with more populations/samples.")
+                )
               ),
               
-              checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
-              conditionalPanel(
-                condition = "input.calcHWE",
-                helpText("The Markov Chains are automatically set to 1,000,000 steps")
-              ),
-              
-              conditionalPanel(
-                condition = "input.calcHWE || input.calcLD",
-                helpText("Running will take some time and will take longer with more populations/samples.")
-              ),
               helpText("Run button will remain unavailable if Arlecore 64-bit executable is not found in the root directory."),
               actionButton("runArlecore", "Run Arlecore", icon = icon("arrow-up-right-from-square")),
               uiOutput("download_arlecore_results_UI")
