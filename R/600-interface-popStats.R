@@ -95,8 +95,8 @@ popstats_tab <- function() {
               tabPanel(
                 title = "7. Fst Values",
                 h4("Pairwise Fst Matrix"),
-                uiOutput("fstMatrixUI"),
-                h4("Tidy Pairwise Fst Data"),
+                #uiOutput("fstMatrixUI"),
+                #h4("Tidy Pairwise Fst Data"),
                 DT::dataTableOutput("fstDfTable"),
                 br(),
                 h4("Fst Heatmap"),

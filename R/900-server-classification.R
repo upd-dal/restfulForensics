@@ -181,7 +181,7 @@ classification_server <- function(input, output, session, rv) {
   tryCatch({
     incProgress(0.2, detail = "Loading and validating input data...")
     file_ext <- tools::file_ext(input$crossValFile$datapath)
-    if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+    if (!file_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
       stop("Unsupported file format: Should be a CSV/Excel file")
     }
         input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
