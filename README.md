@@ -18,7 +18,7 @@ University of the Philippines Diliman, Quezon City.
 2. [Features](#Features)  
 3. [Installation](#Installation) <br>
    a. [Prerequisites](#A-Prerequisites) <br>
-   b. [Installation Guide](#C-Installation-Guide) <br>
+   b. [Installation Guide](#B-Installation-Guide) <br>
 4. [Example Workflow](#Example-Workflow)  
 5. [Software Architecture](#Software-Architecture) 
 6. [Limitations](#Limitations) <br>
@@ -76,17 +76,17 @@ for sub/modules:
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | Run STRUCTURE v2.3.4 | Perform population structure analysis | CSV/Excel file | Structure (.str) file, STRUCTURE results, Q matrices, and .ind files | STRUCTURE v2.3.4 and [_strataG_](https://github.com/EricArcher/strataG) |
-| 2 | Plot STRUCTURE results | Visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
+| 2 | Plot STRUCTURE results | Find best K using Evanno and visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
 
-*Module 7: Forensic Parameters*
+*Module 7: Forensic Parameters* 
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic Parameters | Calculate forensic parameters specific for individual identity SNPs | CSV/Excel file | Excel (.xlsx) file | |
+| 1 | Forensic Parameters | Calculate forensic parameters specific for individual-identity SNPs (see [formulas](https://upd-dal.github.io/restfulForensics/)) | CSV/Excel file | Excel (.xlsx) file | |
 
 *Module 8: Forensic DNA Inference*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic DNA Inference | Perform Naïve Bayes classification to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html) |
+| 1 | Forensic DNA Inference | Perform Leave-one-out and cross validation using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html), [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html), and [_naivebayes 1.0.0_](https://CRAN.R-project.org/package=naivebayes)|
 
 *Module 9: DNA Barcoding*
 | # | Feature | Description | Input file/s | Output | Related Tools |
@@ -189,6 +189,7 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
 | 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
+| 5 | Forensic DNA Inference | Cross-validation | Fixed set of laplace values |
 | 6 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
 
 ### Planned Enhancements

@@ -526,15 +526,24 @@ test_that("calc_rmp calculates gt frequencies and rmp", {
    
    theta = 0.01
    
-   result <- calc_rmp(profile = profile, af_table = af, n_ref = 100, theta = theta)
+   result <- calc_rmp(profile = profile, af_table = af, theta = theta)
    locus_results <- result$locus_results_by_pop[["Pop1"]]
    summary <- result$summary
-   expected_heterozygous <- 2 * 0.6 * 0.4 * (1 - theta)
-   expected_homozygous <- 0.7^2 + theta * 0.7 * (1 - 0.7)
+   theta <- 0.01
+   
+   expected_heterozygous <- (
+      2 * (theta + (1-theta)*0.6) *
+         (theta + (1-theta)*0.4)
+   ) / ((1+theta)*(1+2*theta))
+   
+   expected_homozygous <- (
+      (2*theta + (1-theta)*0.7) *
+         (3*theta + (1-theta)*0.7)
+   ) / ((1+theta)*(1+2*theta))
    expected_rmp <- expected_heterozygous * expected_homozygous
    
-   expect_equal(locus_results$p, c(0.6, 0.7))
-   expect_equal(locus_results$q, c(0.4, 0.7))
+   expect_equal(locus_results$freq_A, c(0.6, 0.7))
+   expect_equal(locus_results$freq_B, c(0.4, 0.3))
    expect_equal(
       locus_results$gen_prob,
       c(expected_heterozygous, expected_homozygous)
@@ -542,7 +551,6 @@ test_that("calc_rmp calculates gt frequencies and rmp", {
    expect_equal(summary$population, "Pop1")
    expect_equal(summary$loci_used, 2)
    expect_equal(summary$RMP, expected_rmp)
-   expect_equal(summary$reciprocal_RMP, 1/expected_rmp)
    expect_equal(nrow(result$missing), 0)
 })
 

@@ -93,12 +93,20 @@ classification_tab <- function() {
           tabBox(
             tabPanel(
               title = "Instructions",
-              h4("Perform NaÏve Bayes classification using k-fold cross validation."),
+              h4("Performs k-fold cross validation using NaÏve Bayes method."),
               p(strong("Input file/s:"), "CSV/Excel file containing training data or merged training and test data."),
+              p(strong("Parameters:"),
+                tags$ul(
+                  tags$li("Set 'optimize' to TRUE to perform grid search. Laplace values are automatically
+                          set to range (0, 0.5, 1, 2) and adjust to (0.5, 1.0, 1.5)"),
+                  tags$li("K (integer) to indicate the samples per subset. Each population should have at least
+                          k number of samples.")
+                )
+                ),
               p(strong("Expected output file:"), "Excel (.xlsx) file"),
               hr(),
               p(
-                "This performs a NaÏve Bayes classification and leave-one-out cross-validation
+                "This performs K-fold cross-validation using NaÏve Bayes method
                                   of individuals with SNP data (ancestry- or phenotype- informative) using the ",
                 tags$a("e1071",
                        href = "https://cran.r-project.org/web/packages/e1071/index.html",

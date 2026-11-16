@@ -8,7 +8,7 @@ run_arlequin <- function(file, ld = FALSE, hwe = FALSE, arsFile = NULL) {
   arlecore_path <- get_arlecore_path()
   
   if (!is.null(arsFile)) {
-    ars_file <- arsFile
+    ars_file <- normalizePath(arsFile)
   } else {
     if (isTRUE(ld) && isTRUE(hwe)) {
       print("Printing with HWE and with LD")
