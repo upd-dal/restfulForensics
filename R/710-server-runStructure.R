@@ -43,7 +43,7 @@ run_structure_analysis <- function(input, output, session, rv) {
     withProgress(message = "Analysis ongoing...", {
       tryCatch({
         incProgress(0.2, detail = "Loading input file...")
-        str_ext <- tools::file_path_sans_ext(input$structureFile$datapath)
+        str_ext <- tools::file_ext(input$structureFile$datapath)
         
         if (!str_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
           stop("Unsupported file format. Input should be a CSV or Excel file.")
