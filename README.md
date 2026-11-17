@@ -189,8 +189,9 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
 | 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
-| 5 | Forensic DNA Inference | Cross-validation | Fixed set of laplace values |
-| 6 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
+| 5 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Visualization of CLUMPP results are different from the standard with the populations separated. |
+| 6 | Forensic DNA Inference | Cross-validation | Fixed set of laplace values |
+| 7 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
 
 ### Planned Enhancements
 1. *File Conversion: To STRUCTURE File*
@@ -199,10 +200,13 @@ Additional options to set main and extra parameters.
 2. *Population Summary Statistics: Arlecore*
 Plot adjustments to accommodate >10 populations.
 
-3. *DNA Barcoding*
+3. *Population Structure Analysis: Run and Plot Results*
+Additional options to set main and extra parameters and standardize visualizations.
+
+4. *DNA Barcoding*
 Add option to perform pairwise alignments and export alignment as BAM/SAM.
 
-4. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
+5. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
 
 ## Citation Guide  
 To cite the application: Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics

@@ -91,7 +91,7 @@ plot_structure_runs <- function() {
               conditionalPanel(
                 condition = "input.greedyAlgo == 'greedy' || input.greedyAlgo == 'large.k'",
                 radioButtons("greedyOption", "Input order of the runs to be tested",
-                             choices = c("All" = "all", "ran order" = "ran.order"),
+                             choices = c("All" = "all", "Random Order" = "ran.order"),
                              selected = "ran.order"
                 ),
                 numericInput("repeatsClumpp", "Number of input orders of runs for testing", value = 100, min = 0)
@@ -105,6 +105,19 @@ plot_structure_runs <- function() {
                 "Instructions",
                 h4("Run CLUMPP and plot STRUCTURE results"),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
+                p(strong("Parameters:"),
+                  tags$ul(
+                    tags$li("K (integer): choice of k to combine and visualize"),
+                    tags$li("Algorithm: algorithm to be used for aligning runs"),
+                    tags$li("Pairwise matrix similarity statistics"),
+                    tags$li("Input order: Input order of runs to be tested. Additional option if algorithm used is 'Large K' or 'Greedy'"),
+                    tags$li("Runs for testing: Number of input orders of runs to be tested. 
+                            Additional option if algorithm used is 'Large K' or 'Greedy' and input order is 'random order'"),
+                    tags$li("Cluster permutation: To permute clusters according to the cluster order of a specific run.
+                            A value of 0 keeps the cluster order of the first run in the input order that maximized H. 
+                            Set from 1 to K.")
+                  )
+                  ),
                 p(strong("Expected output file:"), "PNG plot"),
                 hr(),
                 p(

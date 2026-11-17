@@ -108,7 +108,6 @@ popstats_tab <- function() {
         ),
         tabPanel(
           title = "Arlecore",
-          profvis::profvis_ui("profiler"),
           fluidRow(
             box(
               radioButtons("inputArlecore", "Choose input type", choices = c("Genotype File" = "gtFile",

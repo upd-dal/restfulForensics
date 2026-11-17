@@ -185,27 +185,6 @@ pop_stats_server <- function(input, output, session, rv) {
     options = list(scrollX = TRUE)
   )
 
-#  output$fstMatrixUI <- renderUI({
-#    fst <- fstStats()$fst_matrix
-#    if (is.list(fst) && "message" %in% names(fst)) {
-#      tags$p(style = "color:gray;", fst$message)
-#    } else {
-#      DT::dataTableOutput("fstMatrixTable")
-#    }
-#  })
-
-#  output$fstMatrixTable <- DT::renderDataTable(
-#    {
-#      matrix_data <- matrix(unlist(fstStats()$fst_matrix),
-#        nrow = sqrt(length(fstStats()$fst_matrix)),
-#        byrow = TRUE
-#      )
-#      rownames(matrix_data) <- colnames(matrix_data) <- attr(fsnps_gen(), "pop.names")
-#      as.data.frame(matrix_data)
-#    },
-#    options = list(scrollX = TRUE)
-#  )
-
   output$fstDfTable <- DT::renderDataTable({
      fstData()
   })
@@ -290,7 +269,6 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
-  callModule(profvis_server, "profiler")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

@@ -17,7 +17,7 @@ structure_runs <- function() {
           condition = "input.advancedStructure == true",
           checkboxInput("freqScore", "Use 'Correlated Frequencies' Model", value = FALSE),
           #checkboxInput("popAlpha", "Infer separate alpha per population", value = TRUE),
-          checkboxInput("noadmix", "Use 'No Admixture' Model", value = TRUE),
+          checkboxInput("noadmix", "Use 'No Admixture' Model", value = FALSE),
           conditionalPanel(
             condition = "input.noadmix == false",
             checkboxInput("inferAlpha", "Infer the value of model parameters", value = TRUE),
@@ -36,6 +36,18 @@ structure_runs <- function() {
           title = "Instructions",
           h4("Run population structure analysis using STRUCTURE v2.3.4"),
           p(strong("Input file:"), "CSV or Excel file"),
+          p(strong("Parameters:"),
+            tags$ul(
+              tags$li("K range: minimum and maximum number of clusters/populations"),
+              tags$li("Number of replicates per value of K (replicates per K)"),
+              tags$li("Burnin is the number of iterations for the MCMC burnin"),
+              tags$li("MCMC replicates after the burnin"),
+              tags$li("(optional) Indicate if to assume a 'No Admixture' model where each individual is assumed to come from one cluster. 
+                      Default is to use the 'Admixture' model."),
+              tags$li("(optional) Indicate if frequencies are correlated"),
+              tags$li("(optional) Alpha can be inferred if using the 'Admixture' model.")
+            )
+          ),
           p(strong("Expected output file:"), "Zipped qmatrices and individual files"),
           hr(),
           p(
