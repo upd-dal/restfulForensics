@@ -22,7 +22,14 @@ plot_structure_runs <- function() {
                 h4("Run Evanno Method on STRUCTURE Results"),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
                 p(strong("Expected output file:"), "Metrics (.csv) and PNG plots"),
-                
+                hr(),
+                p("The Evanno method",
+                  tags$a("(Evanno et al. 2005) ",
+                         href = "https://doi.org/10.1111/j.1365-294X.2005.02553.x",
+                         target = "_blank"
+                  ),
+                  "is an ad hoc statistic to find the uppermost level
+                  of structure in a dataset.")
               ),
               tabPanel(
                 "Download Sample File",
@@ -92,6 +99,7 @@ plot_structure_runs <- function() {
                 numericInput("repeatsClumpp", "Number of input orders of runs for testing", value = 100, min = 0)
               ),
               numericInput("orderRun", "Permute clusters according to cluster order?", value = 0),
+              helpText("Run button will remain unavailable if CLUMPP executable is not found in the root directory."),
               actionButton("plotStructureResults", "Run CLUMPP", icon = icon("play"))
             ),
             tabBox(

@@ -5,7 +5,7 @@ source(project_path("R", "helper_utils_io.R"),
        local = FALSE)
 
 test_that("Unpack input files", {
-   sample_zipped <- project_path("www", "endemic_birds.zip")
+   sample_zipped <- project_path("www", "pangolins.zip")
    output_dir <- tempfile("io_test")
    dir.create(output_dir)
    
@@ -58,7 +58,7 @@ test_that("Read input files - vcf", {
 })
 
 test_that("Read input files - fasta", {
-   sample_file <- project_path("www", "endemic_birds.zip")
+   sample_file <- project_path("www", "pangolins.zip")
    output_dir <- tempfile("fasta_test")
    dir.create(output_dir)
    

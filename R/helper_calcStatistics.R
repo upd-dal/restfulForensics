@@ -351,7 +351,7 @@ export_pop_results <- function(allele_freq, priv_alleles, stats_matrix, hw_matri
     #"Adjusted MC test" = as.data.frame(hw_matrix$mc_adjusted),
     "Loci out of HWE" = as.data.frame(hw_matrix$loci_HWE_failure),
     "Pops out of HWE" = as.data.frame(hw_matrix$pops_out_of_HWE),
-    "Pairwise Fst Matrix" = as.data.frame(fst_matrix$fst_matrix)
+    "Pairwise Fst Matrix" = as.data.frame(fst_matrix)
   )
 
   openxlsx::write.xlsx(datasets, file = out_file)
@@ -584,7 +584,7 @@ calc_iisnps_params <- function(geno_freqs, af) {
     x <- dplyr::rename(x, RMP = 4)
     x <- x %>% dplyr::mutate(
       PD = 1 - RMP,
-      PE = (Heterozygous^2)*(1 - (2*(Heterozygous)*(Homozygous^2))),
+      PE = (Heterozygous**2)*(1 - (2*(Heterozygous)*(Homozygous**2))),
       TPI = 1/(2*Homozygous)
       )
   })

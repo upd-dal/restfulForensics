@@ -39,12 +39,12 @@ classification_server <- function(input, output, session, rv) {
         {
       incProgress(0.2, detail = "Loading and calculating...")
           file_ext <- tools::file_ext(input$forPredFile$datapath)
-          if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+          if (!file_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             stop("Unsupported file format: Should be a CSV/Excel file")
           }
           
         validate_file(load_csv_xlsx_files(input$forPredFile$datapath))
-        calculate_loo(input$forPredFile$datapath)
+        result <- calculate_loo(input$forPredFile$datapath)
     
     incProgress(0.4, detail = "Processing results...")
       stats <- as.data.frame(result$predStat)
@@ -183,13 +183,13 @@ classification_server <- function(input, output, session, rv) {
   tryCatch({
     incProgress(0.2, detail = "Loading and validating input data...")
     file_ext <- tools::file_ext(input$crossValFile$datapath)
-    if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+    if (!file_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
       stop("Unsupported file format: Should be a CSV/Excel file")
     }
         input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
         input.file <- clean_input_data(input.file)
         validate_file(input.file)
-        calculate_crossval(file = input.file,
+        result <- calculate_crossval(file = input.file,
                            optimize = input$optimizeVals,
                            k = as.integer(input$kValue))
       
