@@ -168,7 +168,7 @@ classification_tab <- function() {
             tabPanel(
               title = "Overall Statistics",
               uiOutput("downloadoverallStatResultCV_UI"),
-              DT::dataTableOutput("overallStatResultCV")
+              DT::dataTableOutput("statbyStatResultCV")
             ),
             tabPanel(
               title = "Prediction by Individual",
