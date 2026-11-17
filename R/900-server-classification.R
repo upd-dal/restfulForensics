@@ -187,7 +187,7 @@ classification_server <- function(input, output, session, rv) {
         input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
         input.file <- clean_input_data(input.file)
         validate_file(input.file)
-        calculate_crossval(file = input.file,
+        result <- calculate_crossval(file = input.file,
                            optimize = input$optimizeVals,
                            k = as.integer(input$kValue))
       
