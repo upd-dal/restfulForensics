@@ -584,7 +584,7 @@ calc_iisnps_params <- function(geno_freqs, af) {
     x <- dplyr::rename(x, RMP = 4)
     x <- x %>% dplyr::mutate(
       PD = 1 - RMP,
-      PE = (Heterozygous^2)*(1 - (2*(Heterozygous)*(Homozygous^2))),
+      PE = (Heterozygous**2)*(1 - (2*(Heterozygous)*(Homozygous**2))),
       TPI = 1/(2*Homozygous)
       )
   })
