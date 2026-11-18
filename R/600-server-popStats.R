@@ -31,17 +31,9 @@ pop_stats_server <- function(input, output, session, rv) {
   fstStats <- reactiveVal(NULL)
   fstData <- reactiveVal(NULL)
   afData <- reactiveVal(NULL)
-  statsMatrix <- reactiveVal(NULL)
-  hwMatrix <- reactiveVal(NULL)
   fstMatrix <- reactiveVal(NULL)
+  fstDataPlot <- reactiveVal(NULL)
   fsnps_gen <- reactiveVal(NULL)
-  
-#  fsnps_gen <- reactive({
-#    req(input$popStatsFile)
-#    df <- load_csv_xlsx_files(input$popStatsFile$datapath)
-#    cleaned <- clean_input_data(df)
-#    convert_to_genind(cleaned, to_str = FALSE, popinfo = TRUE)
-#  })
 
   observeEvent(input$runPopStats, {
     disable("runPopStats")
@@ -50,7 +42,6 @@ pop_stats_server <- function(input, output, session, rv) {
     withProgress(message = "Running population analysis...", value = 0, {
       tryCatch(
         {
-          #req(fsnps_gen())
           df <- load_csv_xlsx_files(input$popStatsFile$datapath)
           cleaned <- clean_input_data(df)
           validate_file(cleaned)
@@ -93,7 +84,13 @@ pop_stats_server <- function(input, output, session, rv) {
           fstStats(fst_stats)
           fstMatrix(fst_stats)
           fst_data <- fstStats()$fst_dataframe
-          fstData(fst_data)
+          fstDataPlot(fst_data)
+          matrix_fst <- fst_data %>% tidyr::pivot_wider(
+             names_from = Site2,
+             values_from = Fst
+          )
+          
+          fstData(as.data.frame(matrix_fst))
 
           showNotification("Rendering outputs, this might take some time...", type = "message", duration = 30)
 
@@ -121,7 +118,12 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   output$heterozygosity_table <- DT::renderDataTable({
-    popStats()$heterozygosity
+    het_values <- popStats()$heterozygosity
+    het_long <- het_values %>% dplyr::pivot_wider(
+       names_from = Variable, 
+       values_from = Value
+    )
+    het_long
   })
 
   output$heterozygosity_plot <- renderImage(
@@ -143,7 +145,8 @@ pop_stats_server <- function(input, output, session, rv) {
   )
 
   output$inbreeding_table <- DT::renderDataTable({
-    popStats()$inbreeding_coeff
+    ic <- popStats()$inbreeding_coeff
+    rownames(ic) <- NULL
   })
 
   output$ttest_table <- DT::renderDataTable({
@@ -186,29 +189,8 @@ pop_stats_server <- function(input, output, session, rv) {
     options = list(scrollX = TRUE)
   )
 
-  output$fstMatrixUI <- renderUI({
-    fst <- fstStats()$fst_matrix
-    if (is.list(fst) && "message" %in% names(fst)) {
-      tags$p(style = "color:gray;", fst$message)
-    } else {
-      DT::dataTableOutput("fstMatrixTable")
-    }
-  })
-
-  output$fstMatrixTable <- DT::renderDataTable(
-    {
-      matrix_data <- matrix(unlist(fstStats()$fst_matrix),
-        nrow = sqrt(length(fstStats()$fst_matrix)),
-        byrow = TRUE
-      )
-      rownames(matrix_data) <- colnames(matrix_data) <- attr(fsnps_gen(), "pop.names")
-      as.data.frame(matrix_data)
-    },
-    options = list(scrollX = TRUE)
-  )
-
   output$fstDfTable <- DT::renderDataTable({
-    fstStats()$fst_dataframe
+     fstData()
   })
 
   output$fst_heatmap_plot <- renderImage(
@@ -216,7 +198,7 @@ pop_stats_server <- function(input, output, session, rv) {
       req(fstData())
 
       plot_path <- plot_fst(
-        fst_df = fstData(),
+        fst_df = fstDataPlot(),
         out_dir = tempdir(),
         show_values = input$incLabels
       )
@@ -272,13 +254,13 @@ pop_stats_server <- function(input, output, session, rv) {
       paste0("population-statistics-results_", timestamp, ".xlsx")
     },
     content = function(file) {
-      req(popStats(), hardyWeinberg(), fstStats(), privAlleles(), afData())
+      req(popStats(), hardyWeinberg(), fstData(), privAlleles(), afData())
       path <- export_pop_results(
         allele_freq = afData(),
         priv_alleles = privAlleles(),
-        stats_matrix = statsMatrix(),
-        hw_matrix = hwMatrix(),
-        fst_matrix = fstMatrix(), dir = tempdir()
+        stats_matrix = popStats(),
+        hw_matrix = hardyWeinberg(),
+        fst_matrix = fstData(), dir = tempdir()
       )
 
       file.copy(path, file)
@@ -286,7 +268,7 @@ pop_stats_server <- function(input, output, session, rv) {
   )
 
   output$downloadStatsXLSX_UI <- renderUI({
-    req(statsMatrix(), hwMatrix(), fstMatrix(), privAlleles())
+    req(popStats(), hardyWeinberg(), fstStats(), privAlleles())
     downloadButton("downloadStatsXLSX", "Download Results (excel)")
   })
 
@@ -374,15 +356,18 @@ pop_stats_server <- function(input, output, session, rv) {
       arlequinFile(arp_file)
 
       incProgress(0.4, detail = "Running arlecore...")
-      # returns path of res folder
-      ld_value <- input$calcLD
-      hwe_value <- input$calcHWE
-      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value)
-      #}, error = function(e) {
-      #  showNotification(paste("Error:", e$message), type = "error")
-      #  return(NULL)
-      #}
-      #)
+      
+      if (input$uploadARS) {
+        ars_file <- input$arsFile$datapath
+        ld_value <- FALSE
+        hwe_value <- FALSE
+      } else if (isFALSE(input$uploadARS)) {
+        ars_file <- NULL
+        ld_value <- input$calcLD
+        hwe_value <- input$calcHWE
+      }
+      
+      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arsFile = ars_file)
 
       incProgress(0.8, detail = "Loading report...")
       # get report file

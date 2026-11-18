@@ -72,7 +72,13 @@ build_nj_tree <- function(alignment,
   }
 
   nj_tree <- ape::ladderize(nj_tree)
-  num_sites <- ncol(bins)
+  num_sites <- if (!is.null(dim(bins))) {
+    ncol(bins)
+  } else {
+    length(bins[[1]])
+  }
+  
+  
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
     tree_plot <- ggtree(nj_tree, branch.length = "none") +
@@ -128,7 +134,11 @@ build_upgma_tree <- function(alignment,
   }
 
   upgma_tree <- ape::ladderize(upgma_tree)
-  num_sites <- ncol(bins)
+  num_sites <- if (!is.null(dim(bins))) {
+    ncol(bins)
+  } else {
+    length(bins[[1]])
+  }
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
 

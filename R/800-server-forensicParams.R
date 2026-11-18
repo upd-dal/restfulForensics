@@ -149,9 +149,6 @@ forensic_params_server <- function(input, output, session, rv) {
     downloadButton("downloadAFTable", "Download Allele Frequency Table")
   })
 
-
-  
-
   #================= Matching Profile
   callModule(profvis_server, "profiler_profile")
   
@@ -280,6 +277,7 @@ forensic_params_server <- function(input, output, session, rv) {
   )
 
   output$download_RMP_Summary_UI <- renderUI({
+    req(rmpResult())
     downloadButton("download_RMP_Summary", "Download Results")
   })
   

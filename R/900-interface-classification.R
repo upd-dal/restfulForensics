@@ -65,18 +65,22 @@ classification_tab <- function() {
             width = 12,
             tabPanel(
               title = "Prediction Table",
+              uiOutput("downloadpredictionTable_UI"),
               DT::dataTableOutput("predictionTableResult")
             ),
             tabPanel(
               title = "Statistics by Population",
+              uiOutput("downloadstatbyClass_UI"),
               DT::dataTableOutput("statbyClassResult")
             ),
             tabPanel(
               title = "Overall Statistics",
+              uiOutput("downloadoverallStat_UI"),
               DT::dataTableOutput("overallStatResult")
             ),
             tabPanel(
               title = "Prediction by Individual",
+              uiOutput("downloadpredictionList_UI"),
               DT::dataTableOutput("predictionList")
             )
           )
@@ -90,17 +94,28 @@ classification_tab <- function() {
             fileInput("crossValFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
             checkboxInput("optimizeVals", "Optimize "),
             numericInput("kValue", "Set K value for K-fold cross validation", value = 10),
-            actionButton("performCrossval", "Perform cross-validation", icon = icon("shuffle"))
+            numericInput("repsValue", "Repeats or sets of folds to run", value = 1),
+            actionButton("performCrossval", "Perform cross-validation", icon = icon("shuffle")),
+            uiOutput("downloadAllCVResults_UI")
           ),
           tabBox(
             tabPanel(
               title = "Instructions",
-              h4("Perform NaÏve Bayes classification using k-fold cross validation."),
+              h4("Performs k-fold cross validation using NaÏve Bayes method."),
               p(strong("Input file/s:"), "CSV/Excel file containing training data or merged training and test data."),
+              p(strong("Parameters:"),
+                tags$ul(
+                  tags$li("Set 'optimize' to TRUE to perform grid search. Laplace values are automatically
+                          set to range (0, 0.5, 1, 2) and adjust to (0.5, 1.0, 1.5)"),
+                  tags$li("K (integer) to indicate the samples per subset. Each population should have at least
+                          k number of samples."),
+                  tags$li("Repeats (integer) specifies how many complete sets of folds will be ran.")
+                )
+                ),
               p(strong("Expected output file:"), "Excel (.xlsx) file"),
               hr(),
               p(
-                "This performs a NaÏve Bayes classification and leave-one-out cross-validation
+                "This performs K-fold cross-validation using NaÏve Bayes method
                                   of individuals with SNP data (ancestry- or phenotype- informative) using the ",
                 tags$a("e1071",
                        href = "https://cran.r-project.org/web/packages/e1071/index.html",
@@ -160,7 +175,7 @@ classification_tab <- function() {
             tabPanel(
               title = "Overall Statistics",
               uiOutput("downloadoverallStatResultCV_UI"),
-              DT::dataTableOutput("overallStatResultCV")
+              DT::dataTableOutput("statbyStatResultCV")
             ),
             tabPanel(
               title = "Prediction by Individual",

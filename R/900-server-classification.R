@@ -37,16 +37,18 @@ classification_server <- function(input, output, session, rv) {
     withProgress(message = "Ongoing: ", {
       tryCatch(
         {
-      incProgress(0.2, detail = "Loading and calculating...")
+      incProgress(0.2, detail = "Loading input file...")
           file_ext <- tools::file_ext(input$forPredFile$datapath)
-          if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+          if (!file_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
             stop("Unsupported file format: Should be a CSV/Excel file")
           }
           
         validate_file(load_csv_xlsx_files(input$forPredFile$datapath))
-        calculate_loo(input$forPredFile$datapath)
+        
+        incProgress(0.4, detail = "Calculating...")
+        result <- calculate_loo(input$forPredFile$datapath)
     
-    incProgress(0.4, detail = "Processing results...")
+    incProgress(0.6, detail = "Processing results...")
       stats <- as.data.frame(result$predStat)
       stats <- data.frame(row.names(stats), stats)
       other_stat <- t(as.data.frame(result$otherStat))
@@ -79,7 +81,23 @@ classification_server <- function(input, output, session, rv) {
         selection = "multiple"
      )
   })
+  
+  output$downloadpredictionTable <- downloadHandler(
+    filename = function() {
+      paste0("confusion_matrix_", Sys.Date(), ".xlsx")
+    },
+    content = function(file) {
+      openxlsx::write.xlsx(
+        predTable(), file = file
+      )
+    }
+  )
 
+  output$downloadpredictionTable_UI <- renderUI({
+    req(predTable())
+    downloadButton("downloadpredictionTable", "Download Confusion Matrix")
+  })
+  
   output$statbyClassResult <- DT::renderDataTable({
     req(predModel())
      DT::datatable(
@@ -92,6 +110,22 @@ classification_server <- function(input, output, session, rv) {
         filter = "top",
         selection = "multiple"
      )
+  })
+  
+  output$downloadstatbyClass <- downloadHandler(
+    filename = function() {
+      paste0("statistics_by_class_", Sys.Date(), ".xlsx")
+    },
+    content = function(file) {
+      openxlsx::write.xlsx(
+        predModel(), file = file
+      )
+    }
+  )
+  
+  output$downloadstatbyClass_UI <- renderUI({
+    req(predModel())
+    downloadButton("downloadstatbyClass", "Download Statistics per Class")
   })
 
   output$overallStatResult <- DT::renderDataTable({
@@ -108,6 +142,22 @@ classification_server <- function(input, output, session, rv) {
      )
   })
   
+  output$downloadoverallStat <- downloadHandler(
+    filename = function() {
+      paste0("overall_statistics_", Sys.Date(), ".xlsx")
+    },
+    content = function(file) {
+      openxlsx::write.xlsx(
+        predStat(), file = file
+      )
+    }
+  )
+  
+  output$downloadoverallStat_UI <- renderUI({
+    req(predStat())
+    downloadButton("downloadoverallStat", "Download Overall Statistics")
+  })
+  
   output$predictionList <- DT::renderDataTable({
      req(PredictionList())
      DT::datatable(
@@ -120,6 +170,22 @@ classification_server <- function(input, output, session, rv) {
         filter = "top",
         selection = "multiple"
      )
+  })
+  
+  output$downloadpredictionList <- downloadHandler(
+    filename = function() {
+      paste0("individual_predictions_", Sys.Date(), ".xlsx")
+    },
+    content = function(file) {
+      openxlsx::write.xlsx(
+        PredictionList(), file = file
+      )
+    }
+  )
+  
+  output$downloadpredictionList_UI <- renderUI({
+    req(PredictionList())
+    downloadButton("downloadpredictionList", "Download Individual Predictions")
   })
 
   output$downloadClassification <- downloadHandler(
@@ -178,22 +244,25 @@ classification_server <- function(input, output, session, rv) {
   observeEvent(input$performCrossval, {
     disable("performCrossval")
     req(input$crossValFile)
-    withProgress("Performing cross-validation", {
-      
+    
+    withProgress(message = "Performing cross-validation", {
   tryCatch({
     incProgress(0.2, detail = "Loading and validating input data...")
     file_ext <- tools::file_ext(input$crossValFile$datapath)
-    if (!file_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
+    if (!file_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
       stop("Unsupported file format: Should be a CSV/Excel file")
     }
         input.file <- load_csv_xlsx_files(input$crossValFile$datapath)
         input.file <- clean_input_data(input.file)
         validate_file(input.file)
-        calculate_crossval(file = input.file,
+        
+        incProgress(0.4, detail = "Calculating...")
+        result <- calculate_crossval(file = input.file,
                            optimize = input$optimizeVals,
-                           k = as.integer(input$kValue))
+                           k = as.integer(input$kValue),
+                           reps = as.integer(input$repsValue))
       
-        incProgress(0.5, detail = "Processing results...")
+        incProgress(0.6, detail = "Processing results...")
         stats <- as.data.frame(result$predStat)
         stats <- data.frame(
           Statistic = rownames(stats), stats, row.names = NULL
@@ -217,9 +286,7 @@ classification_server <- function(input, output, session, rv) {
     
       }, error = function(e) {
         showNotification(paste("Cross-validation error:", e$message), type = "error")
-        return(NULL)
       })
-      
     }
       
     )
@@ -336,6 +403,35 @@ classification_server <- function(input, output, session, rv) {
     req(PredictionListCV())
     
     downloadButton("downloadpredictionListCV", "Download Individual Predictions")
+  })
+  
+  output$downloadAllCVResults <- downloadHandler(
+    filename = function() {
+      paste0("CrossValidation_Results_", format(Sys.Date(), "%Y%m%d"), ".xlsx")
+    },
+    content = function(file) {
+      wb <- openxlsx::createWorkbook()
+      
+      openxlsx::addWorksheet(wb, "Model Information")
+      openxlsx::addWorksheet(wb, "Confusion Matrix")
+      openxlsx::addWorksheet(wb, "Population Statistics")
+      openxlsx::addWorksheet(wb, "Overall Statistics")
+      openxlsx::addWorksheet(wb, "Individual Predictions")
+      
+      openxlsx::writeData(wb, "Model Information", modelInfoCV())
+      openxlsx::writeData(wb, "Confusion Matrix", predTableCV())
+      openxlsx::writeData(wb, "Population Statistics", predModelCV())
+      openxlsx::writeData(wb, "Overall Statistics", predStatCV())
+      openxlsx::writeData(wb, "Individual Predictions", predictionListCV())
+      
+      openxlsx::saveWorkbook(wb, file = file, overwrite = TRUE)
+    }
+  )
+  
+  output$downloadAllCVResults_UI <- renderUI({
+    req(PredictionListCV(), modelInfoCV(), predTableCV(), predModelCV(), predStatCV())
+    
+    downloadButton("downloadAllCVResults", "Download All Tables (.xlsx)")
   })
   
   

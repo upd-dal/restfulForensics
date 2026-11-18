@@ -43,7 +43,7 @@ run_structure_analysis <- function(input, output, session, rv) {
     withProgress(message = "Analysis ongoing...", {
       tryCatch({
         incProgress(0.2, detail = "Loading input file...")
-        str_ext <- tools::file_path_sans_ext(input$structureFile$datapath)
+        str_ext <- tools::file_ext(input$structureFile$datapath)
         
         if (!str_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
           stop("Unsupported file format. Input should be a CSV or Excel file.")
@@ -107,6 +107,8 @@ run_structure_analysis <- function(input, output, session, rv) {
       incProgress(0.8, detail = "Extracting q matrices...")
       qmatrices_result(lapply(sr, function(x) x$q.mat))
       analysis_done(TRUE)
+      
+      
       }, 
       error = function(e) {
         showNotification(paste("Error:", e$message), type = "error")
@@ -188,13 +190,14 @@ run_structure_analysis <- function(input, output, session, rv) {
     contentType = "application/zip"
   )
   
-  output$downloadButtons <- renderUI({
-    req(analysis_done())
-    tagList(
-      #downloadButton("downloadLogs", "Download Log Files (.zip)"),
-      downloadButton("downloadFOutputs", "Download STRUCTURE _f Files (.zip)"),
-      downloadButton("downloadQMatrixTxtZip", "Download Q Matrices (.zip)")
-    )
-  })
+output$downloadButtons <- renderUI({
+
+  req(analysis_done())
+
+  tagList(
+    downloadButton("downloadFOutputs", "Download STRUCTURE _f Files (.zip)"),
+    downloadButton("downloadQMatrixTxtZip", "Download Q Matrices (.zip)")
+  )
+})
   
 }

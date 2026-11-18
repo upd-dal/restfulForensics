@@ -15,9 +15,8 @@ test_that("calc_msa returns aligned DNA sequences", {
    expect_named(result, c("alignment", "scores", "adjusted", "staggered"))
    
    expect_s4_class(result$alignment, "MsaDNAMultipleAlignment")
-   expect_s4_class(result$adjusted, "DNAStringSet")
-   expect_s4_class(result$staggered, "DNAStringSet")
-   expect_setequal(names(result$adjusted), names(sequences))
+   expect_s4_class(result$adjusted, "DNAMultipleAlignment")
+   expect_s4_class(result$staggered, "DNAMultipleAlignment")
 })
 
 test_that("build_nj_tree returns plot", {

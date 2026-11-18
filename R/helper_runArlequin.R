@@ -4,21 +4,25 @@
 #' @param ld To indicate if linkage disequilibrium will be calculated. Default is FALSE.
 #'
 #' @returns The path of the resulting folder.
-run_arlequin <- function(file, ld = FALSE, hwe = FALSE) {
+run_arlequin <- function(file, ld = FALSE, hwe = FALSE, arsFile = NULL) {
   arlecore_path <- get_arlecore_path()
   
-  if (isTRUE(ld) && isTRUE(hwe)) {
-    print("Printing with HWE and with LD")
-    ars_file <- normalizePath("./arlequin/arl_run_withHWE_withLD.ars", winslash = "\\", mustWork = TRUE)
-  } else if (isTRUE(ld) && isFALSE(hwe)) {
-    print("Printing with LD")
-    ars_file <- normalizePath("./arlequin/arl_run_withLD.ars", winslash = "\\", mustWork = TRUE)
-  } else if (isFALSE(ld) && isTRUE(hwe)) {
-    print("Printing with HWE")
-    ars_file <- normalizePath("./arlequin/arl_run_withHWE.ars", winslash = "\\", mustWork = TRUE)
-  } else if (isFALSE(ld) && isFALSE(hwe)) {
-    print("Printing standard")
-    ars_file <- normalizePath("./arlequin/arl_run.ars", winslash = "\\", mustWork = TRUE)
+  if (!is.null(arsFile)) {
+    ars_file <- normalizePath(arsFile)
+  } else {
+    if (isTRUE(ld) && isTRUE(hwe)) {
+      print("Printing with HWE and with LD")
+      ars_file <- normalizePath("./arlequin/arl_run_withHWE_withLD.ars", winslash = "\\", mustWork = TRUE)
+    } else if (isTRUE(ld) && isFALSE(hwe)) {
+      print("Printing with LD")
+      ars_file <- normalizePath("./arlequin/arl_run_withLD.ars", winslash = "\\", mustWork = TRUE)
+    } else if (isFALSE(ld) && isTRUE(hwe)) {
+      print("Printing with HWE")
+      ars_file <- normalizePath("./arlequin/arl_run_withHWE.ars", winslash = "\\", mustWork = TRUE)
+    } else if (isFALSE(ld) && isFALSE(hwe)) {
+      print("Printing standard")
+      ars_file <- normalizePath("./arlequin/arl_run.ars", winslash = "\\", mustWork = TRUE)
+    }
   }
 
   workdir <- dirname(file)

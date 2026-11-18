@@ -208,7 +208,7 @@ file_conversion_server <- function(input, output, session, rv) {
   convertedBreakdown <- reactiveVal(NULL)
   output.dir <- tempdir()
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  
+
   observe({
     fileready <- !is.null(input$genotypeFile)
     singlePop <- nzchar(input$typePop_meta)
@@ -431,8 +431,7 @@ file_conversion_server <- function(input, output, session, rv) {
     downloadButton("downloadMissingMeta", "Download Samples without Metadata")
   })
 
-  # ================== Widen GT file ====================#
-  callModule(profvis_server, "profiler_widen")
+  # ================== Widen GT file ==================== #
   convertedUAS <- reactiveVal(NULL)
   observe({
     shinyjs::toggleState("run_uas2csv", !is.null(input$uas_zip))
@@ -575,7 +574,7 @@ file_conversion_server <- function(input, output, session, rv) {
       
     tryCatch({
       tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
-      validate_file(tosnipper_file)
+      validate_gt_df(tosnipper_file)
       tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
     if (!is.null(input$refProvided)) {
@@ -593,7 +592,7 @@ file_conversion_server <- function(input, output, session, rv) {
     inputData <- colnames(inputPath)
     numMarkers <- length(inputData) - 1
     
-      snipper.file <- to_snipper(
+    snipper.file <- to_snipper(
             input = inputPath,
             references = refPath,
             target.pop = targetSet,

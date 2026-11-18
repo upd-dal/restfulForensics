@@ -22,7 +22,14 @@ plot_structure_runs <- function() {
                 h4("Run Evanno Method on STRUCTURE Results"),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
                 p(strong("Expected output file:"), "Metrics (.csv) and PNG plots"),
-                
+                hr(),
+                p("The Evanno method",
+                  tags$a("(Evanno et al. 2005) ",
+                         href = "https://doi.org/10.1111/j.1365-294X.2005.02553.x",
+                         target = "_blank"
+                  ),
+                  "is an ad hoc statistic to find the uppermost level
+                  of structure in a dataset.")
               ),
               tabPanel(
                 "Download Sample File",
@@ -86,12 +93,13 @@ plot_structure_runs <- function() {
               conditionalPanel(
                 condition = "input.greedyAlgo == 'greedy' || input.greedyAlgo == 'large.k'",
                 radioButtons("greedyOption", "Input order of the runs to be tested",
-                             choices = c("All" = "all", "ran order" = "ran.order"),
+                             choices = c("All" = "all", "Random Order" = "ran.order"),
                              selected = "ran.order"
                 ),
                 numericInput("repeatsClumpp", "Number of input orders of runs for testing", value = 100, min = 0)
               ),
               numericInput("orderRun", "Permute clusters according to cluster order?", value = 0),
+              helpText("Run button will remain unavailable if CLUMPP executable is not found in the root directory."),
               actionButton("plotStructureResults", "Run CLUMPP", icon = icon("play"))
             ),
             tabBox(
@@ -99,6 +107,19 @@ plot_structure_runs <- function() {
                 "Instructions",
                 h4("Run CLUMPP and plot STRUCTURE results"),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
+                p(strong("Parameters:"),
+                  tags$ul(
+                    tags$li("K (integer): choice of k to combine and visualize"),
+                    tags$li("Algorithm: algorithm to be used for aligning runs"),
+                    tags$li("Pairwise matrix similarity statistics"),
+                    tags$li("Input order: Input order of runs to be tested. Additional option if algorithm used is 'Large K' or 'Greedy'"),
+                    tags$li("Runs for testing: Number of input orders of runs to be tested. 
+                            Additional option if algorithm used is 'Large K' or 'Greedy' and input order is 'random order'"),
+                    tags$li("Cluster permutation: To permute clusters according to the cluster order of a specific run.
+                            A value of 0 keeps the cluster order of the first run in the input order that maximized H. 
+                            Set from 1 to K.")
+                  )
+                  ),
                 p(strong("Expected output file:"), "PNG plot"),
                 hr(),
                 p(

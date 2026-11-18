@@ -18,7 +18,7 @@ University of the Philippines Diliman, Quezon City.
 2. [Features](#Features)  
 3. [Installation](#Installation) <br>
    a. [Prerequisites](#A-Prerequisites) <br>
-   b. [Installation Guide](#C-Installation-Guide) <br>
+   b. [Installation Guide](#B-Installation-Guide) <br>
 4. [Example Workflow](#Example-Workflow)  
 5. [Software Architecture](#Software-Architecture) 
 6. [Limitations](#Limitations) <br>
@@ -76,22 +76,24 @@ for sub/modules:
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | Run STRUCTURE v2.3.4 | Perform population structure analysis | CSV/Excel file | Structure (.str) file, STRUCTURE results, Q matrices, and .ind files | STRUCTURE v2.3.4 and [_strataG_](https://github.com/EricArcher/strataG) |
-| 2 | Plot STRUCTURE results | Visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
+| 2 | Plot STRUCTURE results | Find best K using Evanno and visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
 
-*Module 7: Forensic Parameters*
+*Module 7: Forensic Parameters* 
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic Parameters | Calculate forensic parameters specific for individual identity SNPs | CSV/Excel file | Excel (.xlsx) file | |
+| 1 | Population Database | Calculate forensic parameters specific for individual-identity SNPs (see [formulas](https://upd-dal.github.io/restfulForensics/)) | CSV/Excel file | Excel (.xlsx) file | |
+| 2 | Calculate RMP for a Profile | Calculate the RMP of a profile using frequencies derived under HWE assumptions | CSV/Excel/Text file | CSV of metrics | |
 
 *Module 8: Forensic DNA Inference*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic DNA Inference | Perform Naïve Bayes classification to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html) |
+| 1 | Leave-one-out | Perform leave-one-out using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html)|
+| 2 | Cross-validation | Perform k-fold classification using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html)|
 
 *Module 9: DNA Barcoding*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Multiple Sequence Alignment | Perform multiple sequence alignment using select methods | Zipped FASTA files | PDF and FASTA file of alignment | [_msa_ v1.44.1](https://www.bioconductor.org/packages/release/bioc/html/msa.html) and [_DECIPER v3.8.1_](https://bioconductor.org/packages/release/bioc/html/DECIPHER.html) |
+| 1 | Multiple Sequence Alignment | Perform multiple sequence alignment using select methods and trim MSA | Zipped FASTA files for alignment and fasta files for trimming | PDF and FASTA file of alignment | [_msa_ v1.44.1](https://www.bioconductor.org/packages/release/bioc/html/msa.html) and [_DECIPER v3.8.1_](https://bioconductor.org/packages/release/bioc/html/DECIPHER.html) |
 | 2 | Phylogenetic Tree Analysis | Build a phylogenetic tree based on aligned sequences | Alignment file | PNG file | [_ggtree v4.2.0_](https://bioconductor.org/packages/ggtree/) and [_phangorn v2.12.1_](https://CRAN.R-project.org/package=phangorn) |
 | 3 | Barcoding | Perform species identification, evaluate barcodes, calculate barcoding gap, and calculate species membership value | Aligned sequences | Metrics | [_BarcodingR v1.0.4_](https://cran.r-project.org/web/packages/BarcodingR/index.html) |
 
@@ -189,7 +191,9 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
 | 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
-| 6 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
+| 5 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Visualization of CLUMPP results are different from the standard with the populations separated. |
+| 6 | Forensic DNA Inference | Cross-validation | Fixed set of laplace values |
+| 7 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
 
 ### Planned Enhancements
 1. *File Conversion: To STRUCTURE File*
@@ -198,10 +202,13 @@ Additional options to set main and extra parameters.
 2. *Population Summary Statistics: Arlecore*
 Plot adjustments to accommodate >10 populations.
 
-3. *DNA Barcoding*
+3. *Population Structure Analysis: Run and Plot Results*
+Additional options to set main and extra parameters and standardize visualizations.
+
+4. *DNA Barcoding*
 Add option to perform pairwise alignments and export alignment as BAM/SAM.
 
-4. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
+5. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
 
 ## Citation Guide  
 To cite the application: Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics
