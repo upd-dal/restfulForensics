@@ -57,16 +57,19 @@ calculate_loo <- function(file) {
   ))
 }
 
-calculate_crossval <- function(file, optimize = FALSE, k = 5) {
+calculate_crossval <- function(file, optimize = FALSE, k = 5, reps = 3) {
   data_fsnps <- dplyr::rename(file, Sample = 1, Pop = 2)
   data_fsnps$Pop <- factor(data_fsnps$Pop)
   predictor_cols <- setdiff(colnames(data_fsnps), c("Sample", "Pop"))
   data_fsnps[predictor_cols] <- lapply(data_fsnps[predictor_cols], factor)
   
   pop_counts <- table(data_fsnps$Pop)
+  lowest_pop <- names(pop_counts)[which.min(pop_counts)]
+  lowest_count <- min(pop_counts)
   
   if (any(pop_counts < k)) {
-    stop("Each population must contain at least k samples.")
+    stop(paste("Each population must contain at least k samples.", 
+               lowest_pop, "only has", lowest_count, "values."))
   }
   
   set.seed(123)
@@ -74,7 +77,7 @@ calculate_crossval <- function(file, optimize = FALSE, k = 5) {
   tr_control <- caret::trainControl(
     method = "repeatedcv",
     number = k,
-    repeats = 3,
+    repeats = reps,
     savePredictions = "final"
   )
   

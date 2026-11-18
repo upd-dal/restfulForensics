@@ -81,17 +81,19 @@ for sub/modules:
 *Module 7: Forensic Parameters* 
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic Parameters | Calculate forensic parameters specific for individual-identity SNPs (see [formulas](https://upd-dal.github.io/restfulForensics/)) | CSV/Excel file | Excel (.xlsx) file | |
+| 1 | Population Database | Calculate forensic parameters specific for individual-identity SNPs (see [formulas](https://upd-dal.github.io/restfulForensics/)) | CSV/Excel file | Excel (.xlsx) file | |
+| 2 | Calculate RMP for a Profile | Calculate the RMP of a profile using frequencies derived under HWE assumptions | CSV/Excel/Text file | CSV of metrics | |
 
 *Module 8: Forensic DNA Inference*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Forensic DNA Inference | Perform Leave-one-out and cross validation using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html), [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html), and [_naivebayes 1.0.0_](https://CRAN.R-project.org/package=naivebayes)|
+| 1 | Leave-one-out | Perform leave-one-out using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html)|
+| 2 | Cross-validation | Perform k-fold classification using Naïve Bayes method to evaluate classification performance of markers | CSV/Excel file | Excel (.xlsx) file | [_caret_ v7.0.1](https://cran.r-project.org/web/packages/caret/index.html) and [_e1071 v1.7.17_](https://cran.r-project.org/web/packages/e1071/index.html)|
 
 *Module 9: DNA Barcoding*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Multiple Sequence Alignment | Perform multiple sequence alignment using select methods | Zipped FASTA files | PDF and FASTA file of alignment | [_msa_ v1.44.1](https://www.bioconductor.org/packages/release/bioc/html/msa.html) and [_DECIPER v3.8.1_](https://bioconductor.org/packages/release/bioc/html/DECIPHER.html) |
+| 1 | Multiple Sequence Alignment | Perform multiple sequence alignment using select methods and trim MSA | Zipped FASTA files for alignment and fasta files for trimming | PDF and FASTA file of alignment | [_msa_ v1.44.1](https://www.bioconductor.org/packages/release/bioc/html/msa.html) and [_DECIPER v3.8.1_](https://bioconductor.org/packages/release/bioc/html/DECIPHER.html) |
 | 2 | Phylogenetic Tree Analysis | Build a phylogenetic tree based on aligned sequences | Alignment file | PNG file | [_ggtree v4.2.0_](https://bioconductor.org/packages/ggtree/) and [_phangorn v2.12.1_](https://CRAN.R-project.org/package=phangorn) |
 | 3 | Barcoding | Perform species identification, evaluate barcodes, calculate barcoding gap, and calculate species membership value | Aligned sequences | Metrics | [_BarcodingR v1.0.4_](https://cran.r-project.org/web/packages/BarcodingR/index.html) |
 

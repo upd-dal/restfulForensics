@@ -105,7 +105,7 @@ msa_tab <- function() {
             h4("Trim sequence alignments"),
             p(strong("Input file/s:"), "Alignment file (msa, fasta, fas, fa, aln, msf)"),
             p(strong("Parameter/s:"), "Start and end position of the subsequence to keep."),
-            p(strong("Expected output/s: Fasta file of trimmed sequences.")),
+            p(strong("Expected output/s:"), "Fasta file of trimmed sequences."),
             hr(),
             p("The ape and phangorn packages for building phylogenetic trees require
               a distance matrix built from MSA without missing values, hence the
@@ -151,10 +151,12 @@ phylogeny_tab <- function() {
           title = "Instructions",
           h4("Perform phylogenetic tree reconstruction"),
           p(strong("Input file"), "is a multiple sequence alignment. Results from the 'MSA' tab are also accepted.
-                                     If using outputs from the 'MSA' tab, there is an option to use the raw, adjusted, or staggered alignment for tree construction.
+                                     If using outputs from the 'MSA' tab, there is an option to use the raw, adjusted, staggered, or trimmed alignment for tree construction.
                                   Accepted MSA formats: .msa, .fasta, .msf, .aln, .faa, .fas"),
-          p(strong("Parameters"), "vary based on the method."),
+          p(strong("Parameters"), "vary depending on the method."),
           p(strong("Expected output"), "is the phylogenetic tree in PNG format."),
+          p(strong("Note:"), "Alignments are first validated by pre-computing a matrix of pairwise genetic distances.
+            The presence of missing values will limit the methods for construction to NJ only."),
           hr(),
           p(
             "This performs phylogenetic tree reconstruction using ape (Paradis and Strimmer, 2004) and phangorn (Schliep, 2011) R packages

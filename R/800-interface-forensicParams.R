@@ -103,12 +103,11 @@ forensic_params_tab <- function() {
           fileInput("fileProfile", "Upload Profile", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls", ".txt")),
           numericInput("thetaValue", "Theta Value", min = 0, value = 0.01, max = 1),
           actionButton("calcRMP", "Calculate", icon = icon("calculator"))
-          
         ),
         tabBox(
           tabPanel(
             title = "Instructions",
-            h4("Calculate the RMP value for a profile."),
+            h4("Calculate the RMP value for a profile"),
             p("Calculating the RMP of a profile uses frequencies derived under HWE assumptions."),
             p(strong("Input file:")),
             tags$ul(
@@ -116,7 +115,7 @@ forensic_params_tab <- function() {
               tags$li("(Reference database) Allele frequencies calculated from the 'Population Database' submodule"),
               tags$li("Sample profile containing genotype information for the individual with one marker per row")
             ),
-            p(strong("Expected output file:"), "Calculation results"),
+            p(strong("Expected output file:"), "Calculation results (.csv)"),
           ),
           tabPanel(
             title = "Sample Input Format/s",

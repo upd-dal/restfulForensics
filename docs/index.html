@@ -72,9 +72,12 @@
                      <a href="#" onclick="showPage('popstructure'); return false;">6 Population Structure Analysis</a>
                      <ul>
                          <li><a href="#" onclick="showSection('popstructure', 'runstructure'); return false;">6.1 Run STRUCTURE v2.3.4</a></li>
-                        <li><a href="#" onclick="showSection('popstructure', 'plotstructure'); return false;">6.2 Plot Strucutre results</a></li>
-                        <li><a href="#evannoplot">6.2.1 Plot Evanno</a></li>
-                        <li><a href="#plotstructurefiles">6.2.2 Plot Results</a></li>
+                        <li><a href="#" onclick="showSection('popstructure', 'plotstructure'); return false;">6.2 Plot Strucutre results</a>
+                           <ul>
+                           <li><a href="#evannoplot">6.2.1 Plot Evanno</a></li>
+                           <li><a href="#plotstructurefiles">6.2.2 Plot Results</a></li>
+                           </ul>
+                        </li>
                      </ul>
                   </li>
                   <!-- Forensic Parameters module -->
@@ -85,7 +88,12 @@
                   <li>
                      <a href="#" onclick="showPage('dnabarcoding'); return false;">9 DNA Barcoding</a>
                      <ul>
-                         <li><a href="#" onclick="showSection('dnabarcoding', 'msa'); return false;">9.1 Multiple Sequence Alignment</a></li>
+                         <li><a href="#" onclick="showSection('dnabarcoding', 'msa'); return false;">9.1 Multiple Sequence Alignment</a>
+                           <ul>
+                              <li><a href="#performAlignment">9.1.1 Multiple Sequence Alignment</a></li>
+                              <li><a href="#performTrimming">9.1.2 Trim Sequences</a></li>
+                           </ul>
+                         </li>
                         <li><a href="#" onclick="showSection('dnabarcoding', 'phylogenetictree'); return false;">9.2 Phylogenetic Tree Analysis</a></li>
                         <li><a href="#" onclick="showSection('dnabarcoding', 'barcoding'); return false;">9.3 Barcoding</a>
                         <ul>
@@ -384,8 +392,8 @@
                   </tr>
                   
                   <tr>
-                     <td>Concordance Analysis</td>
-                     <td>Check concordance of calls between datasets with overlapping samples</td>
+                     <td>Arlecore</td>
+                     <td>Calculate common population statistics using Arlecore, the terminal-based version of Arlequin</td>
                      <td>CSV/Excel file</td>
                      <td>Excel (.xlsx) and PNG files</td>
                      <td>Arlecore v3.5.2</td>
@@ -415,9 +423,17 @@
                   </tr>
                   
                   <tr>
-                     <td>Plot STRUCTURE results</td>
+                     <td>Plot STRUCTURE results: Find Best K using Evanno</td>
+                     <td>Run Evanno Method on STRUCTURE Results to identify best K for plotting.</td>
+                     <td>Zipped STRUCTURE Results</td>
+                     <td>Metrics (.csv) and PNG plots</td>
+                     <td>strataG</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Plot STRUCTURE results: Run CLUMPP</td>
                      <td>Visualize STRUCTURE results</td>
-                     <td>CSV/Excel file</td>
+                     <td>Zipped STRUCTURE Results</td>
                      <td>Structure plot (.png and .pdf)</td>
                      <td>CLUMPP and strataG</td>
                   </tr>
@@ -438,10 +454,18 @@
                   
                   <tbody>
                   <tr>
-                     <td>Forensic Parameters</td>
+                     <td>Population Database</td>
                      <td>Calculate forensic parameters specific for individual identity SNPs</td>
                      <td>CSV/Excel file</td>
                      <td>Excel (.xlsx) file</td>
+                     <td></td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Calculate RMP for a Profile</td>
+                     <td>Calculate the RMP of a profile using frequencies derived under HWE assumptions.</td>
+                     <td>CSV/Excel/Text file</td>
+                     <td>CSV file</td>
                      <td></td>
                   </tr>
                   </tbody>
@@ -461,8 +485,16 @@
                   
                   <tbody>
                   <tr>
-                     <td>Forensic DNA Inference</td>
-                     <td>Perform Naïve Bayes classification to evaluate classification performance of markers</td>
+                     <td>Leave-one-out</td>
+                     <td>Perform leave-one-out using Naïve Bayes method to evaluate classification performance of markers</td>
+                     <td>CSV/Excel file</td>
+                     <td>Excel (.xlsx) file</td>
+                     <td>caret v7.0.1 and e1071 v1.7.17</td>
+                  </tr>
+                  
+                  <tr>
+                     <td>Cross-validation</td>
+                     <td>Perform k-fold classification using Naïve Bayes method to evaluate classification performance of markers</td>
                      <td>CSV/Excel file</td>
                      <td>Excel (.xlsx) file</td>
                      <td>caret v7.0.1 and e1071 v1.7.17</td>
@@ -485,8 +517,8 @@
                   <tbody>
                   <tr>
                      <td>Multiple Sequence Alignment</td>
-                     <td>Perform multiple sequence alignment using select methods</td>
-                     <td>Zipped FASTA files</td>
+                     <td>Perform multiple sequence alignment using select methods and trim MSA</td>
+                     <td>Zipped FASTA files for alignment and fasta files for trimming</td>
                      <td>PDF and FASTA file of alignment</td>
                      <td>msa v1.44.1 and DECIPER v3.8.1</td>
                   </tr>
@@ -1088,6 +1120,7 @@
                <ul>
                   <li><p>Set 'optimize' to TRUE to perform grid search. Laplace values are automatically set to range (0, 0.5, 1, 2) and adjust to (0.5, 1.0, 1.5).</p></li>
                   <li><p>K (integer) to indicate the samples per subset. Each population should have at least k number of samples.</p></li>
+                  <li><p>Repeats (integer) specifies how many complete sets of folds will be ran.</p></li>
                </ul>
                </p>
                   <p><strong>Expected output</strong>: Excel (.xlsx) file</p>
@@ -1101,25 +1134,41 @@
             
             <section id="msa" class="section">
                <h3 class="section-title">9.1 Multiple Sequence Alignment</h3>
-               <p>This submodule performs global multiple sequence alignment on DNA sequences using the 
-               <a href="https://www.bioconductor.org/packages/release/bioc/html/msa.html">msa</a> R package.
+               
+               <section id="performAlignment" class="section">
+                  <h4 class="section-title">9.1.1 Multiple Sequence Alignment</h4>
+                     <p>This submodule performs global multiple sequence alignment on DNA sequences using the 
+                     <a href="https://www.bioconductor.org/packages/release/bioc/html/msa.html">msa</a> R package.
+                     </p>
+                     <p><strong>Input file</strong>: Zipped FASTA files</p>
+                     <p><strong>Parameters</strong>: Option to use ClustalW, ClustalOmega, or MUSCLE</p>
+                     <p><strong>Expected output</strong>:
+                     <ul>
+                        <li><p>PDF of alignment</p></li>
+                        <li><p>FASTA file of the alignment</p></li>
+                        The alignment is adjusted using the
+                        <a href="https://bioconductor.org/packages/release/bioc/html/DECIPHER.html">DECIPHER</a> R package 
+                        and are provided as an additional option for download. The output can also be used directly as input 
+                        for the <a href="#phylogenetictree">Phylogenetic Tree Analysis</a> tab.
+                     </ul>
+               </section>
+               
+               <section id="performTrimming" class="section">
+                  <h4 class="section-title">9.1.2 Trim Sequences</h4>
+                  <p>This submodule trims aligned sequences using the <a href="https://bioconductor.org/packages/Biostrings">Biostrings</a> R package.
+                  </p>
+                  <p><strong>Input file</strong>: Alignment file or the resulting alignment from the MSA tab.</p>
+               <p><strong>Parameters</strong>: The starting and end position of the sequence to subset.
                </p>
-               <p><strong>Input file</strong>: Zipped FASTA files</p>
-               <p><strong>Parameters</strong>: Option to use ClustalW, ClustalOmega, or MUSCLE</p>
-               <p><strong>Expected output</strong>:
-               <ul>
-                  <li><p>PDF of alignment</p></li>
-                  <li><p>FASTA file of the alignment</p></li>
-                  The alignment is adjusted using the
-                  <a href="https://bioconductor.org/packages/release/bioc/html/DECIPHER.html">DECIPHER</a> R package 
-                  and are provided as an additional option for download. The output can also be used directly as input 
-                  for the <a href="#phylogenetictree">Phylogenetic Tree Analysis</a> tab.
-               </ul>
+                  <p><strong>Expected output</strong>: Fasta file of trimmed sequence</p>
+               </section>
             </section>
             
             <section id="phylogenetictree" class="section">
                <h3 class="section-title">9.2 Phylogenetic Tree Analysis</h3>
                <p>This submodule constructs a phylogenetic tree based on a multiple sequence alignment.
+               Alignments are first validated by pre-computing a matrix of pairwise genetic distances.
+               The presence of missing values will limit the methods for construction to NJ only.
                </p>
                <p><strong>Input file</strong>: MSA file or MSA result from the 
                <a href="#msa">MSA tab</a>.</p>

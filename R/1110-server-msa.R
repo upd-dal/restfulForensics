@@ -163,6 +163,10 @@ msa_server <- function(input, output, session, rv) {
         alignment_file <- seqinr::read.alignment(file = input$fileForTrim$datapath, format = file_ext_ref)
       }
     }
+      
+      if (methods::is(alignment_file, "MsaDNAMultipleAlignment")) {
+        alignment_file <- as(alignment_file, "DNAStringSet")
+      }
     
     trimmed_sequences <- Biostrings::subseq(alignment_file, start = input$startSeq, end = input$endSeq)
     rv$alignmentTrimmed <- Biostrings::DNAMultipleAlignment(trimmed_sequences)
