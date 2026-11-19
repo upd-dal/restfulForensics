@@ -1,6 +1,5 @@
 pop_stats_server <- function(input, output, session, rv) {
   # =============== POPULATION STATISTICS =================#
-  callModule(profvis_server, "profiler_rpop")
   examplePop <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -58,11 +57,10 @@ pop_stats_server <- function(input, output, session, rv) {
             rownames(priv_alleles) <- NULL
           }
           privAlleles(priv_alleles)
-          
+
           incProgress(0.6, detail = "Computing population statistics...")
           population_stats <- compute_pop_stats(fsnps_gen())
           popStats(population_stats)
-          statsMatrix(population_stats)
 
           ## AF
           af_stats <- compute_af(fsnps_gen())
@@ -76,13 +74,11 @@ pop_stats_server <- function(input, output, session, rv) {
           }
           hardy_weinberg_stats <- compute_hwe(fsnps_gen(), correction = corr_model, alpha = input$alphaValue, chains = input$markovHWE)
           hardyWeinberg(hardy_weinberg_stats)
-          hwMatrix(hardy_weinberg_stats)
 
           ## FST
           incProgress(1.0, detail = "Running FST calculations...")
           fst_stats <- compute_fst(fsnps_gen())
           fstStats(fst_stats)
-          fstMatrix(fst_stats)
           fst_data <- fstStats()$fst_dataframe
           fstDataPlot(fst_data)
           matrix_fst <- fst_data %>% tidyr::pivot_wider(
@@ -273,7 +269,6 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
-  callModule(profvis_server, "profiler_arlecore")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

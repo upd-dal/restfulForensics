@@ -553,6 +553,10 @@ calc_iisnps_params <- function(geno_freqs, af) {
       
       total <- unique(na.omit(curr$n_genotyped))[1]
       
+      curr <- curr %>% dplyr::mutate(
+         gt_type = factor(gt_type, levels = c("Homozygous", "Heterozygous"))
+      )
+      
       gt_res <- curr %>%
         dplyr::group_by(gt_type) %>%
         dplyr::summarise(
@@ -564,7 +568,8 @@ calc_iisnps_params <- function(geno_freqs, af) {
         tidyr::pivot_wider(
           names_from = gt_type,
           values_from = Frequency,
-          values_fill = 0
+          values_fill = 0,
+          names_expand = TRUE
         )
       
       gt_res <-  gt_res %>% dplyr::mutate(Gsqr = Gsqr)
