@@ -48,9 +48,9 @@ snp_extraction_server <- function(input, output, session, rv) {
       )
       plink_prefixes <- tools::file_path_sans_ext(plink_prefixes)
     } else if (!is.null(input$bedFile)) {
-      bed_prefix <- tools::file_path_sans_ext(input$bedFile$datapath)
-      bim_prefix <- tools::file_path_sans_ext(input$bimFile$datapath)
-      fam_prefix <- tools::file_path_sans_ext(input$famFile$datapath)
+      bed_prefix <- tools::file_ext(input$bedFile$datapath)
+      bim_prefix <- tools::file_ext(input$bimFile$datapath)
+      fam_prefix <- tools::file_ext(input$famFile$datapath)
       
       if (bed_prefix != "bed") {
         stop("Unsupported file format. Should be a BED file")

@@ -3,12 +3,12 @@ filtering_server <- function(input, output, session, rv) {
   
   observe({
     hasFile <- !is.null(input$markerFileFilter)
-    anyFilter <- input$filterIndiv || input$filterVariant || input$filterAllele || input$filterQuality || input$filterHWE || input$filterLD || input$cutoffKing
+    anyFilter <- input$filterIndiv || input$filterVariant || input$filterAllele || input$filterHWE || input$filterLD || input$cutoffKing
     shinyjs::toggleState("calcDP", condition = hasFile && anyFilter)
   })
 
   output$filterWarning <- renderText({
-    if (!(input$filterIndiv || input$filterVariant || input$filterAllele || input$filterQuality || input$filterHWE || input$filterLD || input$cutoffKing)) {
+    if (!(input$filterIndiv || input$filterVariant || input$filterAllele || input$filterHWE || input$filterLD || input$cutoffKing)) {
       "Please select at least one filtering option."
     } else {
       ""
@@ -96,9 +96,9 @@ filtering_server <- function(input, output, session, rv) {
     if (input$filterAllele) {
       plink_cmds <- c(plink_cmds, "--maf", input$mafThresh)
     }
-    if (input$filterQuality) {
-      plink_cmds <- c(plink_cmds, "--qual-threshold", input$qualThresh)
-    }
+    #if (input$filterQuality) {
+    #  plink_cmds <- c(plink_cmds, "--qual-threshold", input$qualThresh)
+    #}
     if (input$filterHWE) {
       plink_cmds <- c(plink_cmds, "--hwe", input$qualHWE, input$kval)
     }

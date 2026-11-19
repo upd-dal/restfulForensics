@@ -42,12 +42,12 @@ filtering_tab <- function() {
           "input.filterAllele == true",
           numericInput("mafThresh", "Minor Allele Frequency Threshold (--maf)", value = 0.1)
         ),
-        checkboxInput("filterQuality", "Filter by Quality (--qual-threshold)", value = FALSE),
-        helpText("Exclude variants with quality scores below the threshold."),
-        conditionalPanel(
-          "input.filterQuality == true",
-          numericInput("qualThresh", "Quality Score Threshold (--qual-threshold)", value = 5)
-        ),
+#        checkboxInput("filterQuality", "Filter by Quality (--qual-threshold)", value = FALSE),
+#        helpText("Exclude variants with quality scores below the threshold."),
+#        conditionalPanel(
+#          "input.filterQuality == true",
+#          numericInput("qualThresh", "Quality Score Threshold (--qual-threshold)", value = 5)
+#        ),
         checkboxInput("filterHWE", "Filter Variants (--hwe)", value = FALSE),
         helpText("Exclude SNPs deviating from the Hardy-Weinberg Equilibrium."),
         conditionalPanel(
