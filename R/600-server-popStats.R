@@ -1,5 +1,6 @@
 pop_stats_server <- function(input, output, session, rv) {
   # =============== POPULATION STATISTICS =================#
+  callModule(profvis_server, "profiler_r")
   examplePop <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -38,7 +39,7 @@ pop_stats_server <- function(input, output, session, rv) {
     disable("runPopStats")
     req(input$popStatsFile)
     
-    withProgress(message = "Running population analysis...", value = 0, {
+    withProgress(message = "Running population analysis...", {
       tryCatch(
         {
           df <- load_csv_xlsx_files(input$popStatsFile$datapath)
@@ -115,7 +116,7 @@ pop_stats_server <- function(input, output, session, rv) {
 
   output$heterozygosity_table <- DT::renderDataTable({
     het_values <- popStats()$heterozygosity
-    het_long <- het_values %>% dplyr::pivot_wider(
+    het_long <- het_values %>% tidyr::pivot_wider(
        names_from = Variable, 
        values_from = Value
     )
@@ -269,6 +270,7 @@ pop_stats_server <- function(input, output, session, rv) {
   })
 
   # ==================== To Arlequin-compatible file =======================#
+  callModule(profvis_server, "profiler_arlecore")
   exampleForArlecore <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),

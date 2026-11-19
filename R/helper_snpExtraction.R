@@ -143,8 +143,6 @@ extract_by_pos_pgen <- function(pos_list,
 
   out_prefix <- file.path(output_dir, merged_file)
 
-  print(read.delim(range_file$range_file, header = FALSE))
-
   cmd <- paste(
     shQuote(plink_path),
     "--pfile", shQuote(pgen_prefix),
