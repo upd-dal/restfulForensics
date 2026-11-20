@@ -88,7 +88,7 @@ filtering_tab <- function() {
             tags$li("--mind [value]"),
             tags$li("--geno [value]"),
             tags$li("--maf [value]"),
-            tags$li("--qual-threshold [value]"),
+           # tags$li("--qual-threshold [value]"),
             tags$li("--hwe [value]"),
             tags$li("--indep-pairwise [value]"),
             tags$li("--king-cutoff [value]"),

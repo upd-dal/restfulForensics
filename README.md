@@ -43,8 +43,8 @@ for sub/modules:
 *Module 1: File Conversion*  
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| 1 | Convert Files | Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files | VCF, BCF, CSV, PLINK files | VCF, CSV or PLINK files | PLINK 2.0 |
-| 2 | Add Metadata | Merge genotype data with metadata based on shared keywords (sample IDs) | VCF, BCF, PLINK, CSV file/s | CSV files | |
+| 1 | Convert Files | Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files | VCF, BCF, CSV, PLINK files (or zipped files) | VCF, CSV or PLINK files | PLINK 2.0 |
+| 2 | Add Metadata | Merge genotype data with metadata based on shared keywords (sample IDs) | VCF, BCF, PLINK, CSV file/s (or zipped files) | CSV files | |
 | 3 | Widen SNP calls | Convert long-formatted SNP calls to a wide format | Compressed file (.zip/.tar) containing CSV/Excel files | CSV file | |
 | 4 | To SNIPPER file | Convert CSV/Excel files into a SNIPPER-compatible file for individual classification using ancestry-informative markers | CSV/Excel file | Excel (.xlsx) file | |
 | 5 | To STRUCTURE file | Converts CSV/Excel file to a STRUCTURE v2.3.4-compatible file | CSV/Excel file | Structure (.str) file | |
@@ -191,7 +191,7 @@ by the ui. The pipeline is presented in Figures 1 and 2.
 | 2 | File Conversion | To Arlequin File | <ul><li>Datatype is automatically set to "Standard"</li><li>No option to specify genetic/group structure</li></ul> However, output can be manually edited using any text editor. |
 | 3 | Population Summary Statistics | Arlecore | <ul><li>Statistics calculated: Expected Heterozygosities, FST, and Coancestry Coefficient. There is also an option to calculate loci in LD and the Diversity and HWE metrics</li><li>Crowded labels on plots with >10 populations</li></ul> |
 | 4 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Same limited parameters as set in the strataG R package |
-| 5 | Population Structure Analysis | Run STRUCTURE v2.3.4 | Visualization of CLUMPP results are different from the standard with the populations separated. |
+| 5 | Population Structure Analysis | Plot Structure results: Run CLUMPP | Visualization of CLUMPP results are different from the standard with the populations separated. |
 | 6 | Forensic DNA Inference | Cross-validation | Fixed set of laplace values |
 | 7 | DNA Barcoding | Multiple Sequence Alignment | Only multiple sequence alignments can be performed |
 
@@ -211,7 +211,7 @@ Add option to perform pairwise alignments and export alignment as BAM/SAM.
 5. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
 
 ## Citation Guide  
-To cite the application: Samin LC [aut], Soliven NFJ [aut], Matias MA [ctb], & Salvador J [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics
+To cite the application: Samin LC [aut], Soliven NFJ [aut], Salvador J [ctb], &  Matias MA [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics
 
 Manuscript in preparation.  
 

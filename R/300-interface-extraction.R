@@ -107,6 +107,7 @@ snp_extraction_tab <- function() {
             tabPanel(
               title = "Sample Input Format/s",
               h4("File Format (for concordance)"),
+              p(""),
               tableOutput("exampleTable")
             ),
             tabPanel(

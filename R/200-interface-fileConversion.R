@@ -160,8 +160,8 @@ file_conversion_tab <- function() {
               ),
               p(strong("Expected output file/s:"), "CSV file of sample with metadata."),
               br(),
-              p(strong("Notes:")),
-              p("Missing values from VCF/BCF files will appear as empty cells while
+              p(strong("Notes:"),
+              "Missing values from VCF/BCF files will appear as empty cells while
                 original representation of missing values from CSV/Excel files will be kept.")
             ),
             tabPanel(
@@ -230,8 +230,8 @@ file_conversion_tab <- function() {
               p(strong("Input file/s:"), "Compressed folder (.zip or .tar) containing CSV/Excel files."),
               p(strong("Expected output file/s:"), "Single CSV file (merged CSV/Excel files)."),
               br(),
-              p(strong("Notes:")),
-              p("Input files are assumed to contain biallelic markers without dropouts.")
+              p(strong("Notes:"),
+              "Input files are assumed to contain biallelic markers without dropouts.")
             ),
             tabPanel(
               title = "Sample Input Format/s",
@@ -285,9 +285,6 @@ file_conversion_tab <- function() {
               p(strong("Input file/s:"), "CSV or Excel file"),
               p(strong("Parameter/s:"), "(optional) Target population name for classification."),
               p(strong("Expected output file/s:"), "Excel (.xslx) file"),
-              p(strong("Notes:")),
-              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
-              Missing data are standardized to 'NN' as recognized by the SNIPPER tool."),
               hr(),
               p(
                 "The ",
@@ -316,6 +313,8 @@ file_conversion_tab <- function() {
             tabPanel(
               title = "Sample Input Format/s",
               h4("Sample Input File"),
+              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'NN' as recognized by the SNIPPER tool."),
               p("Format if input file does", strong("not"), "contain population metadata:"),
               DT::dataTableOutput("exampleTableSnipper1"),
               br(),
@@ -375,9 +374,6 @@ file_conversion_tab <- function() {
                 tags$li("structure (.str) file"),
                 tags$li("revised input file")
               ),
-              p(strong("Notes:")),
-              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
-              Missing data are standardized to '?' as recognized by the STRUCTURE tool."),
               hr(),
               p(tags$a("STRUCTURE",
                 href = "https://web.stanford.edu/group/pritchardlab/structure.html",
@@ -396,6 +392,8 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
+              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '-9' as recognized by the STRUCTURE tool."),
               DT::dataTableOutput("examplePop_STRUI")
             ),
             tabPanel(
@@ -460,6 +458,8 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
+              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '?' as recognized by the Arlequin/Arlecore tool."),
               DT::dataTableOutput("exampleForArlecore_UI")
             ),
             tabPanel(

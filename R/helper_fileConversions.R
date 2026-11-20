@@ -48,7 +48,6 @@ clean_input_data <- function(file) {
     }
   )
   
-  
   file[is.na(file)] <- "N"
   file <- file %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
@@ -702,11 +701,8 @@ to_snipper <- function(input,
                        target.pop = TRUE,
                        population.name = NULL,
                        markers = snps) {
-  if (is.data.frame(input)) {
-    input.file <- input
-  } else {
-    stop("Input file is not a dataframe.")
-  }
+  
+  input.file <- clean_input_data(input)
   
   validate_gt_df(input.file)
   
@@ -726,8 +722,10 @@ to_snipper <- function(input,
   )
   tosnipper <- as.data.frame(tosnipper)
   
+  # if single allele, automatic "NN"
+  
   tosnipper <- dplyr::rename(tosnipper, Sample = 1)
-  reference <- dplyr::rename(references, Sample = 1)
+  reference <- dplyr::rename(references, Sample = 1, Pop = 2)
 
   if (class(tosnipper$Sample) != "character") {
     tosnipper$Sample <- as.character(tosnipper$Sample)
@@ -739,7 +737,7 @@ to_snipper <- function(input,
 
   matched <- tosnipper %>% 
     dplyr::left_join(reference, by = "Sample") %>%
-    dplyr::mutate(Population = `Superpopulation name`, .before = "Sample")
+    dplyr::mutate(Population = Pop, .before = "Sample")
   matched <- matched[, -ncol(matched)]
   
   last.col <- as.integer(ncol(matched))

@@ -1,6 +1,5 @@
 snp_extraction_server <- function(input, output, session, rv) {
   # ================ MARKER EXTRACTION ====================#
-  
   output$examplersID <- renderTable({
     data.frame(
       rsID = c("rs101", "rs102", "rs103", "rs104", "...")
@@ -309,7 +308,6 @@ snp_extraction_server <- function(input, output, session, rv) {
 
 
   # =============== CONCORDANCE ANALYSIS ==================#
-
   observe({
     toggleState("compareBtn", !is.null(input$concordanceFile1) && !is.null(input$concordanceFile2))
   })

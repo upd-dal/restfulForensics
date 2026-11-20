@@ -1,6 +1,5 @@
 filtering_server <- function(input, output, session, rv) {
   # ===================== FILTERING =======================#
-  
   observe({
     hasFile <- !is.null(input$markerFileFilter)
     anyFilter <- input$filterIndiv || input$filterVariant || input$filterAllele || input$filterHWE || input$filterLD || input$cutoffKing

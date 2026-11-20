@@ -143,8 +143,6 @@ extract_by_pos_pgen <- function(pos_list,
 
   out_prefix <- file.path(output_dir, merged_file)
 
-  print(read.delim(range_file$range_file, header = FALSE))
-
   cmd <- paste(
     shQuote(plink_path),
     "--pfile", shQuote(pgen_prefix),
@@ -271,21 +269,8 @@ calc_concordance <- function(file1, file2, phased = FALSE) {
   ID <- merged$markers
   merged <- clean_input_data(merged)
 
-  if (phased == TRUE) {
-    message("Assuming the data are haplotypes.")
+  if (isFALSE(phased)) {
     merged <- merged %>% dplyr::mutate(across(tidyselect::everything(), ~ case_when(
-      . == "A" ~ "A/A",
-      . == "T" ~ "T/T",
-      . == "C" ~ "C/C",
-      . == "G" ~ "G/G",
-      TRUE ~ .x
-    )))
-  } else if (phased == FALSE) {
-    merged <- merged %>% dplyr::mutate(across(tidyselect::everything(), ~ case_when(
-      . == "A" ~ "A/A",
-      . == "T" ~ "T/T",
-      . == "C" ~ "C/C",
-      . == "G" ~ "G/G",
       . == "T/C" ~ "C/T",
       . == "T/G" ~ "G/T",
       . == "T/A" ~ "A/T",
@@ -294,9 +279,7 @@ calc_concordance <- function(file1, file2, phased = FALSE) {
       . == "C/A" ~ "A/C",
       TRUE ~ .x
     )))
-  } else {
-    stop("Parameter haplotype is required.")
-  }
+  } 
 
   overlap1 <- merged %>% dplyr::select(dplyr::ends_with(".x"))
   overlap2 <- merged %>% dplyr::select(dplyr::ends_with(".y"))
