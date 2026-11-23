@@ -52,7 +52,7 @@ clean_input_data <- function(file) {
   file <- file %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::case_when(
-      .x %in% c("N/A", "NA", "N/N", "./.", "NN", ".") ~ "N",
+      .x %in% c("N/A", "NA", "N/N", "./.", "NN", ".", "") ~ "N",
       TRUE ~ .x
     )))
   file <- as.data.frame(file)
