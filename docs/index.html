@@ -132,11 +132,24 @@
          
          <section id="introduction" class="page active">
             <h1 class="section-title">I Introduction</h1>
-            <p><b>restful forensics</b> is an open-source Windows-based platform for 
+            <p><b>restful forensics (Reproducible and Efficient Sequence Toolkit)</b> 
+            is an open-source Windows-based platform for 
             forensic genetics research workflow and method validation. This tool 
             is built as a Shiny app in R and incorporates commonly used packages, 
             functions, and software for genetic data preparation, pre-processing, 
             and exploratory data analysis.</p>
+            <br>
+            <p>
+               It is a toolkit dedicated for the forensic analysis of single nucleotide 
+               polymorphisms (SNPs) and DNA barcodes. It compiles reference population 
+               datasets extracted from publicly available databases for direct evaluation 
+               of forensic marker panels. It allows the user to analyze their dataset with 
+               compiled reference datasets, perform exploratory data analysis (i.e., principal 
+               component analysis), and calculate population summary statistics and forensic parameters. 
+               This version also contains modules for population structure analysis (i.e., STRUCTURE), 
+               forensic DNA inference/classification using ancestry- or phenotype-informative SNPs, and 
+               DNA barcoding (i.e., multiple sequence alignment).
+            </p>
             <br>
             <p>restful forensics is developed at the Natural Sciences Research Institute, 
             University of the Philippines Diliman, Quezon City.</p>
@@ -159,7 +172,7 @@
                      (should be compatible with R versions above 4.5.0)</p></li>
                   <li><p>Integrated Development Environment such as  
                   <a href="https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads">RStudio</a></p></li>
-                  <p>For complete functionalities, to be placed in the root folder:</p>
+                  <p><b>For complete functionalities, to be placed in the root folder:</b></p>
                   <li><p><a href="https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html">
                      STRUCTURE v2.3.4 (Windows without front end)</a></p></li>
                   <li><p><a href="https://cmpg.unibe.ch/software/arlequin35/Arl35Downloads.html">
@@ -211,6 +224,7 @@
                      </code></pre>
                      </p></li>
                   </ul>
+                  <br>
                   <p>Automatically install dependencies using source("install.R")</p>
                   <p>To be installed by the user: STRUCTURE, Arlecore, and CLUMPP</p>
                   
@@ -259,7 +273,7 @@
                   <tr>
                      <td>Add Metadata</td>
                      <td>Merge genotype data with metadata based on shared keywords (sample IDs)</td>
-                     <td>VCF, BCF, PLINK, CSV file (or zipped files)</td>
+                     <td>VCF, BCF, CSV file (or zipped files)</td>
                      <td>CSV files</td>
                      <td></td>
                   </tr>
@@ -399,7 +413,7 @@
                   <tr>
                      <td>Arlecore</td>
                      <td>Calculate common population statistics using Arlecore, the terminal-based version of Arlequin</td>
-                     <td>CSV/Excel file</td>
+                     <td>CSV/Excel file or .arp file</td>
                      <td>Excel (.xlsx) and PNG files</td>
                      <td>Arlecore v3.5.2</td>
                   </tr>
@@ -582,9 +596,12 @@
                   </ul>
                   </p> 
                   <p><strong>Expected output file</strong>: VCF or PLINK-associated files.</p>
+                  <br>
             <p>The <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210x.70204">tidypopgen</a> R package
                   is used for the CSV/Excel to VCF conversion while <a href="https://pubmed.ncbi.nlm.nih.gov/25722852/">PLINK 2.0</a> 
                   is used for the rest.</p>
+                  <br>
+                  <p><b>Notes:</b> Missing values will appear as empty cells.</p>
          </section>
          
          <section id="addmeta" class="section">
@@ -615,6 +632,9 @@
             </p>
             <p>For missing samples, double check if the sample IDs are the same for the 
             genotype file and the metadata file.</p>
+            <br>
+            <p><b>Notes:</b> Missing values from VCF/BCF files will appear as empty cells while original 
+            representation of missing values from CSV/Excel files will be kept.</p>
          </section>
          
          <section id="widensnp" class="section">
@@ -627,6 +647,8 @@
             </p>
             <p><strong>Input file</strong>: Compressed file (.zip/.tar)</p>
             <p><strong>Expected output file</strong>: Single CSV file</p>
+            <br>
+            <p><b>Notes:</b> Input files are assumed to contain biallelic markers without dropouts.</p>
          </section>
          
          <section id="tosnipper" class="section">
@@ -648,7 +670,10 @@
             </p>
             <p><strong>Expected output file</strong>: Excel (.xlsx) file compatible with 
             SNIPPER v4 for ancestry-based individual classification</p>
-            
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 
+            'NN' as recognized by the SNIPPER tool. An 'N' is added if only a single allele is present.</p>
          </section>
          
          <section id="tostructure" class="section">
@@ -672,6 +697,10 @@
                There is also a dedicated module within restful forensics that <a href="#" onclick="showSection('popstructure', 'runstructure'); return false;">runs STRUCTURE</a>
                 automatically using the CSV/Excel file containing genotype and population data directly. 
             </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 
+            '-9' as recognized by the STRUCTURE tool.</p>
          </section>
          
          <section id="toarlequin" class="section">
@@ -695,8 +724,13 @@
             <p><strong>Expected output file</strong>: Arlequin (.arp) file</p>
             <p>
                There is a dedicated module within restful forensics that runs the terminal version of Arlequin, 
-               <a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">Arlecore</a> and uses the standard CSV/Excel file with genotype and population data.
+               <a href="#" onclick="showSection('popsummarystat', 'arlecore'); return false;">Arlecore</a> 
+               and uses the standard CSV/Excel file with genotype and population data.
             </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 
+            '?' as recognized by the Arlequin/Arlecore tool.</p>
          </section>   
             
             <div class="page-navigation">
@@ -754,6 +788,9 @@
                   <li><p>Concordance plot (.png file)</p></li>
                </ul>
                </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
             </section>
             
             <div class="page-navigation">
@@ -827,6 +864,10 @@
             </p>
             <p><strong>Expected outputs</strong>: PCA plots (.png file)</p>
             
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
+            
             <div class="page-navigation">
                <a href="#" onclick="showPage('filtering'); return false;">← Previous</a>
                <a href="#" onclick="showPage('popsummarystat'); return false;">Next →</a>
@@ -853,6 +894,9 @@
                   <li><p>PNG plots (heterozygosity and FST plots)</p></li>
                </ul>
                </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
             </section>
             
             <section id="arlecore" class="section">
@@ -879,6 +923,9 @@
                sumExpectedHeterozygosity.R, sumNumAllelesFunction.R, and sumThetaHFunction.R. 
                The mentioned scripts can be found within the R folder as helper functions.
                </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
             </section>
             
             <div class="page-navigation">
@@ -921,6 +968,9 @@
                   restful forensics also integrates the CLUMPP program under the 
                   <a href="#plotstructure">Plot Structure tab</a>.
                </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to '-9' as recognized by the STRUCTURE tool.</p>
             </section>
             
             <section id="plotstructure" class="section">
@@ -1005,6 +1055,9 @@
                <li><p>Individual sheets containing the genotype frequencies per population</p></li>
             </ul>
             </p>
+            <br>
+            <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+            'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
             <br>
             <p style="background-color: lightblue;">restful forensics calculates these parameters 
             for SNPs, but there are multiple tools and software specific for STR data.</p>
@@ -1107,10 +1160,9 @@
                      </p>
                      <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
                      <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
-                     <div class="page-navigation">
-                        <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>
-                        <a href="#" onclick="showPage('dnabarcoding'); return false;">Next →</a>
-                     </div>
+                  <br>
+                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+                  'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
                </section>
                
                <section id="cvclassification" class="section">
@@ -1129,8 +1181,15 @@
                </ul>
                </p>
                   <p><strong>Expected output</strong>: Excel (.xlsx) file</p>
+                  <br>
+                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
+                  'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
                </section>
-            
+               
+                     <div class="page-navigation">
+                        <a href="#" onclick="showPage('forensicparams'); return false;">← Previous</a>
+                        <a href="#" onclick="showPage('dnabarcoding'); return false;">Next →</a>
+                     </div>
          </section>
          
          <!-- DNA Barcoding module -->

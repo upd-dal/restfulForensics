@@ -8,7 +8,7 @@ forensic_params_server <- function(input, output, session, rv) {
     rs102 = c("G/G", "C/C", "G/C", "G/G", "..."),
     rs_n = c("...", "...", "...", "...", "...")
   )
-  
+
   output$referenceData_UI <- DT::renderDataTable(
     {
       req(referenceData)
@@ -23,7 +23,7 @@ forensic_params_server <- function(input, output, session, rv) {
   forenParams <- reactiveVal(NULL)
   genoFreq <- reactiveVal(NULL)
   afTable <- reactiveVal(NULL)
-  
+
   observe({
     shinyjs::toggleState("calcIISNPs", !is.null(input$iisnpsFile))
   })
@@ -33,27 +33,30 @@ forensic_params_server <- function(input, output, session, rv) {
     req(input$iisnpsFile)
 
     withProgress(message = "Ongoing: ", {
-    tryCatch({
-      incProgress(0.2, detail = "Loading input file...")
-      fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
-      cleaned_data <- clean_input_data(fileUploaded)
-      validate_file(cleaned_data)
-    genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
-    
-    incProgress(0.4, detail = "Calculating frequencies...")
-    af_table <- compute_af(genind_input)
-    af_expected <- calc_expected_genotype_freq(af_table)
-    
-    gt_freqs <- calc_observed_genotype_freq(cleaned_data) # returns list of per population gt
-    
-    incProgress(0.6, detail = "Calculating parameters...")
-    params_res <- calc_iisnps_params(gt_freqs, af_expected)
-    genoFreq(gt_freqs)
-    forenParams(params_res)
-    afTable(af_table)
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
+      tryCatch(
+        {
+          incProgress(0.2, detail = "Loading input file...")
+          fileUploaded <- load_csv_xlsx_files(input$iisnpsFile$datapath)
+          cleaned_data <- clean_input_data(fileUploaded)
+          validate_file(cleaned_data)
+          genind_input <- convert_to_genind(cleaned_data, to_str = FALSE, popinfo = TRUE)
+
+          incProgress(0.4, detail = "Calculating frequencies...")
+          af_table <- compute_af(genind_input)
+          af_expected <- calc_expected_genotype_freq(af_table)
+
+          gt_freqs <- calc_observed_genotype_freq(cleaned_data) # returns list of per population gt
+
+          incProgress(0.6, detail = "Calculating parameters...")
+          params_res <- calc_iisnps_params(gt_freqs, af_expected)
+          genoFreq(gt_freqs)
+          forenParams(params_res)
+          afTable(af_table)
+        },
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
+        }
+      )
     })
     shinyjs::enable("calcIISNPs")
   })
@@ -85,30 +88,34 @@ forensic_params_server <- function(input, output, session, rv) {
   output$genotypeFreqs_UI <- DT::renderDataTable({
     req(genoFreq())
     df <- genoFreq()[[input$selected_pop_gt]]
-    DT::datatable(df, rownames = FALSE, selection = "multiple",
-                  options = list(
-                    pageLength = 10,
-                    scrollX = TRUE
-                  ))
+    DT::datatable(df,
+      rownames = FALSE, selection = "multiple",
+      options = list(
+        pageLength = 10,
+        scrollX = TRUE
+      )
+    )
   })
 
   output$popTable <- DT::renderDataTable({
     req(forenParams())
     df <- forenParams()[[input$selected_pop]]
-    DT::datatable(df, rownames = FALSE, selection = "multiple",
-                  options = list(
-                    pageLength = 10,
-                    scrollX = TRUE
-                  ))
+    DT::datatable(df,
+      rownames = FALSE, selection = "multiple",
+      options = list(
+        pageLength = 10,
+        scrollX = TRUE
+      )
+    )
   })
-  
+
   output$downloadAFTable <- downloadHandler(
     filename = function() {
       paste0("allele_frequencies_", Sys.Date(), ".xlsx")
     },
     content = function(file) {
       req(afTable())
-      
+
       af_table <- afTable()
       writexl::write_xlsx(af_table, path = file)
     }
@@ -122,7 +129,7 @@ forensic_params_server <- function(input, output, session, rv) {
       req(forenParams(), genoFreq())
       sheets <- list()
       fp_sheets <- forenParams()
-      
+
       names(fp_sheets) <- paste0("FP_", substr(gsub(
         "[^A-Za-z0-9]", "_",
         names(fp_sheets)
@@ -143,19 +150,19 @@ forensic_params_server <- function(input, output, session, rv) {
     req(forenParams(), genoFreq())
     downloadButton("downloadMetrics", "Download Forensic Parameters")
   })
-  
+
   output$downloadAFTable_UI <- renderUI({
     req(afTable())
     downloadButton("downloadAFTable", "Download Allele Frequency Table")
   })
 
-  #================= Matching Profile
+  # ================= Matching Profile
   forensicParamInput <- data.frame(
     markers = c("rs101.A", "rs101.T", "rs102.C", "rs102.G", "..."),
     pop1 = c("0.185185185	", "0.814814815", "0.777777778", "0.222222222", "..."),
     pop2 = c("0.89285714", "0.10714286", "0.89285714", "0.10714286", "...")
   )
-  
+
   output$forensicParamInput_UI <- DT::renderDataTable(
     {
       req(forensicParamInput)
@@ -166,12 +173,12 @@ forensic_params_server <- function(input, output, session, rv) {
       pageLength = 5
     )
   )
-  
+
   sampleProfile <- data.frame(
     markers = c("rs101", "rs102", "rs103", "rs104", "..."),
     genotype = c("A/A	", "G/T", "A/T", "C/G", "...")
   )
-  
+
   output$sampleProfile_UI <- DT::renderDataTable(
     {
       req(sampleProfile)
@@ -182,94 +189,97 @@ forensic_params_server <- function(input, output, session, rv) {
       pageLength = 5
     )
   )
-  
+
   rmpResult <- reactiveVal(NULL)
-  
+
   observe({
     shinyjs::toggleState("calcRMP", !is.null(input$fileProfile))
   })
-  
-  
+
+
   observeEvent(input$calcRMP, {
     disable("calcRMP")
-    
+
     withProgress(message = "Ongoing: ", {
-    tryCatch({
-      incProgress(0.2, detail = "Loading input file...")
-      profile <- load_csv_xlsx_files(input$fileProfile$datapath)
-      incProgress(0.4, detail = "Loading reference database...")
-      if (isFALSE(input$newPopDatabase)) {
-      req(afTable())
-      af_long <- af_to_long(afTable())
-    } else {
-      req(input$newPopDataFile)
-      af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
-      af_long <- af_to_long(af_long)
-    }
-    
-    af_long <- prep_af_table(af_long)
-    incProgress(0.6, detail = "Calculating RMP..")
-    result <- calc_rmp(
-      profile = profile,
-      af_table = af_long,
-      theta = input$thetaValue
-    )
-    rmpResult(result)
-    showNotification("Calculation complete!", type = "message")
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
+      tryCatch(
+        {
+          incProgress(0.2, detail = "Loading input file...")
+          profile <- load_csv_xlsx_files(input$fileProfile$datapath)
+          incProgress(0.4, detail = "Loading reference database...")
+          if (isFALSE(input$newPopDatabase)) {
+            req(afTable())
+            af_long <- af_to_long(afTable())
+          } else {
+            req(input$newPopDataFile)
+            af_long <- load_csv_xlsx_files(input$newPopDataFile$datapath)
+            af_long <- af_to_long(af_long)
+          }
+
+          af_long <- prep_af_table(af_long)
+          incProgress(0.6, detail = "Calculating RMP..")
+          result <- calc_rmp(
+            profile = profile,
+            af_table = af_long,
+            theta = input$thetaValue
+          )
+          rmpResult(result)
+          showNotification("Calculation complete!", type = "message")
+        },
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
+        }
+      )
+
+      enable("calcRMP")
     })
-    
-    enable("calcRMP")
-    })
-    })
-  
+  })
+
   output$rmp_summary <- renderTable({
     req(rmpResult())
     result <- rmpResult()
-    
+
     result$summary %>%
       dplyr::transmute(
         Population = population,
-        'Loci Used' = loci_used,
-        'Random Match Probability (RMP)' = format(RMP, scientific = TRUE, digits = 6),
-        'Reciprocal RMP (1/RMP)' = format(reciprocal_RMP, scientific = TRUE, digits = 6)
+        "Loci Used" = loci_used,
+        "Random Match Probability (RMP)" = format(RMP, scientific = TRUE, digits = 6),
+        "Reciprocal RMP (1/RMP)" = format(reciprocal_RMP, scientific = TRUE, digits = 6)
       )
   })
-  
+
   output$missing_alleles <- renderTable({
     req(rmpResult())
     missing <- rmpResult()$missing
-    
+
     if (nrow(missing) == 0) {
-      return(data.frame( Status = "No incomplete or missing genotypes found."))
+      return(data.frame(Status = "No incomplete or missing genotypes found."))
     }
-    
+
     missing %>%
       dplyr::select(
         Marker = marker,
         Genotype = genotype,
-        'First allele' = allele1,
-        'Second allele' = allele2,
+        "First allele" = allele1,
+        "Second allele" = allele2,
         Reason = reason
       )
- 
   })
-  
+
   output$download_RMP_Summary <- downloadHandler(
-    filename = function() { paste0("RMP_summary_", Sys.Date(), ".csv")
-      },
+    filename = function() {
+      paste0("RMP_summary_", Sys.Date(), ".csv")
+    },
     content = function(file) {
       req(rmpResult())
       result <- rmpResult()
       summary_table <- result$summary %>%
         dplyr::transmute(
           Population = population,
-          'Loci Used' = loci_used,
-          'Random Match Probability (RMP)' = RMP,
-          'Reciprocal RMP' = reciprocal_RMP
+          "Loci Used" = loci_used,
+          "Random Match Probability (RMP)" = RMP,
+          "Reciprocal RMP" = reciprocal_RMP
         )
-      
+
       write.csv(summary_table, file, row.names = FALSE, na = "")
     },
     contentType = "text/csv"
@@ -279,5 +289,4 @@ forensic_params_server <- function(input, output, session, rv) {
     req(rmpResult())
     downloadButton("download_RMP_Summary", "Download Results")
   })
-  
-  }
+}

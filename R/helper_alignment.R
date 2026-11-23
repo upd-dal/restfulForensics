@@ -58,9 +58,9 @@ calc_msa <- function(files, algorithm) {
 #' @param model The substitution model.
 #'
 #' @returns A phylogenetic tree plot.
-build_nj_tree <- function(alignment, 
-                          outgroup = NULL, 
-                          seed = 123, 
+build_nj_tree <- function(alignment,
+                          outgroup = NULL,
+                          seed = 123,
                           model = model,
                           pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)
@@ -77,8 +77,8 @@ build_nj_tree <- function(alignment,
   } else {
     length(bins[[1]])
   }
-  
-  
+
+
   if (num_sites < 10) {
     warning("Alignment has fewer than 10 sites. Skipping bootstrap.")
     tree_plot <- ggtree(nj_tree, branch.length = "none") +
@@ -120,9 +120,9 @@ build_nj_tree <- function(alignment,
 #' @inheritParams build_nj_tree
 #'
 #' @returns A phylogenetic tree plot.
-build_upgma_tree <- function(alignment, 
-                             outgroup = NULL, 
-                             seed = 123, 
+build_upgma_tree <- function(alignment,
+                             outgroup = NULL,
+                             seed = 123,
                              model = model,
                              pairwise = FALSE) {
   bins <- ape::as.DNAbin(alignment)

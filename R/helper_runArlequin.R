@@ -6,7 +6,7 @@
 #' @returns The path of the resulting folder.
 run_arlequin <- function(file, ld = FALSE, hwe = FALSE, arsFile = NULL) {
   arlecore_path <- get_arlecore_path()
-  
+
   if (!is.null(arsFile)) {
     ars_file <- normalizePath(arsFile)
   } else {
@@ -383,7 +383,7 @@ parse_ld <- function(doc) {
       results[[length(results) + 1]] <- population_ld
     }
   }
-  
+
   if (length(results) == 0) {
     return(NULL)
   }
@@ -415,9 +415,9 @@ plot_heatmap_arlecore <- function(long_data, pop_labels, legend_name = "Value") 
   heatmap_data$Value <- as.numeric(heatmap_data$Value)
 
   pop_grid <- expand.grid(Pop1 = pop_names, Pop2 = pop_names, stringsAsFactors = FALSE)
-  
+
   heatmap_data <- merge(pop_grid, heatmap_data, by = c("Pop1", "Pop2"), all.x = TRUE)
-  
+
   heatmap_data$Pop1 <- factor(heatmap_data$Pop1, levels = pop_names)
   heatmap_data$Pop2 <- factor(heatmap_data$Pop2, levels = pop_names)
 
@@ -447,7 +447,7 @@ plot_heatmap_arlecore <- function(long_data, pop_labels, legend_name = "Value") 
     data = heatmap_data,
     x = ~Pop1,
     y = ~Pop2,
-    text = ~ifelse(is.na(Value), "", sprintf("%.3f", Value)),
+    text = ~ ifelse(is.na(Value), "", sprintf("%.3f", Value)),
     type = "scatter",
     mode = "text",
     textposition = "middle center",
@@ -517,7 +517,7 @@ plot_pairwise_heatmap <- function(data, pop_labels) {
       color = "white",
       linewidth = 0.5
     ) +
-    #geom_text(aes(label = sprintf("%.1f", value)), size = 3) +
+    # geom_text(aes(label = sprintf("%.1f", value)), size = 3) +
     facet_wrap(~type, nrow = 1) +
     scale_fill_viridis_c(name = "Value", na.value = "white") +
     coord_fixed() +
@@ -597,21 +597,21 @@ plot_pairwise_heatmap_overlap <- function(data, pop_labels) {
       high = "orange",
       na.value = "white"
     ) +
-#    geom_text(
-#      data = nei_long,
-#      aes(x = x, y = y, label = sprintf("%.1f", value)),
-#      size = 3
-#    ) +
-#    geom_text(
-#      data = between_long,
-#      aes(x = x, y = y, label = sprintf("%.1f", value)),
-#      size = 3
-#    ) +
-#    geom_text(
-#      data = within_long,
-#      aes(x = x, y = y, label = sprintf("%.1f", value)),
-#      size = 3
-#    ) +
+    #    geom_text(
+    #      data = nei_long,
+    #      aes(x = x, y = y, label = sprintf("%.1f", value)),
+    #      size = 3
+    #    ) +
+    #    geom_text(
+    #      data = between_long,
+    #      aes(x = x, y = y, label = sprintf("%.1f", value)),
+    #      size = 3
+    #    ) +
+    #    geom_text(
+    #      data = within_long,
+    #      aes(x = x, y = y, label = sprintf("%.1f", value)),
+    #      size = 3
+    #    ) +
     coord_fixed() +
     labs(x = NULL, y = NULL, title = "Ave. Number of Pairwise Differences (Breakdown)") +
     theme_minimal(base_size = 11) +

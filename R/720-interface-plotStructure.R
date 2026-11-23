@@ -22,13 +22,15 @@ plot_structure_runs <- function() {
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
                 p(strong("Expected output file:"), "Metrics (.csv) and PNG plots"),
                 hr(),
-                p("The Evanno method",
+                p(
+                  "The Evanno method",
                   tags$a("(Evanno et al. 2005) ",
-                         href = "https://doi.org/10.1111/j.1365-294X.2005.02553.x",
-                         target = "_blank"
+                    href = "https://doi.org/10.1111/j.1365-294X.2005.02553.x",
+                    target = "_blank"
                   ),
                   "is an ad hoc statistic to find the uppermost level
-                  of structure in a dataset.")
+                  of structure in a dataset."
+                )
               ),
               tabPanel(
                 "Download Sample File",
@@ -82,17 +84,17 @@ plot_structure_runs <- function() {
               numericInput("kChoice", "Target K Value", value = 2, min = 1),
               helpText("To see other K values, run CLUMPP again."),
               selectInput("greedyAlgo", "Choose Algorithm",
-                          choices = c("Full Search" = "full.search", "Greedy" = "greedy", "Large K" = "large.k"),
-                          selected = "greedy"
+                choices = c("Full Search" = "full.search", "Greedy" = "greedy", "Large K" = "large.k"),
+                selected = "greedy"
               ),
               radioButtons("simStat", "Pairwise matrix similarity statistics",
-                           choices = c("g" = "g", "g.prime" = "g.prime")
+                choices = c("g" = "g", "g.prime" = "g.prime")
               ),
               conditionalPanel(
                 condition = "input.greedyAlgo == 'greedy' || input.greedyAlgo == 'large.k'",
                 radioButtons("greedyOption", "Input order of the runs to be tested",
-                             choices = c("All" = "all", "Random Order" = "ran.order"),
-                             selected = "ran.order"
+                  choices = c("All" = "all", "Random Order" = "ran.order"),
+                  selected = "ran.order"
                 ),
                 numericInput("repeatsClumpp", "Number of input orders of runs for testing", value = 100, min = 0)
               ),
@@ -105,31 +107,32 @@ plot_structure_runs <- function() {
                 "Instructions",
                 h4("Run CLUMPP and plot STRUCTURE results"),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
-                p(strong("Parameters:"),
+                p(
+                  strong("Parameters:"),
                   tags$ul(
                     tags$li("K (integer): choice of k to combine and visualize"),
                     tags$li("Algorithm: algorithm to be used for aligning runs"),
                     tags$li("Pairwise matrix similarity statistics"),
                     tags$li("Input order: Input order of runs to be tested. Additional option if algorithm used is 'Large K' or 'Greedy'"),
-                    tags$li("Runs for testing: Number of input orders of runs to be tested. 
+                    tags$li("Runs for testing: Number of input orders of runs to be tested.
                             Additional option if algorithm used is 'Large K' or 'Greedy' and input order is 'random order'"),
                     tags$li("Cluster permutation: To permute clusters according to the cluster order of a specific run.
-                            A value of 0 keeps the cluster order of the first run in the input order that maximized H. 
+                            A value of 0 keeps the cluster order of the first run in the input order that maximized H.
                             Set from 1 to K.")
                   )
-                  ),
+                ),
                 p(strong("Expected output file:"), "PNG plot"),
                 hr(),
                 p(
                   "Runs ",
                   tags$a("CLUMPP",
-                         href = "https://rosenberglab.stanford.edu/clumpp.html",
-                         target = "_blank"
+                    href = "https://rosenberglab.stanford.edu/clumpp.html",
+                    target = "_blank"
                   ),
                   "(Jakobsson & Rosenberg, 2007) to visualize STRUCTURE results using the ",
                   tags$a("strataG",
-                         href = "https://github.com/EricArcher/strataG/tree/master",
-                         target = "_blank"
+                    href = "https://github.com/EricArcher/strataG/tree/master",
+                    target = "_blank"
                   ), "R package."
                 )
               ),
@@ -155,7 +158,5 @@ plot_structure_runs <- function() {
         )
       )
     )
-
   )
 }
-

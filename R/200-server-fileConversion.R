@@ -63,7 +63,7 @@ file_conversion_server <- function(input, output, session, rv) {
 
     if (input$inputType1 == "csv1") {
       csv_ext <- tools::file_ext(input$CSVFile$name)
-      
+
       if (csv_ext %in% c("zip", "tar")) {
         unpacked_files <- unpack_input_file(input$CSVFile$datapath, output.dir)
         file_names <- unpacked_files$data_files
@@ -89,8 +89,7 @@ file_conversion_server <- function(input, output, session, rv) {
       prepared <- convert_files(
         input_file = input_file,
         output.dir = output.dir,
-        original_name = switch(
-          input$inputType1,
+        original_name = switch(input$inputType1,
           "vcf1" = input$VCFFile$name,
           "bcf1" = input$BCFFile$name,
           "csv1" = input$CSVFile$name,
@@ -112,11 +111,10 @@ file_conversion_server <- function(input, output, session, rv) {
       if (outputType %in% c("plink2", "plink1")) {
         convertedPLINK(result)
       }
-      
+
       if (outputType == "csv2") {
         convertedtoCSV(result$with_meta)
       }
-      
     }
     enable("ConvertFILES")
   })
@@ -131,7 +129,7 @@ file_conversion_server <- function(input, output, session, rv) {
       pageLength = 10
     )
   )
-  
+
   output$downloadConvertedVCF <- downloadHandler(
     filename = function() {
       paste0("csv_to_vcf_", timestamp, ".vcf")
@@ -141,7 +139,7 @@ file_conversion_server <- function(input, output, session, rv) {
       file.copy(convertedVCF(), file)
     }
   )
-  
+
   output$downloadConvertedtoCSV <- downloadHandler(
     filename = function() {
       paste0("file_to_csv_", timestamp, ".csv")
@@ -151,7 +149,7 @@ file_conversion_server <- function(input, output, session, rv) {
       readr::write_csv(convertedtoCSV(), file)
     }
   )
-  
+
   output$downloadConvertedPLINK <- downloadHandler(
     filename = function() {
       if (output_type(input) == "plink1") {
@@ -176,12 +174,12 @@ file_conversion_server <- function(input, output, session, rv) {
     req(convertedPLINK())
     downloadButton("downloadConvertedPLINK", "Download PLINK File")
   })
-  
+
   output$downloadtoCSV_UI <- renderUI({
     req(convertedtoCSV())
     downloadButton("downloadConvertedtoCSV", "Download CSV File")
   })
-  
+
 
   # =================== Add Metadata ======================#
   exampleRefCSV <- data.frame(
@@ -253,101 +251,104 @@ file_conversion_server <- function(input, output, session, rv) {
 
     withProgress(message = "Conversion ongoing...", {
       tryCatch(
-      {
-        incProgress(0.2, detail = "Reading input file...")
-        input_file <- input$genotypeFile$datapath
+        {
+          incProgress(0.2, detail = "Reading input file...")
+          input_file <- input$genotypeFile$datapath
 
-        if (!is.null(input$refMetadata)) {
-          ref_file <- load_csv_xlsx_files(input$refMetadata$datapath)
+          if (!is.null(input$refMetadata)) {
+            ref_file <- load_csv_xlsx_files(input$refMetadata$datapath)
 
-          if (length(input$col_targets) <= 0) {
-            stop("Select at least one column to merge")
-          }
-          
-          id_col <- colnames(ref_file)[1]
-          selected_cols <- unique(c(id_col, input$col_targets))
-          for_merging <- data.frame(ref_file[
-            ,
-            selected_cols,
-            drop = FALSE
-          ])
-        } else {
-          for_merging <- input$typePop_meta
-        }
-        
-        # Check extension
-        file_extension <- tools::file_ext(input_file)
-        
-        incProgress(0.4, detail = "Checking format and merging...")
-        if (file_extension %in% c("zip", "tar")) {
-          # Unpack to determine the data type
-          unpacked <- unpack_input_file(input_file, output.dir)
-          files <- unpacked$data_files
-          ext <- tools::file_ext(files[[1]])
-          
-          if (ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
-            all.list <- list()
-            
-            for (x in files) {
-              all.list[[x]] <- load_csv_xlsx_files(x)
+            if (length(input$col_targets) <= 0) {
+              stop("Select at least one column to merge")
             }
-            
-            merged <- dplyr::bind_rows(all.list)
-            merged <- data.frame(rownames(merged), merged)
-            result <- add_metadata(merged, for_merging)
+
+            id_col <- colnames(ref_file)[1]
+            selected_cols <- unique(c(id_col, input$col_targets))
+            for_merging <- data.frame(ref_file[
+              ,
+              selected_cols,
+              drop = FALSE
+            ])
           } else {
-            result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
-            
-            # convert to vcf
-            vcf_file <- convert_from_plink2(result,
-                                            output_type = "vcf2",
-                                            output.dir = output.dir)
-            # vcf to csv and merge
-            csv_file <- convert_from_plink2(vcf_file, 
-                                            output_type = "csv2",
-                                            output.dir = output.dir,
-                                            ref = for_merging)
-            result <- csv_file
+            for_merging <- input$typePop_meta
           }
-          
-        } else {
-          # if single files
-          if (file_extension %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
-            csv_df <- load_csv_xlsx_files(input_file)
-            result <- add_metadata(csv_df, for_merging)
+
+          # Check extension
+          file_extension <- tools::file_ext(input_file)
+
+          incProgress(0.4, detail = "Checking format and merging...")
+          if (file_extension %in% c("zip", "tar")) {
+            # Unpack to determine the data type
+            unpacked <- unpack_input_file(input_file, output.dir)
+            files <- unpacked$data_files
+            ext <- tools::file_ext(files[[1]])
+
+            if (ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
+              all.list <- list()
+
+              for (x in files) {
+                all.list[[x]] <- load_csv_xlsx_files(x)
+              }
+
+              merged <- dplyr::bind_rows(all.list)
+              merged <- data.frame(rownames(merged), merged)
+              result <- add_metadata(merged, for_merging)
+            } else {
+              result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
+
+              # convert to vcf
+              vcf_file <- convert_from_plink2(result,
+                output_type = "vcf2",
+                output.dir = output.dir
+              )
+              # vcf to csv and merge
+              csv_file <- convert_from_plink2(vcf_file,
+                output_type = "csv2",
+                output.dir = output.dir,
+                ref = for_merging
+              )
+              result <- csv_file
+            }
           } else {
-            result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
-            
-            # convert to vcf
-            vcf_file <- convert_from_plink2(result,
-                                            output_type = "vcf2",
-                                            output.dir = output.dir)
-            # vcf to csv and merge
-            csv_file <- convert_from_plink2(vcf_file, 
-                                            output_type = "csv2",
-                                            output.dir = output.dir,
-                                            ref = for_merging)
-            result <- csv_file 
-          }
-        }
+            # if single files
+            if (file_extension %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
+              csv_df <- load_csv_xlsx_files(input_file)
+              result <- add_metadata(csv_df, for_merging)
+            } else {
+              result <- convert_files(input_file, output.dir = output.dir) # returns plink 2.0 files
 
-        convertedCSV(result$with_meta)
-        missingData(result$missing)
-
-        if (input$breakdownPop == "YesBreakdown") {
-
-          if (length(input$popForBreakdown) <= 0) {
-            stop("No column selected.")
+              # convert to vcf
+              vcf_file <- convert_from_plink2(result,
+                output_type = "vcf2",
+                output.dir = output.dir
+              )
+              # vcf to csv and merge
+              csv_file <- convert_from_plink2(vcf_file,
+                output_type = "csv2",
+                output.dir = output.dir,
+                ref = for_merging
+              )
+              result <- csv_file
+            }
           }
 
-          breakdown_results <- pop_breakdown(convertedCSV(), input$popForBreakdown)
-          convertedBreakdown(breakdown_results)
+          convertedCSV(result$with_meta)
+          missingData(result$missing)
+
+          if (input$breakdownPop == "YesBreakdown") {
+            if (length(input$popForBreakdown) <= 0) {
+              stop("No column selected.")
+            }
+
+            breakdown_results <- pop_breakdown(convertedCSV(), input$popForBreakdown)
+            convertedBreakdown(breakdown_results)
+          }
+        }, # end for try catch
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
         }
-      }, # end for try catch
-      error = function(e) {
-        showNotification(paste("Error:", e$message), type = "error")
-      }
-    )})
+      )
+    })
     enable("addMetadata")
   })
 
@@ -456,7 +457,7 @@ file_conversion_server <- function(input, output, session, rv) {
           if (!tools::file_ext(input_path) %in% c("zip", "tar")) {
             stop("Unsupported file format: Should be a zipped or tar file.")
           }
-          
+
           widened.file <- widen_genotype_file(
             files = input_path,
             output.dir = temp_dir
@@ -568,41 +569,41 @@ file_conversion_server <- function(input, output, session, rv) {
     disable("convertBtn")
 
     withProgress(message = "Converting to SNIPPER-analysis ready file...", value = 0, {
-      
-    tryCatch({
-      tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
-      validate_gt_df(tosnipper_file)
-      tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
+      tryCatch(
+        {
+          tosnipper_file <- load_csv_xlsx_files(input$convertFile$datapath)
+          validate_gt_df(tosnipper_file)
+          tosnipper_file <- dplyr::rename(tosnipper_file, Sample = 1)
 
-    if (!is.null(input$refProvided)) {
-        validate_file(tosnipper_file)
+          if (!is.null(input$refProvided)) {
+            validate_file(tosnipper_file)
 
-      inputPath <- tosnipper_file[, -2]
-      refPath <- tosnipper_file[, 1:2]
-    } else {
-      inputPath <- tosnipper_file
-      refPath <- load_csv_xlsx_files(input$refFile$datapath)
-    }
+            inputPath <- tosnipper_file[, -2]
+            refPath <- tosnipper_file[, 1:2]
+          } else {
+            inputPath <- tosnipper_file
+            refPath <- load_csv_xlsx_files(input$refFile$datapath)
+          }
 
-    targetSet <- input$targetPop
-    targetName <- if (targetSet) input$targetPopName else NULL
-    inputData <- colnames(inputPath)
-    numMarkers <- length(inputData) - 1
-    
-    snipper.file <- to_snipper(
+          targetSet <- input$targetPop
+          targetName <- if (targetSet) input$targetPopName else NULL
+          inputData <- colnames(inputPath)
+          numMarkers <- length(inputData) - 1
+
+          snipper.file <- to_snipper(
             input = inputPath,
             references = refPath,
             target.pop = targetSet,
             population.name = targetName,
             markers = numMarkers
           )
-        convertedSNIPPER(snipper.file)
+          convertedSNIPPER(snipper.file)
+        },
+        error = function(e) {
+          showNotification(paste("Error during SNIPPER conversion: ", e$message), type = "error", duration = 20)
+        }
+      )
 
-      },error = function(e) {
-        showNotification(paste("Error during SNIPPER conversion: ", e$message), type = "error", duration = 20)
-      }
-    )
-    
       enable("convertBtn")
     })
   })
@@ -761,40 +762,38 @@ file_conversion_server <- function(input, output, session, rv) {
     disable("convert2Arle")
 
     withProgress(message = "Conversion ongoing...", {
-      
-    incProgress(0.2, detail = "Loading input file...")
-    for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
-    for_arp <- clean_input_data(for_arp)
-    # All null values are "N", set to ""
-    for_arp <- for_arp %>%
-      mutate(across(everything(), ~ case_when(
-        . == "N" ~ "",
-        TRUE ~ .x
-      )))
-    for_arp <- as.data.frame(for_arp)
+      incProgress(0.2, detail = "Loading input file...")
+      for_arp <- load_csv_xlsx_files(input$toArleFile$datapath)
+      for_arp <- clean_input_data(for_arp)
+      # All null values are "N", set to ""
+      for_arp <- for_arp %>%
+        mutate(across(everything(), ~ case_when(
+          . == "N" ~ "",
+          TRUE ~ .x
+        )))
+      for_arp <- as.data.frame(for_arp)
 
-    incProgress(0.4, detail = "Creating .arp file...")
-    # create the arp file
-    tryCatch(
-      {
-      validate_file(for_arp)
-      arp_file <- build_arp_per_population(for_arp,
-                                           genotypic_data = as.numeric(input$genotypicDataConv),
-                                           gametic_phase = as.numeric(input$gameticPhaseConv),
-                                           recessive_data = as.numeric(input$recessiveDataConv),
-                                           locus_sep = input$locusSepConv,
-                                           output.prefix = "arp_file",
-                                           data_type = "STANDARD"
-    )
-    
-    arleFile(arp_file)
-    showNotification("Conversion complete!", type = "message")
-    }, 
-    error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
-    )
-    
+      incProgress(0.4, detail = "Creating .arp file...")
+      # create the arp file
+      tryCatch(
+        {
+          validate_file(for_arp)
+          arp_file <- build_arp_per_population(for_arp,
+            genotypic_data = as.numeric(input$genotypicDataConv),
+            gametic_phase = as.numeric(input$gameticPhaseConv),
+            recessive_data = as.numeric(input$recessiveDataConv),
+            locus_sep = input$locusSepConv,
+            output.prefix = "arp_file",
+            data_type = "STANDARD"
+          )
+
+          arleFile(arp_file)
+          showNotification("Conversion complete!", type = "message")
+        },
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
+        }
+      )
     })
 
     enable("convert2Arle")

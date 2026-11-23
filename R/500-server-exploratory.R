@@ -80,7 +80,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
             Populations(NULL)
             SelectedPops(NULL)
           }
-          
+
           incProgress(0.6, detail = "Calculating principal components...")
           pca_results1 <- compute_pca(fsnps_gen, popinfo = with_popinfo)
           PCAResults(pca_results1)
@@ -141,7 +141,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
       pc_y = input$pcY,
       highlight_pop = input$highlightPops
     )
-    plotly::ggplotly(p) %>% 
+    plotly::ggplotly(p) %>%
       plotly::layout(autosize = TRUE)
   })
 
@@ -177,7 +177,7 @@ exploratory_analysis_server <- function(input, output, session, rv) {
       } else {
         cent_labels <- FALSE
       }
-      
+
       plot <- plot_pca(
         ind_coords = PCAResults()$ind_coords,
         centroid = PCAResults()$centroid,

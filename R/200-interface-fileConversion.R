@@ -149,7 +149,7 @@ file_conversion_tab <- function() {
               h4("Merge select metadata to genotype/sample data"),
               p(strong("Input file/s:")),
               tags$ul(
-                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data. 
+                tags$li("Genotype data (.vcf, .vcf.gz, .bcf) or CSV/Excel genotype data.
                         Zipped files are also accepted but should consist a single file type for merging.
                         To merge a VCF and CSV/Excel file, convert one file to the other.
                         "),
@@ -164,9 +164,11 @@ file_conversion_tab <- function() {
               DT::dataTableOutput("ExampleRefFile"),
               p("Sample column should match sample IDs in the genotype file."),
               hr(),
-              p(strong("Notes:"),
+              p(
+                strong("Notes:"),
                 "Missing values from VCF/BCF files will appear as empty cells while
-                original representation of missing values from CSV/Excel files will be kept.")
+                original representation of missing values from CSV/Excel files will be kept."
+              )
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -233,8 +235,10 @@ file_conversion_tab <- function() {
               h4("Sample input file. All alleles of available SNPs per sample are listed in a long format."),
               tableOutput("exampleXLSX"),
               hr(),
-              p(strong("Notes:"),
-                "Input files are assumed to contain biallelic markers without dropouts.")
+              p(
+                strong("Notes:"),
+                "Input files are assumed to contain biallelic markers without dropouts."
+              )
             )
           )
         ),
@@ -299,18 +303,18 @@ file_conversion_tab <- function() {
               p(
                 "The input file can be used as input for ",
                 tags$a("training set design",
-                       href = "https://mathgene.usc.es/snipper4/trainingsetdesign.php",
-                       target = "_blank"
+                  href = "https://mathgene.usc.es/snipper4/trainingsetdesign.php",
+                  target = "_blank"
                 ), " and/or AIM classification of ",
                 tags$a("multiple individuals",
-                       href = "https://mathgene.usc.es/snipper4/analysismultipleprofiles.php",
-                       target = "_blank"
+                  href = "https://mathgene.usc.es/snipper4/analysismultipleprofiles.php",
+                  target = "_blank"
                 ), " under SNIPPER v4."
               )
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              #h4("Sample Input File"),
+              # h4("Sample Input File"),
               h4("Format if input file does", strong("not"), "contain population metadata:"),
               DT::dataTableOutput("exampleTableSnipper1"),
               br(),

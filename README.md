@@ -44,7 +44,7 @@ for sub/modules:
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | Convert Files | Interconvert single or zipped VCF, BCF, CSV, or PLINK-associated files | VCF, BCF, CSV, PLINK files (or zipped files) | VCF, CSV or PLINK files | PLINK 2.0 |
-| 2 | Add Metadata | Merge genotype data with metadata based on shared keywords (sample IDs) | VCF, BCF, PLINK, CSV file/s (or zipped files) | CSV files | |
+| 2 | Add Metadata | Merge genotype data with metadata based on shared keywords (sample IDs) | VCF, BCF, CSV file/s (or zipped files) | CSV files | |
 | 3 | Widen SNP calls | Convert long-formatted SNP calls to a wide format | Compressed file (.zip/.tar) containing CSV/Excel files | CSV file | |
 | 4 | To SNIPPER file | Convert CSV/Excel files into a SNIPPER-compatible file for individual classification using ancestry-informative markers | CSV/Excel file | Excel (.xlsx) file | |
 | 5 | To STRUCTURE file | Converts CSV/Excel file to a STRUCTURE v2.3.4-compatible file | CSV/Excel file | Structure (.str) file | |
@@ -70,13 +70,13 @@ for sub/modules:
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | R-based Calculations | Calculate common population statistics using R-based packages | CSV/Excel file | Excel (.xlsx) and PNG files | [_poppr v2.9.8_](https://CRAN.R-project.org/package=poppr), [_hierfstat v0.5.11_](https://CRAN.R-project.org/package=hierfstat), and [_adegenet v2.1.11_](https://CRAN.R-project.org/package=adegenet) |
-| 2 | Arlecore | Calculate common population statistics using Arlecore, the terminal-based version of Arlequin | CSV/Excel file | Excel (.xlsx) and PNG files | Arlecore v3.5.2 |
+| 2 | Arlecore | Calculate common population statistics using Arlecore, the terminal-based version of Arlequin | CSV/Excel file or .arp file | Excel (.xlsx) and PNG files | Arlecore v3.5.2 |
 
 *Module 6: Population Structure Analysis*
 | # | Feature | Description | Input file/s | Output | Related Tools |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | 1 | Run STRUCTURE v2.3.4 | Perform population structure analysis | CSV/Excel file | Structure (.str) file, STRUCTURE results, Q matrices, and .ind files | STRUCTURE v2.3.4 and [_strataG_](https://github.com/EricArcher/strataG) |
-| 2 | Plot STRUCTURE results | Find best K using Evanno and visualize STRUCTURE results | CSV/Excel file | Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
+| 2 | Plot STRUCTURE results | Find best K using Evanno and visualize STRUCTURE results | Zipped STRUCTURE Results | K values or Structure plot (.png and .pdf) | CLUMPP and [_strataG_](https://github.com/EricArcher/strataG) |
 
 *Module 7: Forensic Parameters* 
 | # | Feature | Description | Input file/s | Output | Related Tools |

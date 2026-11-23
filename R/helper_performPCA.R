@@ -166,9 +166,9 @@ plot_pca <- function(ind_coords,
       scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0.20)) +
       labs(x = xlab, y = ylab) +
       ggtheme
-    
+
     if (isTRUE(centroid_label)) {
-      plot <- plot + 
+      plot <- plot +
         ggrepel::geom_label_repel(
           data = centroid,
           aes(
@@ -181,7 +181,6 @@ plot_pca <- function(ind_coords,
           size = 4, show.legend = FALSE
         )
     }
-      
   } else {
     plot <- ggplot(ind_coords, aes(
       x = .data[[paste0("PC", pc_x)]],

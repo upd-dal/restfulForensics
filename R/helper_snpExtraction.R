@@ -18,7 +18,7 @@ create_range_file <- function(pos_input, addID = FALSE) {
   }
 
   pos_df <- as.data.frame(pos_df)
-  
+
   if (ncol(pos_df) < 3) {
     stop("Position file should contain the ff: [1] marker [2] chromosome [3] position")
   }
@@ -225,7 +225,7 @@ extract_POStoID_pgen <- function(pos_list,
 calc_concordance <- function(file1, file2, phased = FALSE) {
   file1 <- clean_input_data(file1)
   file2 <- clean_input_data(file1)
-  
+
   file1 <- dplyr::rename(file1, Ind = 1)
   file2 <- dplyr::rename(file2, Ind = 1)
   file_list <- list(file1, file2)
@@ -279,7 +279,7 @@ calc_concordance <- function(file1, file2, phased = FALSE) {
       . == "C/A" ~ "A/C",
       TRUE ~ .x
     )))
-  } 
+  }
 
   overlap1 <- merged %>% dplyr::select(dplyr::ends_with(".x"))
   overlap2 <- merged %>% dplyr::select(dplyr::ends_with(".y"))

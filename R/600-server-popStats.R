@@ -37,7 +37,7 @@ pop_stats_server <- function(input, output, session, rv) {
   observeEvent(input$runPopStats, {
     disable("runPopStats")
     req(input$popStatsFile)
-    
+
     withProgress(message = "Running population analysis...", value = 0, {
       tryCatch(
         {
@@ -82,10 +82,10 @@ pop_stats_server <- function(input, output, session, rv) {
           fst_data <- fstStats()$fst_dataframe
           fstDataPlot(fst_data)
           matrix_fst <- fst_data %>% tidyr::pivot_wider(
-             names_from = Site2,
-             values_from = Fst
+            names_from = Site2,
+            values_from = Fst
           )
-          
+
           fstData(as.data.frame(matrix_fst))
 
           showNotification("Rendering outputs, this might take some time...", type = "message", duration = 30)
@@ -116,8 +116,8 @@ pop_stats_server <- function(input, output, session, rv) {
   output$heterozygosity_table <- DT::renderDataTable({
     het_values <- popStats()$heterozygosity
     het_long <- het_values %>% tidyr::pivot_wider(
-       names_from = Variable, 
-       values_from = Value
+      names_from = Variable,
+      values_from = Value
     )
     het_long
   })
@@ -186,7 +186,7 @@ pop_stats_server <- function(input, output, session, rv) {
   )
 
   output$fstDfTable <- DT::renderDataTable({
-     fstData()
+    fstData()
   })
 
   output$fst_heatmap_plot <- renderImage(
@@ -300,7 +300,7 @@ pop_stats_server <- function(input, output, session, rv) {
   locusData <- reactiveVal(NULL)
 
   arlecore_path <- get_arlecore_path()
-  
+
   observe({
     fileReady <- (!is.null(input$fileForArlecoreGT) || (!is.null(input$fileForArlecoreARP))) && file.exists(arlecore_path)
     shinyjs::toggleState("runArlecore", fileReady)
@@ -310,134 +310,133 @@ pop_stats_server <- function(input, output, session, rv) {
     disable("runArlecore")
     results <- NULL
     withProgress(message = "Analysis ongoing...", {
-      #tryCatch({
-      tryCatch({
-        incProgress(0.2, detail = "Loading input file...")
-        
-        file_ext <- tools::file_ext(input$fileForArlecoreGT$datapath)
-        rsids <- NULL
-        if ((!is.null(input$fileForArlecoreGT)) &&
+      # tryCatch({
+      tryCatch(
+        {
+          incProgress(0.2, detail = "Loading input file...")
+
+          file_ext <- tools::file_ext(input$fileForArlecoreGT$datapath)
+          rsids <- NULL
+          if ((!is.null(input$fileForArlecoreGT)) &&
             (tools::file_ext(input$fileForArlecoreGT$datapath) %in% c("xlsx", "xlsm", "xlsb", "xls", "csv"))
-            ) {
-          for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
-          for_arp <- clean_input_data(for_arp)
-          validate_file(for_arp)
-          rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
-          rsids <- data.frame(rownames(rsids), rsids)
-          locusData(rsids)
-          
-          # All null values are "N", set to ""
-          for_arp <- for_arp %>%
-            mutate(across(everything(), ~ case_when(
-              . == "N" ~ "",
-              TRUE ~ .x
-            )))
-          for_arp <- as.data.frame(for_arp)
-          
-          arp_file <- build_arp_per_population(for_arp,
-                                               genotypic_data = as.numeric(input$genotypicData),
-                                               gametic_phase = as.numeric(input$gameticPhase),
-                                               recessive_data = as.numeric(input$recessiveData),
-                                               locus_sep = input$locusSep,
-                                               output.prefix = "arp_file",
-                                               data_type = "STANDARD"
-          )
-        } else if (!is.null(input$fileForArlecoreARP)) {
-          arp_file <- input$fileForArlecoreARP$datapath
-        } else {
-          stop("Unsupported file type: Acceptable are CSV/Excel or ARP files.")
+          ) {
+            for_arp <- load_csv_xlsx_files(input$fileForArlecoreGT$datapath)
+            for_arp <- clean_input_data(for_arp)
+            validate_file(for_arp)
+            rsids <- as.data.frame(colnames(for_arp)[-c(1, 2)])
+            rsids <- data.frame(rownames(rsids), rsids)
+            locusData(rsids)
+
+            # All null values are "N", set to ""
+            for_arp <- for_arp %>%
+              mutate(across(everything(), ~ case_when(
+                . == "N" ~ "",
+                TRUE ~ .x
+              )))
+            for_arp <- as.data.frame(for_arp)
+
+            arp_file <- build_arp_per_population(for_arp,
+              genotypic_data = as.numeric(input$genotypicData),
+              gametic_phase = as.numeric(input$gameticPhase),
+              recessive_data = as.numeric(input$recessiveData),
+              locus_sep = input$locusSep,
+              output.prefix = "arp_file",
+              data_type = "STANDARD"
+            )
+          } else if (!is.null(input$fileForArlecoreARP)) {
+            arp_file <- input$fileForArlecoreARP$datapath
+          } else {
+            stop("Unsupported file type: Acceptable are CSV/Excel or ARP files.")
+          }
+
+          arlequinFile(arp_file)
+
+          incProgress(0.4, detail = "Running arlecore...")
+
+          if (input$uploadARS) {
+            ars_file <- input$arsFile$datapath
+            ld_value <- FALSE
+            hwe_value <- FALSE
+          } else if (isFALSE(input$uploadARS)) {
+            ars_file <- NULL
+            ld_value <- input$calcLD
+            hwe_value <- input$calcHWE
+          }
+
+          results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arsFile = ars_file)
+
+          incProgress(0.8, detail = "Loading report...")
+          # get report file
+          file_dir <- dirname(results)
+          xml_file <- file.path(results, "arp_file.xml")
+
+          if (!file.exists(xml_file)) {
+            stop("Resulting 'arp_file.xml' report not found.")
+          }
+
+          arlequinResult(xml_file)
+
+          doc <- xml2::read_xml(xml_file)
+
+          # run it separately
+          pop_labels <- parse_pop_labels(doc)
+          heterozygosity <- parse_sections_arlequin(doc, "helper_sumExpHeterozygosity", sumExpectedHeterozygosity) # bar plot
+          hwe <- heterozygosity[["data"]]
+
+          if (!is.null(rsids)) {
+            hwe$Locus <- rsids[[2]][
+              match(as.numeric(hwe$Locus), as.numeric(rsids[[1]]))
+            ]
+          }
+
+          heterozygosity[["data"]] <- hwe
+
+          fst_matrix <- parse_sections_arlequin(doc, "helper_PairFstMat", pairFstMatrix) # matrix of pairwise fst
+          coancestry_coeff <- parse_sections_arlequin(doc, "helper_coancestryCoefficients", coancestryCoeff) # pairwise of fst and reynolds
+          pairwise_matrix <- parse_sections_arlequin(doc, "helper_pairwiseDifferenceMatrix", pairwiseDiffMatrix)
+
+
+          if (isTRUE(input$calcHWE)) {
+            population_diversity <- parse_pop_diversity(doc)
+
+            if (!is.null(rsids)) {
+              population_diversity$Locus <- rsids[[2]][
+                match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
+              ]
+            }
+          } else {
+            population_diversity <- NULL
+          }
+
+          if (isTRUE(input$calcLD)) {
+            ld_vals <- parse_ld(doc)
+
+            if (!is.null(rsids)) {
+              rsids_zero <- rsids
+              rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
+
+              ld_vals$Locus1 <- rsids_zero[[2]][
+                match(ld_vals$Locus1, rsids_zero[[1]])
+              ]
+              ld_vals$Locus2 <- rsids_zero[[2]][
+                match(ld_vals$Locus2, rsids_zero[[1]])
+              ]
+            }
+          } else {
+            ld_vals <- NULL
+          }
+
+          arlequinPopLabels(pop_labels)
+          arlequinHeterozygosity(heterozygosity)
+          arlequinFstMatrix(fst_matrix)
+          arlequinCoancestry(coancestry_coeff)
+          arlequinPairwise(pairwise_matrix)
+          arlequinPopDiversity(population_diversity)
+          arlequinLD(ld_vals)
+        },
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
         }
-        
-      arlequinFile(arp_file)
-
-      incProgress(0.4, detail = "Running arlecore...")
-      
-      if (input$uploadARS) {
-        ars_file <- input$arsFile$datapath
-        ld_value <- FALSE
-        hwe_value <- FALSE
-      } else if (isFALSE(input$uploadARS)) {
-        ars_file <- NULL
-        ld_value <- input$calcLD
-        hwe_value <- input$calcHWE
-      }
-      
-      results <- run_arlequin(arp_file, ld = ld_value, hwe = hwe_value, arsFile = ars_file)
-
-      incProgress(0.8, detail = "Loading report...")
-      # get report file
-      file_dir <- dirname(results)
-      xml_file <- file.path(results, "arp_file.xml")
-
-      if (!file.exists(xml_file)) {
-        stop("Resulting 'arp_file.xml' report not found.")
-      }
-
-      arlequinResult(xml_file)
-
-      doc <- xml2::read_xml(xml_file)
-
-      # run it separately
-      pop_labels <- parse_pop_labels(doc)
-      heterozygosity <- parse_sections_arlequin(doc, "helper_sumExpHeterozygosity", sumExpectedHeterozygosity) # bar plot
-      hwe <- heterozygosity[["data"]]
-      
-      if (!is.null(rsids)) {
-        hwe$Locus <- rsids[[2]][
-          match(as.numeric(hwe$Locus), as.numeric(rsids[[1]]))
-        ]
-      }
-      
-      heterozygosity[["data"]] <- hwe
-
-      fst_matrix <- parse_sections_arlequin(doc, "helper_PairFstMat", pairFstMatrix) # matrix of pairwise fst
-      coancestry_coeff <- parse_sections_arlequin(doc, "helper_coancestryCoefficients", coancestryCoeff) # pairwise of fst and reynolds
-      pairwise_matrix <- parse_sections_arlequin(doc, "helper_pairwiseDifferenceMatrix", pairwiseDiffMatrix)
-
-      
-      if (isTRUE(input$calcHWE)) {
-        population_diversity <- parse_pop_diversity(doc)
-        
-        if (!is.null(rsids)) {
-          population_diversity$Locus <- rsids[[2]][
-            match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
-          ] 
-        }
-      } else {
-        population_diversity <- NULL
-      }
-
-      if (isTRUE(input$calcLD)) {
-        ld_vals <- parse_ld(doc)
-        
-        if (!is.null(rsids)) {
-          rsids_zero <- rsids
-          rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
-          
-          ld_vals$Locus1 <- rsids_zero[[2]][
-            match(ld_vals$Locus1, rsids_zero[[1]])
-          ]
-          ld_vals$Locus2 <- rsids_zero[[2]][
-            match(ld_vals$Locus2, rsids_zero[[1]])
-          ]
-        }
-
-      } else {
-        ld_vals <- NULL
-      }
-
-      arlequinPopLabels(pop_labels)
-      arlequinHeterozygosity(heterozygosity)
-      arlequinFstMatrix(fst_matrix)
-      arlequinCoancestry(coancestry_coeff)
-      arlequinPairwise(pairwise_matrix)
-      arlequinPopDiversity(population_diversity)
-      arlequinLD(ld_vals)
-      
-      },
-      error = function(e) {
-        showNotification(paste("Error:", e$message), type = "error")
-      }
       )
     })
 

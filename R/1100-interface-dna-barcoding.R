@@ -10,17 +10,17 @@ msa_tab <- function() {
           box(
             fileInput("fastaFile", "Upload zipped FASTA files", accept = c(".zip", ".tar")),
             radioButtons("substitutionMatrix", "Choose Substitution Matrix for MSA",
-                         choices = c("ClustalW" = "ClustalW", "ClustalOmega" = "ClustalOmega", "MUSCLE" = "Muscle")
+              choices = c("ClustalW" = "ClustalW", "ClustalOmega" = "ClustalOmega", "MUSCLE" = "Muscle")
             ),
             actionButton("runMSA", "Align", icon = icon("align-justify")),
             br(),
             selectInput("msaDownloadType", "Choose alignment (FASTA and PDF) version to download:",
-                        choices = c(
-                          "Initial" = "initial",
-                          "Adjusted" = "adjusted",
-                          "Staggered" = "staggered"
-                        ),
-                        selected = "initial"
+              choices = c(
+                "Initial" = "initial",
+                "Adjusted" = "adjusted",
+                "Staggered" = "staggered"
+              ),
+              selected = "initial"
             )
           ),
           tabBox(
@@ -81,12 +81,12 @@ msa_tab <- function() {
           conditionalPanel(
             condition = "input.uploadMSATrim == true",
             selectInput("sequenceToTrim", "Alignment to trim",
-                        choices = c(
-                          "Initial" = "initial",
-                          "Adjusted" = "adjusted",
-                          "Staggered" = "staggered"
-                        ),
-                        selected = "initialTrim"
+              choices = c(
+                "Initial" = "initial",
+                "Adjusted" = "adjusted",
+                "Staggered" = "staggered"
+              ),
+              selected = "initialTrim"
             )
           ),
           conditionalPanel(
@@ -96,9 +96,9 @@ msa_tab <- function() {
           numericInput("startSeq", "Starting position", value = 50),
           numericInput("endSeq", "End position", value = 150),
           helpText("Indicate the start and end position of the sequence to keep"),
-          actionButton("trimSequences", "Trim sequences", icon=icon("scissors")),
+          actionButton("trimSequences", "Trim sequences", icon = icon("scissors")),
           uiOutput("downloadTrimmedFASTAUI")
-          ),
+        ),
         tabBox(
           tabPanel(
             title = "Instructions",
@@ -110,7 +110,7 @@ msa_tab <- function() {
             p("The ape and phangorn packages for building phylogenetic trees require
               a distance matrix built from MSA without missing values, hence the
               aligned sequences should be trimmed as needed.")
-            )
+          )
         )
       )
     ) # end of tabset panel
@@ -142,8 +142,8 @@ phylogeny_tab <- function() {
             condition = "input.uploadMSA == false",
             fileInput("msaFileforPhylogen", "Upload MSA file")
           ),
-          
-          # 
+
+          #
           actionButton("validateAlignment", "Validate Input File (distance)", icon = icon("check")),
           uiOutput("phylogeneticOptionsUI")
         ),

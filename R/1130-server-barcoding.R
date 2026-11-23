@@ -17,66 +17,68 @@ barcoding_server <- function(input, output, session, rv) {
     req(input$refBarcoding)
     req(input$queBarcoding)
 
-    tryCatch({
-      ref_seq <- alignment_to_dnabin(input$refBarcoding$datapath)
-    que_seq <- alignment_to_dnabin(input$queBarcoding$datapath)
+    tryCatch(
+      {
+        ref_seq <- alignment_to_dnabin(input$refBarcoding$datapath)
+        que_seq <- alignment_to_dnabin(input$queBarcoding$datapath)
 
-    refseq(ref_seq)
-    queseq(que_seq)
+        refseq(ref_seq)
+        queseq(que_seq)
 
-    # If not using kmer method
-    if (!isTRUE(input$kmerSelect)) {
-      result_identity <- BarcodingR::barcoding.spe.identify(
-        refseq(),
-        queseq(),
-        method = input$barcodingMethod
-      )
+        # If not using kmer method
+        if (!isTRUE(input$kmerSelect)) {
+          result_identity <- BarcodingR::barcoding.spe.identify(
+            refseq(),
+            queseq(),
+            method = input$barcodingMethod
+          )
 
-      if (input$barcodingMethod == "Bayesian") {
-        result <- result_identity[["output_identified"]]
-      } else {
-        result <- list(
-          success_rate = result_identity[["success.rates.ref"]],
-          output = result_identity[["output_identified"]]
-        )
+          if (input$barcodingMethod == "Bayesian") {
+            result <- result_identity[["output_identified"]]
+          } else {
+            result <- list(
+              success_rate = result_identity[["success.rates.ref"]],
+              output = result_identity[["output_identified"]]
+            )
+          }
+        } else {
+          if (input$kmerType == "Fuzzy-set Method and kmer") {
+            result_identity <- BarcodingR::barcoding.spe.identify2(
+              refseq(),
+              queseq(),
+              kmer = input$kmerValueFuzzy,
+              optimization = input$optimizationKMER
+            )
+
+            result <- list(
+              model_success = result_identity[["model.success"]],
+              output = result_identity[["output_identified"]]
+            )
+          } else if (input$kmerType == "BP-based Method and kmer") {
+            result_identity <- BarcodingR::bbsik(
+              refseq(),
+              queseq(),
+              kmer = input$kmerValueBP,
+              UseBuiltModel = input$builtModel,
+              lr = input$lrValue,
+              maxit = input$maxitValue
+            )
+
+            result <- list(
+              success_rate = result_identity[["success.rates.ref"]],
+              output = result_identity[["output_identified"]]
+            )
+          }
+        }
+
+        resultIdentity(result)
+        showNotification("Calculation complete!", type = "message")
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
       }
-    } else {
-      if (input$kmerType == "Fuzzy-set Method and kmer") {
-        result_identity <- BarcodingR::barcoding.spe.identify2(
-          refseq(),
-          queseq(),
-          kmer = input$kmerValueFuzzy,
-          optimization = input$optimizationKMER
-        )
+    )
 
-        result <- list(
-          model_success = result_identity[["model.success"]],
-          output = result_identity[["output_identified"]]
-        )
-      } else if (input$kmerType == "BP-based Method and kmer") {
-        result_identity <- BarcodingR::bbsik(
-          refseq(),
-          queseq(),
-          kmer = input$kmerValueBP,
-          UseBuiltModel = input$builtModel,
-          lr = input$lrValue,
-          maxit = input$maxitValue
-        )
-
-        result <- list(
-          success_rate = result_identity[["success.rates.ref"]],
-          output = result_identity[["output_identified"]]
-        )
-      }
-    }
-
-    resultIdentity(result)
-    showNotification("Calculation complete!", type = "message")
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
-      )
-    
     enable("identifySpecies")
   })
 
@@ -192,23 +194,23 @@ barcoding_server <- function(input, output, session, rv) {
     req(input$barcodeRef)
     req(input$gapModel)
 
-    tryCatch({
-      ref_Barcode <- alignment_to_dnabin(input$barcodeRef$datapath)
-    refBarcode(ref_Barcode)
+    tryCatch(
+      {
+        ref_Barcode <- alignment_to_dnabin(input$barcodeRef$datapath)
+        refBarcode(ref_Barcode)
 
-    tmp_plot <- tempfile(fileext = ".png")
-    png(tmp_plot, width = 1200, height = 800)
-    gap <- BarcodingR::barcoding.gap(ref_Barcode, dist = input$gapModel)
+        tmp_plot <- tempfile(fileext = ".png")
+        png(tmp_plot, width = 1200, height = 800)
+        gap <- BarcodingR::barcoding.gap(ref_Barcode, dist = input$gapModel)
 
-    dev.off()
+        dev.off()
 
-    barcodeGap(gap)
-    gapPlotFile(tmp_plot)
-    
-    },
-    error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
+        barcodeGap(gap)
+        gapPlotFile(tmp_plot)
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
     )
 
     enable("gapBarcodes")
@@ -265,22 +267,25 @@ barcoding_server <- function(input, output, session, rv) {
     req(input$kmer1)
     req(input$kmer2)
 
-    tryCatch({
-      b1 <- alignment_to_dnabin(input$barcode1$datapath)
-    b2 <- alignment_to_dnabin(input$barcode2$datapath)
-    barcode1RV(b1)
-    barcode2RV(b2)
+    tryCatch(
+      {
+        b1 <- alignment_to_dnabin(input$barcode1$datapath)
+        b2 <- alignment_to_dnabin(input$barcode2$datapath)
+        barcode1RV(b1)
+        barcode2RV(b2)
 
-    result <- BarcodingR::barcodes.eval(b1,
+        result <- BarcodingR::barcodes.eval(b1,
           b2,
           kmer1 = as.numeric(input$kmer1),
           kmer2 = as.numeric(input$kmer2)
         )
 
-    barcodeEvalRV(result)
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
+        barcodeEvalRV(result)
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+    )
   })
 
   output$evalBarcodesResult <- renderTable(
@@ -309,21 +314,25 @@ barcoding_server <- function(input, output, session, rv) {
     req(input$bootValue1)
     req(input$bootValue2)
 
-    tryCatch({oneSpe <- alignment_to_dnabin(input$oneSpe$datapath)
-    queSpe <- alignment_to_dnabin(input$queSpe$datapath)
+    tryCatch(
+      {
+        oneSpe <- alignment_to_dnabin(input$oneSpe$datapath)
+        queSpe <- alignment_to_dnabin(input$queSpe$datapath)
 
-    oneSpeRV(oneSpe)
-    queSpeRV(queSpe)
+        oneSpeRV(oneSpe)
+        queSpeRV(queSpe)
 
-        result <-  BarcodingR::TDR2(oneSpe, queSpe, boot = as.numeric(input$bootValue1), boot2 = as.numeric(input$bootValue2))
+        result <- BarcodingR::TDR2(oneSpe, queSpe, boot = as.numeric(input$bootValue1), boot2 = as.numeric(input$bootValue2))
 
 
-    tdrRV(result)
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    })
-    
-    
+        tdrRV(result)
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+    )
+
+
     enable("calculateTDR2")
   })
 

@@ -7,26 +7,28 @@ msa_server <- function(input, output, session, rv) {
   observe({
     toggleState("runMSA", !is.null(input$fastaFile))
   })
-  
+
   observeEvent(input$runMSA, {
     req(input$fastaFile)
-    
-    tryCatch({
-      fasta <- read_fasta(input$fastaFile$datapath, directory)
-    fasta_data(fasta)
 
-    aligned <- calc_msa(fasta,
-      algorithm = input$substitutionMatrix
-    )
-    showNotification("Alignment complete!", type = "message")
+    tryCatch(
+      {
+        fasta <- read_fasta(input$fastaFile$datapath, directory)
+        fasta_data(fasta)
 
-    rv$alignmentMSA <- aligned$alignment
-    rv$alignmentAdjusted <- aligned$adjusted
-    rv$alignmentStaggered <- aligned$staggered
-    alignment_scores(aligned$scores)
-    }, error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
+        aligned <- calc_msa(fasta,
+          algorithm = input$substitutionMatrix
+        )
+        showNotification("Alignment complete!", type = "message")
+
+        rv$alignmentMSA <- aligned$alignment
+        rv$alignmentAdjusted <- aligned$adjusted
+        rv$alignmentStaggered <- aligned$staggered
+        alignment_scores(aligned$scores)
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
     )
   })
 
@@ -129,53 +131,55 @@ msa_server <- function(input, output, session, rv) {
     req(alignment_scores())
     downloadButton("downloadAlignmentScores", "Download Alignment Scores")
   })
-  
+
   # ================= TRIM THE SEQUENCES ==================#
   observe({
-   if (isTRUE(input$uploadMSATrim)) {
-     toggleState("trimSequences", !is.null(input$sequenceToTrim))
-   } else {
-     toggleState("trimSequences", !is.null(input$fileForTrim))
-   }
+    if (isTRUE(input$uploadMSATrim)) {
+      toggleState("trimSequences", !is.null(input$sequenceToTrim))
+    } else {
+      toggleState("trimSequences", !is.null(input$fileForTrim))
+    }
   })
-  
+
   observeEvent(input$trimSequences, {
     disable(input$trimSequences)
-    
-    tryCatch({
-      if (isTRUE(input$uploadMSATrim)) {
-      alignment <- switch(input$sequenceToTrim,
-                          initial = rv$alignmentMSA,
-                          adjusted = rv$alignmentAdjusted,
-                          staggered = rv$alignmentStaggered
-      )
-      alignment_file <- alignment
-    } else if (!is.null(input$fileForTrim)) {
-      file_ext_ref <- tools::file_ext(input$fileForTrim$name)
-      if (file_ext_ref == "msa") {
-        alignment_file <- Biostrings::ReadDNAStringSet(input$fileForTrim$datapath)
-      } else if (file_ext_ref %in% c("fasta", "fa", "fas", "msf", "aln")) {
-        if (file_ext_ref == "aln") {
-          file_ext_ref <- "clustal"
-        } else {
-          stop("Unsupported alignment file. Should be any of the ff: 'msa', 'fasta', 'fa', 'fas', 'msf', 'aln'.")
-        }
-        alignment_file <- seqinr::read.alignment(file = input$fileForTrim$datapath, format = file_ext_ref)
-      }
-    }
-      
-      if (methods::is(alignment_file, "MsaDNAMultipleAlignment")) {
-        alignment_file <- as(alignment_file, "DNAStringSet")
-      }
-    
-    trimmed_sequences <- Biostrings::subseq(alignment_file, start = input$startSeq, end = input$endSeq)
-    rv$alignmentTrimmed <- Biostrings::DNAMultipleAlignment(trimmed_sequences)
 
-  }, error = function(e) {
-    showNotification(paste("Error:", e$message), type = "error")
+    tryCatch(
+      {
+        if (isTRUE(input$uploadMSATrim)) {
+          alignment <- switch(input$sequenceToTrim,
+            initial = rv$alignmentMSA,
+            adjusted = rv$alignmentAdjusted,
+            staggered = rv$alignmentStaggered
+          )
+          alignment_file <- alignment
+        } else if (!is.null(input$fileForTrim)) {
+          file_ext_ref <- tools::file_ext(input$fileForTrim$name)
+          if (file_ext_ref == "msa") {
+            alignment_file <- Biostrings::ReadDNAStringSet(input$fileForTrim$datapath)
+          } else if (file_ext_ref %in% c("fasta", "fa", "fas", "msf", "aln")) {
+            if (file_ext_ref == "aln") {
+              file_ext_ref <- "clustal"
+            } else {
+              stop("Unsupported alignment file. Should be any of the ff: 'msa', 'fasta', 'fa', 'fas', 'msf', 'aln'.")
+            }
+            alignment_file <- seqinr::read.alignment(file = input$fileForTrim$datapath, format = file_ext_ref)
+          }
+        }
+
+        if (methods::is(alignment_file, "MsaDNAMultipleAlignment")) {
+          alignment_file <- as(alignment_file, "DNAStringSet")
+        }
+
+        trimmed_sequences <- Biostrings::subseq(alignment_file, start = input$startSeq, end = input$endSeq)
+        rv$alignmentTrimmed <- Biostrings::DNAMultipleAlignment(trimmed_sequences)
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
+      }
+    )
   })
-  })
-  
+
   output$downloadTrimmedFASTA <- downloadHandler(
     filename = function() {
       "trimmed_barcodes.fasta"
@@ -185,11 +189,9 @@ msa_server <- function(input, output, session, rv) {
       Biostrings::writeXStringSet(rv$alignmentTrimmed, filepath = file, format = "fasta")
     }
   )
-  
+
   output$downloadTrimmedFASTAUI <- renderUI({
     req(rv$alignmentTrimmed)
     downloadButton("downloadTrimmedFASTA", "Download Trimmed Sequences")
   })
-  
-  
 }

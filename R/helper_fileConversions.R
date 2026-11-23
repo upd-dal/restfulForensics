@@ -7,7 +7,7 @@ validate_gt_df <- function(df) {
   # Get first value of the third column, assumption is genotype
   val <- df[1, 3]
   is_a_char <- stringr::str_count(val, "[A-Za-z]") == 2
-  
+
   if (isFALSE(is_a_char)) {
     stop("Unsupported format: Genotype should be present by the third column. Only biallelic markers are accepted.")
   }
@@ -22,7 +22,7 @@ validate_file <- function(df) {
   validate_gt_df(df)
   val <- df[1, 2]
   with_pop <- is.character(val) && !grepl("[/|]", val) && (stringr::str_count(val, "[A-Za-z]") > 2)
-  
+
   if (isFALSE(with_pop)) {
     stop("File should contain a population column.")
   }
@@ -35,7 +35,7 @@ validate_file <- function(df) {
 #' @returns Updated dataframe compatible for functions within restful forensics.
 clean_input_data <- function(file) {
   file <- as.data.frame(file)
-  
+
   file[, 3:ncol(file)] <- lapply(
     file[, 3:ncol(file), drop = FALSE],
     function(x) {
@@ -47,7 +47,7 @@ clean_input_data <- function(file) {
       x
     }
   )
-  
+
   file[is.na(file)] <- "N"
   file <- file %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
@@ -103,12 +103,12 @@ convert_to_genind <- function(file, to_str = FALSE, popinfo = TRUE) {
     # Change Ind to numeric
     ind_only <- as.data.frame(file[, 1])
     ind_only$num <- rownames(ind_only)
-    
+
     Label <- file$Ind
     STR_label <- ind_only$num
     Pop <- file$Pop
     STR_pop <- pop_df_corr$num
-    csv_revised <- data.frame(Label, STR_label, Pop, STR_pop, file[,-c(1,2)])
+    csv_revised <- data.frame(Label, STR_label, Pop, STR_pop, file[, -c(1, 2)])
 
     ind <- as.character(ind_only$num)
     pop <- as.character(pops)
@@ -181,10 +181,9 @@ convert_to_plink2 <- function(input.file,
   } else {
     original_name
   }
-  
+
   file_extension <- tolower(tools::file_ext(check_name))
-  flag <- switch(
-    file_extension,
+  flag <- switch(file_extension,
     bed = "--bfile",
     bim = "--bfile",
     fam = "--bfile",
@@ -193,17 +192,17 @@ convert_to_plink2 <- function(input.file,
     bcf = "--bcf",
     NULL
   )
-  
+
   if (is.null(flag)) {
     stop("Unsupported file type: ", check_name)
   }
-  
+
   if (file_extension %in% c("bed", "bim", "fam")) {
     input <- tools::file_path_sans_ext(input.file)
   } else {
     input <- input.file
   }
-  
+
   args <- c(
     flag, input,
     "--make-pgen",
@@ -211,7 +210,7 @@ convert_to_plink2 <- function(input.file,
     "--output-chr", output_chr,
     "--out", name
   )
-  
+
   system2(plink_path, args = args, stdout = TRUE, stderr = TRUE)
   return(name)
 }
@@ -256,15 +255,14 @@ convert_to_plink <- function(input.file, name = "converted_to_plink") {
 #' @param output.dir The directory to save the unpacked files. Default is the working directory.
 #'
 #' @returns The prefix of the merged dataset.
-#prepare_input_dataset_archive <- function(df_list, ext, output.dir = ".") {
+# prepare_input_dataset_archive <- function(df_list, ext, output.dir = ".") {
 convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".") {
-  
   work_dir <- file.path(output.dir, "for_processing")
   dir.create(work_dir, showWarnings = FALSE, recursive = TRUE)
   merge_list_path <- file.path(work_dir, "merge_list.txt")
   prefixes <- c()
 
-  if (isFALSE(plink_files)){
+  if (isFALSE(plink_files)) {
     for (f in df_list) {
       base <- sub("\\.vcf(\\.gz)?$|\\.bcf$", "", basename(f), ignore.case = TRUE)
       out_pref <- file.path(work_dir, paste0(base, "_p2"))
@@ -275,8 +273,8 @@ convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".
       prefixes <- c(prefixes, converted)
     }
   } else {
-      prefixes <- df_list
-    }
+    prefixes <- df_list
+  }
 
   if (length(prefixes) == 0) {
     stop("No valid files in the directory.")
@@ -297,27 +295,26 @@ convert_merge_to_plink <- function(df_list, plink_files = FALSE, output.dir = ".
 #' Evaluate and convert data files to PLINK
 #' @return Plink2 file prefix
 convert_files <- function(input_file, output.dir = ".", original_name = NULL) {
-  
   if (!file.exists(input_file)) {
     stop("File not found.")
   }
-  
+
   # check if zipped or not
   file_extension <- tolower(
     tools::file_ext(
       if (!is.null(original_name)) original_name else input_file
     )
   )
-  
+
   if (!file_extension %in% c("zip", "tar", "bed", "bim", "fam", "vcf", "gz", "bcf")) {
     stop("Unsupported file type. Should be VCF, BCF, PLINK or zipped files.")
   }
-  
+
   if (file_extension %in% c("zip", "tar")) {
     unpacked <- unpack_input_file(input_file, output.dir)
     files <- unpacked$data_files
     ext <- tools::file_ext(files[[1]])
-    
+
     if (ext %in% c("bed", "bim", "fam")) {
       unique_files <- unique(unlist(lapply(files, tools::file_path_sans_ext), use.names = FALSE))
       unique_files <- as.list(unique_files)
@@ -326,7 +323,6 @@ convert_files <- function(input_file, output.dir = ".", original_name = NULL) {
       merged_plink <- convert_merge_to_plink(files, output.dir = output.dir, plink_files = FALSE)
     }
     return(merged_plink$pgen_prefix)
-    
   } else {
     pgen_prefix <- file.path(output.dir, "input_pgen")
     convert_to_plink2(input_file, original_name = original_name, name = pgen_prefix, output_chr = "26")
@@ -451,10 +447,9 @@ vcf_to_df <- function(files, ref = NULL, output.dir = ".") {
   final_df <- raw_file
 
   if (is.null(ref)) {
-     
     return(list(
-       with_meta = as.data.frame(final_df),
-       missing = NULL
+      with_meta = as.data.frame(final_df),
+      missing = NULL
     ))
   } else {
     merged <- add_metadata(final_df, ref)
@@ -464,12 +459,12 @@ vcf_to_df <- function(files, ref = NULL, output.dir = ".") {
 
 
 #' Add metadata to dataframes
-#' 
+#'
 #' @param df The dataframe containing sample and genotype information.
 #' @param metadata The dataframe containing the sample and population information. Sample name should match the samples with genotype information.
 add_metadata <- function(df, metadata) {
   df <- clean_input_data(df)
-  
+
   # check if single population
   if (is.character(metadata) && length(metadata) == 1) {
     df$Pop <- metadata
@@ -482,27 +477,27 @@ add_metadata <- function(df, metadata) {
     ref_data <- data.frame(metadata)
     ref_data <- dplyr::rename(ref_data, Sample = 1)
     final_df <- dplyr::rename(df, Sample = 1)
-    
+
     # normalize sample sections
     ref_data$Sample <- gsub("[^a-z0-9]", "", tolower(as.character(ref_data$Sample)))
     final_df$Sample <- gsub("[^a-z0-9]", "", tolower(as.character(final_df$Sample)))
-    
+
     samples_vcf <- final_df$Sample
     samples_ref <- ref_data$Sample
-    
+
     if (sum(samples_vcf %in% samples_ref) == 0) {
       stop("Sample IDS do not match between VCF and metadata.")
     }
-    
+
     cols <- colnames(ref_data)
-    
+
     with_meta_data <- final_df %>%
       dplyr::inner_join(ref_data, by = "Sample") %>%
-      relocate(cols, .after = 1) 
+      relocate(cols, .after = 1)
     with_meta_data <- dplyr::rename(with_meta_data, Pop = 2)
-    
+
     missing_meta <- final_df %>% dplyr::anti_join(ref_data, by = "Sample")
-    
+
     return(list(
       with_meta = with_meta_data,
       missing = missing_meta
@@ -522,13 +517,13 @@ to_binary <- function(df, markers = marker.file) {
   data <- df[, -c(1, 2)]
   data <- data.frame(t(data))
   row_name <- data.frame(rownames(data))
-  
+
   data <- lapply(data, function(x) {
     x <- gsub("/", "", x, fixed = TRUE)
-    x[x=="N"] <- ""
+    x[x == "N"] <- ""
     x
-    })
-  
+  })
+
   data <- as.data.frame(data)
   revised_data <- data.frame(row_name, data)
   revised_data <- dplyr::rename(revised_data, ID = 1)
@@ -557,7 +552,7 @@ to_binary <- function(df, markers = marker.file) {
         TRUE ~ 1
       )
     ))
-  df_marker[df_marker==3] <- NA
+  df_marker[df_marker == 3] <- NA
   final_df <- df_marker[, -c(1, 2, 3)]
   final_df <- data.frame(t(final_df))
   return(final_df)
@@ -575,7 +570,7 @@ csv_to_gentibble <- function(file, loci.meta = loci.meta) {
   validate_gt_df(df)
   df <- clean_input_data(df)
   df <- as.data.frame(df)
-  
+
   meta <- df[, 1:2]
   meta <- dplyr::rename(meta, id = 1, population = 2)
 
@@ -611,19 +606,19 @@ csv_to_gentibble <- function(file, loci.meta = loci.meta) {
 #'
 #' @returns The dataframe of widened and merged genotype files.
 widen_genotype_file <- function(files = files,
-                                #population = NULL,
+                                # population = NULL,
                                 output.dir = ".") {
   if (!file.exists(files)) {
     stop("File does not exist in the working directory")
   } else {
     files_raw <- unpack_input_file(files, output.dir = output.dir)
-}
+  }
 
   data_list <- files_raw$data_files
   all.list <- list()
 
   f_ext <- tools::file_ext(data_list[1])
-  
+
   if (f_ext %in% c(".csv", "xlsx", "xlsm", "xlsb", "xls")) {
     for (x in data_list) {
       all.list[[x]] <- load_csv_xlsx_files(x)
@@ -660,7 +655,7 @@ widen_genotype_file <- function(files = files,
   Samples <- rownames(corrected)
   corrected <- data.frame(Samples, corrected)
   rownames(corrected) <- NULL
-  
+
   return(corrected)
 }
 
@@ -701,11 +696,10 @@ to_snipper <- function(input,
                        target.pop = TRUE,
                        population.name = NULL,
                        markers = snps) {
-  
   input.file <- clean_input_data(input)
-  
+
   validate_gt_df(input.file)
-  
+
   input.file <- input.file %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::case_when(
@@ -721,11 +715,11 @@ to_snipper <- function(input,
     }
   )
   tosnipper <- as.data.frame(tosnipper)
-  
+
   tosnipper[-1] <- as.data.frame(lapply(tosnipper[-1], function(x) {
     ifelse(nchar(x) == 1, paste(x, "N"), x)
   }))
-  
+
   tosnipper <- dplyr::rename(tosnipper, Sample = 1)
   reference <- dplyr::rename(references, Sample = 1, Pop = 2)
 
@@ -737,11 +731,11 @@ to_snipper <- function(input,
     reference$Sample <- as.character(reference$Sample)
   }
 
-  matched <- tosnipper %>% 
+  matched <- tosnipper %>%
     dplyr::left_join(reference, by = "Sample") %>%
     dplyr::mutate(Population = Pop, .before = "Sample")
   matched <- matched[, -ncol(matched)]
-  
+
   last.col <- as.integer(ncol(matched))
   tosnpr_split <- split(matched, matched$Population)
   tosnpr_split <- tosnpr_split %>% map(`rownames<-`, NULL)

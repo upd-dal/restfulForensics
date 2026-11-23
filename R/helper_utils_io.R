@@ -2,14 +2,14 @@
 #'
 #' @returns The file path for PLINK 2.0.
 get_plink2_path <- function() {
-    normalizePath("./plink/plink2.exe")
+  normalizePath("./plink/plink2.exe")
 }
 
 #' Get PLINK1.9 executable path
 #'
 #' @returns The file path for PLINK 1.9.
 get_plink_path <- function() {
-    normalizePath("./plink/plink.exe")
+  normalizePath("./plink/plink.exe")
 }
 
 #' Get Arlecore path
@@ -17,7 +17,7 @@ get_plink_path <- function() {
 #' @returns The file path for the 64-bit arlecore executable
 get_arlecore_path <- function() {
   normalizePath("./arlecore64.exe")
-} 
+}
 
 #' Get STRUCTURE path
 #'
@@ -46,7 +46,7 @@ unpack_input_file <- function(files, output.dir = ".") {
     archive_ext <- tolower(tools::file_ext(files))
     data_path <- tempfile(pattern = "unpacked_", tmpdir = output.dir)
     dir.create(data_path, recursive = TRUE, showWarnings = FALSE)
-    
+
     if (archive_ext == "zip") {
       utils::unzip(files,
         files = NULL,
@@ -54,14 +54,12 @@ unpack_input_file <- function(files, output.dir = ".") {
         overwrite = TRUE,
         exdir = data_path
       )
-
     } else if (archive_ext == "tar") {
-      untar(files, 
-            files = NULL, 
-            list = FALSE, 
-            exdir = data_path
-            )
-
+      untar(files,
+        files = NULL,
+        list = FALSE,
+        exdir = data_path
+      )
     } else {
       stop("Not a zipped file.")
     }
@@ -116,7 +114,7 @@ load_vcf_files <- function(vcf, output.dir = ".") {
   } else if (vcf_ext %in% c("tar", "zip")) {
     vcf_zipped <- unpack_input_file(vcf, output.dir = output.dir)
     wb <- vcf_zipped$data_files
-#    wb <- list.files(path = file.path(output.dir), pattern = ".vcf$", full.names = TRUE)
+    #    wb <- list.files(path = file.path(output.dir), pattern = ".vcf$", full.names = TRUE)
     dflist <- lapply(wb, function(x) {
       vcf_obj <- vcfR::read.vcfR(x, verbose = FALSE)
       genotypes <- vcfR::extract.gt(vcf_obj, return.alleles = TRUE)
@@ -149,15 +147,15 @@ read_fasta <- function(zipped, directory) {
     overwrite = TRUE,
     exdir = file.path(directory, "fasta_files")
   )
-  
+
   data_path <- file.path(directory, "fasta_files")
   fasta_patterns <- paste("\\.fasta$", "\\.fa$", "\\.fna$", "\\.fas$", "\\.txt", sep = "|")
   fasta_files <- list.files(path = data_path, pattern = fasta_patterns, full.names = TRUE)
-  
+
   if (length(fasta_files) == 0) {
     stop("No fasta files found in the zipped folder.")
   }
-  
+
   dna_sequences <- Biostrings::readDNAStringSet(fasta_files)
 
   return(dna_sequences)

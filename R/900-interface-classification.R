@@ -22,13 +22,13 @@ classification_tab <- function() {
                 "This performs a NaÏve Bayes classification and leave-one-out cross-validation
                                   of individuals with SNP data (ancestry- or phenotype- informative) using the ",
                 tags$a("e1071",
-                       href = "https://cran.r-project.org/web/packages/e1071/index.html",
-                       target = "_blank"
+                  href = "https://cran.r-project.org/web/packages/e1071/index.html",
+                  target = "_blank"
                 ),
                 " and ",
                 tags$a("caret",
-                       href = "https://cran.r-project.org/web/packages/caret/index.html",
-                       target = "_blank"
+                  href = "https://cran.r-project.org/web/packages/caret/index.html",
+                  target = "_blank"
                 ),
                 " R packages."
               ),
@@ -39,8 +39,8 @@ classification_tab <- function() {
                 tags$a(actionLink("topcatab", "PCA,")),
                 tags$a(actionLink("tostructuretab", "STRUCTURE")), "and",
                 tags$a("SNIPPER.",
-                       href = "https://mathgene.usc.es/snipper/index.php",
-                       target = "_blank"
+                  href = "https://mathgene.usc.es/snipper/index.php",
+                  target = "_blank"
                 ),
                 " Multiple resources are available detailing the limiation of each classification method
                                    (Cheung et al., 2016; Barash et al., 2024)."
@@ -104,7 +104,8 @@ classification_tab <- function() {
               title = "Instructions",
               h4("Performs k-fold cross validation using NaÏve Bayes method."),
               p(strong("Input file/s:"), "CSV/Excel file containing training data or merged training and test data."),
-              p(strong("Parameters:"),
+              p(
+                strong("Parameters:"),
                 tags$ul(
                   tags$li("Set 'optimize' to TRUE to perform grid search. Laplace values are automatically
                           set to range (0, 0.5, 1, 2) and adjust to (0.5, 1.0, 1.5)"),
@@ -112,20 +113,20 @@ classification_tab <- function() {
                           k number of samples."),
                   tags$li("Repeats (integer) specifies how many complete sets of folds will be ran.")
                 )
-                ),
+              ),
               p(strong("Expected output file:"), "Excel (.xlsx) file"),
               hr(),
               p(
                 "This performs K-fold cross-validation using NaÏve Bayes method
                                   of individuals with SNP data (ancestry- or phenotype- informative) using the ",
                 tags$a("e1071",
-                       href = "https://cran.r-project.org/web/packages/e1071/index.html",
-                       target = "_blank"
+                  href = "https://cran.r-project.org/web/packages/e1071/index.html",
+                  target = "_blank"
                 ),
                 " and ",
                 tags$a("caret",
-                       href = "https://cran.r-project.org/web/packages/caret/index.html",
-                       target = "_blank"
+                  href = "https://cran.r-project.org/web/packages/caret/index.html",
+                  target = "_blank"
                 ),
                 " R packages."
               ),
@@ -136,8 +137,8 @@ classification_tab <- function() {
                 tags$a(actionLink("topcatab", "PCA,")),
                 tags$a(actionLink("tostructuretab", "STRUCTURE")), "and",
                 tags$a("SNIPPER.",
-                       href = "https://mathgene.usc.es/snipper/index.php",
-                       target = "_blank"
+                  href = "https://mathgene.usc.es/snipper/index.php",
+                  target = "_blank"
                 ),
                 " Multiple resources are available detailing the limiation of each classification method
                                    (Cheung et al., 2016; Barash et al., 2024)."

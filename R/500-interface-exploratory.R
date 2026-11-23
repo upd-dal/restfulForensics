@@ -24,15 +24,16 @@ exploratory_tab <- function() {
           title = "Instructions",
           h4("Run principal component analysis using the ade4 (Dray and Dufour, 2007) package in R"),
           p(strong("Input file:"), "CSV or Excel file and color labels (optional)"),
-          p(strong("Optional additional input file/s:"),
-            "If using custom visualizations, upload a file (CSV/Excel) with columns containing 
+          p(
+            strong("Optional additional input file/s:"),
+            "If using custom visualizations, upload a file (CSV/Excel) with columns containing
             [1] Unique population name/s that matches the input file,
             [2] Color for a given population (name or hex code), and
             [3] Desired point", tags$a("shapes",
-                href = "https://ggplot2.tidyverse.org/reference/scale_shape.html",
-                target = "_blank"
-              ), "for a given population"
-            ),
+              href = "https://ggplot2.tidyverse.org/reference/scale_shape.html",
+              target = "_blank"
+            ), "for a given population"
+          ),
           p(strong("Expected output file:"), "PNG plots"),
           br(),
           p(strong("Note (if analyzing many populations):")),
@@ -64,8 +65,9 @@ exploratory_tab <- function() {
         tabPanel(
           title = "Plots",
           uiOutput("downloadPCAPlot_UI"),
-          div(style = "height: 70vh; overflow-y: auto;", 
-              plotly::plotlyOutput("pcaPlot", height = "100%") 
+          div(
+            style = "height: 70vh; overflow-y: auto;",
+            plotly::plotlyOutput("pcaPlot", height = "100%")
           )
         ),
         tabPanel(

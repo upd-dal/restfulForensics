@@ -1,5 +1,4 @@
 run_structure_analysis <- function(input, output, session, rv) {
-
   examplePop_STR2 <- data.frame(
     Sample = c("Sample1", "Sample2", "Sample3", "Sample4", "..."),
     Population = c("POP1", "POP2", "POP3", "POP4", "..."),
@@ -7,7 +6,7 @@ run_structure_analysis <- function(input, output, session, rv) {
     rs102 = c("G/G", "C/C", "G/C", "G/G", "..."),
     rs_n = c("...", "...", "...", "...", "...")
   )
-  
+
   output$examplePop_STR2UI <- DT::renderDataTable(
     {
       req(examplePop_STR2)
@@ -18,20 +17,20 @@ run_structure_analysis <- function(input, output, session, rv) {
       pageLength = 5
     )
   )
-  
+
   structure_exec <- get_structure_path()
   observe({
     file_ready <- !is.null(input$structureFile) && file.exists(structure_exec)
     shinyjs::toggleState("runStructure", condition = file_ready)
   })
-  
+
   analysis_done <- reactiveVal(FALSE)
   structureLog <- reactiveVal("")
   qmatrices_result <- reactiveVal(NULL)
   output_dir <- tempfile("structure_")
   dir.create(output_dir)
   out_path <- output_dir
-  
+
   observeEvent(input$runStructure, {
     old_wd <- getwd()
     setwd(output_dir)
@@ -39,90 +38,87 @@ run_structure_analysis <- function(input, output, session, rv) {
     disable("runStructure")
     req(input$structureFile)
     Sys.sleep(1.5)
-    
+
     withProgress(message = "Analysis ongoing...", {
-      tryCatch({
-        incProgress(0.2, detail = "Loading input file...")
-        str_ext <- tools::file_ext(input$structureFile$datapath)
-        
-        if (!str_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
-          stop("Unsupported file format. Input should be a CSV or Excel file.")
+      tryCatch(
+        {
+          incProgress(0.2, detail = "Loading input file...")
+          str_ext <- tools::file_ext(input$structureFile$datapath)
+
+          if (!str_ext %in% c("csv", "xlsx", "xlsm", "xlsb", "xls")) {
+            stop("Unsupported file format. Input should be a CSV or Excel file.")
+          }
+
+          df <- csv_to_gtype_format(input$structureFile$datapath)
+          df_gtype <- strataG::df2gtypes(df, ploidy = 2, id.col = 1, strata.col = 2, loc.col = 3)
+
+          incProgress(0.4, detail = "Running STRUCTURE analysis...")
+
+          if (isTRUE(input$inferAlpha)) {
+            sr <- strataG::structureRun(df_gtype,
+              k.range = input$kMin:input$kMax,
+              num.k.rep = input$numKRep,
+              burnin = input$burnin,
+              numreps = input$numreps,
+              noadmix = input$noadmix,
+              freqscorr = input$freqScore,
+              inferalpha = input$inferAlpha,
+              alpha = input$alphaValStructure,
+              exec = structure_exec,
+              delete.files = FALSE,
+              label = "structureRun",
+              pop.prior = "usepopinfo"
+            )
+          } else {
+            sr <- strataG::structureRun(df_gtype,
+              k.range = input$kMin:input$kMax,
+              num.k.rep = input$numKRep,
+              burnin = input$burnin,
+              numreps = input$numreps,
+              noadmix = input$noadmix,
+              freqscorr = input$freqScore,
+              exec = structure_exec,
+              delete.files = FALSE,
+              label = "structureRun",
+              pop.prior = "usepopinfo"
+            )
+          }
+          stray_dir <- file.path(getwd(), "structureRun.structureRun")
+
+          if (dir.exists(stray_dir)) {
+            dest <- file.path(out_path, "structure_files")
+
+            dir.create(dest, recursive = TRUE, showWarnings = FALSE)
+
+            file.copy(
+              list.files(stray_dir, full.names = TRUE),
+              dest,
+              recursive = TRUE,
+              overwrite = TRUE
+            )
+
+            unlink(stray_dir, recursive = TRUE, force = TRUE)
+          }
+
+          rv$structureRes <- sr
+
+          # get the q matrices
+          incProgress(0.8, detail = "Extracting q matrices...")
+          qmatrices_result(lapply(sr, function(x) x$q.mat))
+          analysis_done(TRUE)
+        },
+        error = function(e) {
+          showNotification(paste("Error:", e$message), type = "error")
         }
-        
-      df <- csv_to_gtype_format(input$structureFile$datapath)
-      df_gtype <- strataG::df2gtypes(df, ploidy = 2, id.col = 1, strata.col = 2, loc.col = 3)
-      
-      incProgress(0.4, detail = "Running STRUCTURE analysis...")
-      
-      if (isTRUE(input$inferAlpha)){
-        sr <- strataG::structureRun(df_gtype,
-                                    k.range = input$kMin:input$kMax,
-                                    num.k.rep = input$numKRep,
-                                    burnin = input$burnin,
-                                    numreps = input$numreps,
-                                    noadmix = input$noadmix,
-                                    freqscorr = input$freqScore,
-                                    inferalpha = input$inferAlpha,
-                                    alpha = input$alphaValStructure,
-                                    exec = structure_exec,
-                                    delete.files = FALSE,
-                                    label = "structureRun",
-                                    pop.prior = "usepopinfo"
-        )
-      } else {
-        sr <- strataG::structureRun(df_gtype,
-                                    k.range = input$kMin:input$kMax,
-                                    num.k.rep = input$numKRep,
-                                    burnin = input$burnin,
-                                    numreps = input$numreps,
-                                    noadmix = input$noadmix,
-                                    freqscorr = input$freqScore,
-                                    exec = structure_exec,
-                                    delete.files = FALSE,
-                                    label = "structureRun",
-                                    pop.prior = "usepopinfo"
-        )
-      }
-      stray_dir <- file.path(getwd(), "structureRun.structureRun")
-      
-      if (dir.exists(stray_dir)) {
-        
-        dest <- file.path(out_path, "structure_files")
-        
-        dir.create(dest, recursive = TRUE, showWarnings = FALSE)
-        
-        file.copy(
-          list.files(stray_dir, full.names = TRUE),
-          dest,
-          recursive = TRUE,
-          overwrite = TRUE
-        )
-        
-        unlink(stray_dir, recursive = TRUE, force = TRUE)
-      }
-      
-      rv$structureRes <- sr
-      
-      # get the q matrices
-      incProgress(0.8, detail = "Extracting q matrices...")
-      qmatrices_result(lapply(sr, function(x) x$q.mat))
-      analysis_done(TRUE)
-      
-      
-      }, 
-      error = function(e) {
-        showNotification(paste("Error:", e$message), type = "error")
-      }
       )
-      
     })
     enable("runStructure")
   })
-  
+
   #   output$structure_log <- renderText({
   #      structureLog()
   #   })
-  #   
+  #
   #   output$downloadLogs <- downloadHandler(
   #      filename = function() {
   #         paste0("structure_logs_", Sys.Date(), ".zip")
@@ -132,7 +128,7 @@ run_structure_analysis <- function(input, output, session, rv) {
   #         if (length(log_files) == 0) {
   #            return(NULL)
   #         }
-  #         
+  #
   #         log_files_renamed <- sapply(log_files, function(f) {
   #            ext <- tools::file_ext(f)
   #            if (ext == "") {
@@ -146,29 +142,28 @@ run_structure_analysis <- function(input, output, session, rv) {
   #      },
   #      contentType = "application/zip"
   #   )
-  
+
   output$downloadFOutputs <- downloadHandler(
     filename = function() {
       paste0("structure_outputs_", Sys.Date(), ".zip")
     },
     content = function(file) {
-      
       f_files <- list.files(
         output_dir,
         pattern = "_out_f$",
         recursive = TRUE,
         full.names = TRUE
       )
-      
+
       if (length(f_files) == 0) {
         stop("No STRUCTURE output files found.")
       }
-      
+
       zip::zipr(zipfile = file, files = f_files)
     },
     contentType = "application/zip"
   )
-  
+
   output$downloadQMatrixTxtZip <- downloadHandler(
     filename = function() {
       paste0("q_matrices_", Sys.Date(), ".zip")
@@ -181,7 +176,7 @@ run_structure_analysis <- function(input, output, session, rv) {
         mat <- qmatrices_result()[[name]]
         if (!is.null(mat)) {
           write.table(mat, file.path(q_files, paste0(name, ".indfile")),
-                      row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "\t"
+            row.names = FALSE, col.names = FALSE, quote = FALSE, sep = "\t"
           )
         }
       })
@@ -189,15 +184,13 @@ run_structure_analysis <- function(input, output, session, rv) {
     },
     contentType = "application/zip"
   )
-  
-output$downloadButtons <- renderUI({
 
-  req(analysis_done())
+  output$downloadButtons <- renderUI({
+    req(analysis_done())
 
-  tagList(
-    downloadButton("downloadFOutputs", "Download STRUCTURE _f Files (.zip)"),
-    downloadButton("downloadQMatrixTxtZip", "Download Q Matrices (.zip)")
-  )
-})
-  
+    tagList(
+      downloadButton("downloadFOutputs", "Download STRUCTURE _f Files (.zip)"),
+      downloadButton("downloadQMatrixTxtZip", "Download Q Matrices (.zip)")
+    )
+  })
 }

@@ -36,7 +36,7 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
   if (!"genind" %in% class(data)) {
     warning("Function was designed for genind objects.")
   }
-  
+
   ## Check adegenet, miscTools and stringr are installed
   if (!require(adegenet)) {
     install.packages("adegenet")
@@ -47,132 +47,131 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
   if (!require(stringr)) {
     install.packages("stringr")
   }
-  
-  
+
+
   # ---------------- #
   #
   # Preamble
   #
   # ---------------- #
-  
+
   ## Ploidy
   ploid <- max(data$ploidy)
-  
+
   ## Number of individuals
   ind <- nInd(data)
-  
+
   ## Create dataframe containing individual labels
   ## Number of duplicated labels depends on the ploidy of the dataset
   df <- data.frame(ind = rep(indNames(data), each = ploid))
-  
+
   ## Locus names
   loci <- locNames(data)
-  
-  
+
+
   # ---------------- #
   #
   # Population IDs
   #
   # ---------------- #
-  
+
   if (pops) {
     ## Create dataframe containing individual labels
     ## Number of duplicated labels depends on the ploidy of the dataset
     df.pop <- data.frame(pop = rep(as.numeric(data$pop), each = ploid))
-    
+
     ## Add population IDs to dataframe
     df$Pop <- df.pop$pop
   }
-  
+
   # ---------------- #
   #
   # Process genotypes
   #
   # ---------------- #
-  
+
   ## Add columns for genotypes
   df <- cbind(df, matrix(-9, # -9 codes for missing data
-                         nrow = dim(df)[1],
-                         ncol = nLoc(data),
-                         dimnames = list(NULL, loci)
+    nrow = dim(df)[1],
+    ncol = nLoc(data),
+    dimnames = list(NULL, loci)
   ))
-  
+
   ## Loop through dataset to extract genotypes
-  #=========================== revised in restful forensics 
+  # =========================== revised in restful forensics
   for (L in loci) {
     cols <- grep(paste0("^", L, "\\."), colnames(data$tab))
-    
-    if (length(cols) == 0){
+
+    if (length(cols) == 0) {
       warning("No allele columns found for locus:", L)
       next
     }
-    
+
     thesedata <- as.matrix(data$tab[, cols, drop = FALSE])
-    
+
     al <- seq_len(ncol(thesedata))
     for (s in 1:ind) {
-      if (all(is.na(thesedata[s,]))) {
+      if (all(is.na(thesedata[s, ]))) {
         next
       }
-      
+
       tabrows <- which(df[[1]] == adegenet::indNames(data)[s])
       allele_counts <- thesedata[s, ]
-      
+
       if (any(is.na(allele_counts))) {
         next
       }
-      
+
       n_alleles <- sum(allele_counts)
-      
+
       if (n_alleles == 0) {
         next
       }
-      
+
       n_alleles <- min(n_alleles, length(tabrows))
       tabrows <- tabrows[seq_len(n_alleles)]
       genotype <- rep(al, times = allele_counts)
-      
+
       if (length(genotype) != length(tabrows)) {
         warning("Genotype length mismatch at locus ", L, ", individual", adegenet::indNames(data)[s])
         next
       }
       df[tabrows, L] <- genotype
-      
     }
   }
-  
-  
+
+
   # ---------------- #
   #
   # Marker IDs
   #
   # ---------------- #
-  
+
   if (markers) {
     ## Add a row at the top containing loci names
     df <- as.data.frame(insertRow(as.matrix(df), 1, c(loci, "", "")))
-    df <- df[-1,]
+    df <- df[-1, ]
     df <- rbind(colnames(df), df)
   }
-  
+
   # ---------------- #
   #
   # Export file
   #
   # ---------------- #
-  
+
   ## Export dataframe
   write.table(df,
-              file = file, sep = "\t", quote = FALSE,
-              row.names = FALSE, col.names = FALSE
+    file = file, sep = "\t", quote = FALSE,
+    row.names = FALSE, col.names = FALSE
   )
-  
+
   ## Export dataframe as unix text file
   if (unix) {
     output_file <- file(file, open = "wb")
     write.table(df,
-                file = output_file, sep = "\t", quote = FALSE,
-                row.names = FALSE, col.names = FALSE
+      file = output_file, sep = "\t", quote = FALSE,
+      row.names = FALSE, col.names = FALSE
     )
     close(output_file)
   }
@@ -180,7 +179,7 @@ genind2structure2 <- function(data, file = "", pops = TRUE, markers = TRUE, unix
 
 
 #' Generate structure R object
-#' 
+#'
 #' @param files The directory containing structure results.
 #' @param pops The populations in the input file.
 #'
@@ -189,77 +188,77 @@ structureImport <- function(files, pops = NULL) {
   if (length(files) == 0) {
     stop("No STRUCTURE files found.")
   }
-  
+
   if (is.null(pops)) {
     pops <- structure_get_populations(files[1])
   }
-  
+
   sr <- lapply(files, function(f) {
     result <- strataG::structureRead(f, pops = pops)
-    
+
     result$files <- f
     result$label <- basename(f)
-    
+
     result
   })
-  
+
   names(sr) <- vapply(sr, function(x) x$label, character(1))
   sr <- sr[order(
     as.numeric(sub(".*k([0-9]+).*", "\\1", names(sr))),
     as.numeric(sub(".*r([0-9]+).*", "\\1", names(sr)))
   )]
   class(sr) <- c("structure.result", "list")
-  
+
   return(sr)
 }
 
 #' Extract populations from STRUCTURE files
-#' 
+#'
 #' @param file The directory containing structure results.
 #'
 #' @returns A list of populations.
-structure_get_populations <- function(file){
+structure_get_populations <- function(file) {
   txt <- readLines(file)
-  
+
   first <- grep("(%Miss)", txt, fixed = TRUE) + 1
   last <- grep("Estimated Allele", txt, fixed = TRUE) - 1
-  
+
   if (length(first) == 0 || length(last) == 0) {
     stop("Cannot find STRUCTURE Q matrix in _f files.")
   }
-  
+
   q.txt <- txt[first:last]
-  
+
   # same as structureRead()
   q.txt <- sub("[\\*]+", "", q.txt)
   q.txt <- sub("[(]", "", q.txt)
   q.txt <- sub("[)]", "", q.txt)
   q.txt <- sub("[|][ ]+$", "", q.txt)
-  
-  pops <- vapply(strsplit(q.txt, "\\s+"), function(x){
+
+  pops <- vapply(strsplit(q.txt, "\\s+"), function(x) {
     x <- x[x != ""]
     x[4]
   }, character(1))
-  
+
   return(unique(pops))
 }
 
 structurePlot2 <- function(
-    q.mat, 
-    type = NULL,
-    plot = TRUE
+  q.mat,
+  type = NULL,
+  plot = TRUE
 ) {
   pop_labels <- as.character(q.mat$orig.pop)
   p <- swfscMisc::plotAssignments(
-    q.mat %>% 
-      dplyr::select(id, dplyr::starts_with('Group.')) %>% 
-      tibble::column_to_rownames('id'),
+    q.mat %>%
+      dplyr::select(id, dplyr::starts_with("Group.")) %>%
+      tibble::column_to_rownames("id"),
     orig = factor(pop_labels, levels = unique(pop_labels)),
-    type = type, 
+    type = type,
     plot = FALSE
-  ) + 
-    ggplot2::theme(legend.position = 'none')
-  
-  if(plot) print(p)
+  ) +
+    ggplot2::theme(legend.position = "none")
+
+  if (plot) print(p)
   invisible(p)
 }

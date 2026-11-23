@@ -42,12 +42,12 @@ filtering_tab <- function() {
           "input.filterAllele == true",
           numericInput("mafThresh", "Minor Allele Frequency Threshold (--maf)", value = 0.1)
         ),
-#        checkboxInput("filterQuality", "Filter by Quality (--qual-threshold)", value = FALSE),
-#        helpText("Exclude variants with quality scores below the threshold."),
-#        conditionalPanel(
-#          "input.filterQuality == true",
-#          numericInput("qualThresh", "Quality Score Threshold (--qual-threshold)", value = 5)
-#        ),
+        #        checkboxInput("filterQuality", "Filter by Quality (--qual-threshold)", value = FALSE),
+        #        helpText("Exclude variants with quality scores below the threshold."),
+        #        conditionalPanel(
+        #          "input.filterQuality == true",
+        #          numericInput("qualThresh", "Quality Score Threshold (--qual-threshold)", value = 5)
+        #        ),
         checkboxInput("filterHWE", "Filter Variants (--hwe)", value = FALSE),
         helpText("Exclude SNPs deviating from the Hardy-Weinberg Equilibrium."),
         conditionalPanel(
@@ -64,8 +64,8 @@ filtering_tab <- function() {
           numericInput("ldR2", "r2 Threshold", value = 0.2, min = 0, max = 1, step = 0.01)
         ),
         checkboxInput("cutoffKing", "Filter based on Relationships (--king-cutoff)", value = FALSE),
-        helpText("Exclude a member of a pair with a kinship coefficient greater than the threshold. 
-                 Use '0.354' to screen for monozygotic twins and duplicate samples, '0.177' for 1st-degree, 
+        helpText("Exclude a member of a pair with a kinship coefficient greater than the threshold.
+                 Use '0.354' to screen for monozygotic twins and duplicate samples, '0.177' for 1st-degree,
                  '0.0884' for 2nd-degree, and '0.0442' for 3rd-degree relationships."),
         conditionalPanel(
           "input.cutoffKing == true",
@@ -88,7 +88,7 @@ filtering_tab <- function() {
             tags$li("--mind [value]"),
             tags$li("--geno [value]"),
             tags$li("--maf [value]"),
-           # tags$li("--qual-threshold [value]"),
+            # tags$li("--qual-threshold [value]"),
             tags$li("--hwe [value]"),
             tags$li("--indep-pairwise [value]"),
             tags$li("--king-cutoff [value]"),

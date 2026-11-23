@@ -37,92 +37,92 @@ snp_extraction_server <- function(input, output, session, rv) {
 
   observeEvent(input$validateBtn, {
     shinyjs::disable("validateBtn")
-    
-    tryCatch({
-      plink_prefixes <- NULL
-      if (!is.null(input$zippedPLINK)) {
-      plink_prefixes <- prepare_input_dataset(
-        input_file = input$zippedPLINK$datapath,
-        output.dir = tempdir()
-      )
-      plink_prefixes <- tools::file_path_sans_ext(plink_prefixes)
-    } else if (!is.null(input$bedFile)) {
-      bed_prefix <- tools::file_ext(input$bedFile$name)
-      bim_prefix <- tools::file_ext(input$bimFile$name)
-      fam_prefix <- tools::file_ext(input$famFile$name)
-      
-      if (bed_prefix != "bed") {
-        stop("Unsupported file format. Should be a BED file")
-      }
-      
-      if (bim_prefix != "bim") {
-        stop("Unsupported file format. Should be a BIM file")
-      }
-      
-      if (fam_prefix != "fam") {
-        stop("Unsupported file format. Should be a FAM file")
-      }
-      
-      plink_prefixes <- tools::file_path_sans_ext(input$bedFile$datapath)
-    }
 
-    temp_snplist <- file.path(tempdir(), "temp_snplist.txt")
-    input_type <- if (!is.null(input$markerFile)) {
-      file_ext <- tools::file_ext(input$markerFile$name)
-      
-      if (!file_ext %in% c("vcf", "gz", "bcf")) {
-        stop("Unsupported file format. Upload a VCF/BCF file or use PLINK files.")
+    tryCatch(
+      {
+        plink_prefixes <- NULL
+        if (!is.null(input$zippedPLINK)) {
+          plink_prefixes <- prepare_input_dataset(
+            input_file = input$zippedPLINK$datapath,
+            output.dir = tempdir()
+          )
+          plink_prefixes <- tools::file_path_sans_ext(plink_prefixes)
+        } else if (!is.null(input$bedFile)) {
+          bed_prefix <- tools::file_ext(input$bedFile$name)
+          bim_prefix <- tools::file_ext(input$bimFile$name)
+          fam_prefix <- tools::file_ext(input$famFile$name)
+
+          if (bed_prefix != "bed") {
+            stop("Unsupported file format. Should be a BED file")
+          }
+
+          if (bim_prefix != "bim") {
+            stop("Unsupported file format. Should be a BIM file")
+          }
+
+          if (fam_prefix != "fam") {
+            stop("Unsupported file format. Should be a FAM file")
+          }
+
+          plink_prefixes <- tools::file_path_sans_ext(input$bedFile$datapath)
+        }
+
+        temp_snplist <- file.path(tempdir(), "temp_snplist.txt")
+        input_type <- if (!is.null(input$markerFile)) {
+          file_ext <- tools::file_ext(input$markerFile$name)
+
+          if (!file_ext %in% c("vcf", "gz", "bcf")) {
+            stop("Unsupported file format. Upload a VCF/BCF file or use PLINK files.")
+          }
+
+          if (grepl("\\.bcf$", input$markerFile$name, ignore.case = TRUE)) {
+            "bcf"
+          } else {
+            "vcf"
+          }
+        } else {
+          if (is.null(plink_prefixes)) {
+            stop("Unsupported file format. No valid PLINK files uploaded.")
+          }
+
+          "bfile"
+        }
+
+        snps <- character(0)
+
+        if (input_type %in% c("vcf", "bcf", "gz")) {
+          cmd <- paste(
+            shQuote(plink2_path),
+            paste0("--", input_type), shQuote(input$markerFile$datapath),
+            "--write-snplist allow-dups",
+            "--out", shQuote(temp_snplist)
+          )
+          system(cmd)
+        } else {
+          cmd <- paste(
+            shQuote(plink2_path),
+            paste0("--", input_type), shQuote(plink_prefixes),
+            "--write-snplist allow-dups",
+            "--out", shQuote(temp_snplist)
+          )
+          system(cmd)
+        }
+
+        snps <- tryCatch(readLines(paste0(temp_snplist, ".snplist")),
+          error = function(e) character(0)
+        )
+
+        snps <- unique(snps)
+
+        if (length(snps) == 0) snps <- "."
+
+        variant_ids(unique(snps))
+        rsID_available(length(snps) > 1 || snps[1] != ".")
+      },
+      error = function(e) {
+        showNotification(paste("Error:", e$message), type = "error")
       }
-      
-      if (grepl("\\.bcf$", input$markerFile$name, ignore.case = TRUE)) {
-        "bcf"
-      } else {
-        "vcf"
-      }
-    } else {
-      if (is.null(plink_prefixes)) {
-        stop("Unsupported file format. No valid PLINK files uploaded.")
-      }
-
-      "bfile"
-    }
-
-    snps <- character(0)
-
-    if (input_type %in% c("vcf", "bcf", "gz")) {
-      cmd <- paste(
-        shQuote(plink2_path),
-        paste0("--", input_type), shQuote(input$markerFile$datapath),
-        "--write-snplist allow-dups",
-        "--out", shQuote(temp_snplist)
-      )
-      system(cmd)
-    } else {
-      cmd <- paste(
-        shQuote(plink2_path),
-        paste0("--", input_type), shQuote(plink_prefixes),
-        "--write-snplist allow-dups",
-        "--out", shQuote(temp_snplist)
-      )
-      system(cmd)
-    }
-
-    snps <- tryCatch(readLines(paste0(temp_snplist, ".snplist")),
-      error = function(e) character(0)
     )
-
-    snps <- unique(snps)
-
-    if (length(snps) == 0) snps <- "."
-
-    variant_ids(unique(snps))
-    rsID_available(length(snps) > 1 || snps[1] != ".")
-    },
-    error = function(e) {
-      showNotification(paste("Error:", e$message), type = "error")
-    }
-    )
-    
   })
 
   output$markerOptionsUI <- renderUI({
@@ -207,88 +207,88 @@ snp_extraction_server <- function(input, output, session, rv) {
 
     withProgress(message = "Extraction ongoing...", {
       tryCatch(
-      {
-        incProgress(0.2, detail = "Preparing input file...")
-        pgen_prefix <- file.path(temp_dir, "input_pgen")
+        {
+          incProgress(0.2, detail = "Preparing input file...")
+          pgen_prefix <- file.path(temp_dir, "input_pgen")
 
-        if (!is.null(input$markerFile)) {
-          input_file <- input$markerFile$datapath
-          convert_to_plink2(input_file,
-            original_name = input$markerFile$name,
-            name = pgen_prefix
-          )
-        } else {
-          bed_prefix <- tools::file_path_sans_ext(input$bedFile$datapath)
-          convert_to_plink2(bed_prefix,
-            original_name = NULL,
-            name = pgen_prefix
-          )
-        }
-
-        merged_name <- "extracted_markers"
-        incProgress(0.4, detail = "Evaluating data for extraction...")
-        if (rsID_available() && input$markerType == "rsID") {
-          snps_list <- tempfile(fileext = ".txt")
-          if (input$rsIDInputType == "manual") {
-            rsIDs <- trimws(unlist(strsplit(input$typedrsIDs, "\n")))
-            rsIDs <- rsIDs[nzchar(rsIDs)]
-            writeLines(rsIDs, snps_list)
-          } else {
-            df <- load_csv_xlsx_files(input$markerList1$datapath)
-            writeLines(as.character(df[[1]]), snps_list)
-          }
-
-          extracted <- extract_by_ID_pgen(
-            pgen_prefix = pgen_prefix,
-            snps_list = snps_list,
-            output_dir = temp_dir,
-            merged_file = merged_name
-          )
-        } else {
-          req(input$markerList2)
-          pos_list <- as.data.frame(load_csv_xlsx_files(input$markerList2$datapath))
-
-          if (ncol(pos_list) < 2) {
-            stop("Position file must contain: chr and pos columns")
-          }
-
-          if (isTRUE(input$addrsID)) {
-            if (ncol(pos_list) < 3) {
-              stop("Position file must contain: rsID, chr, and pos columns")
-            }
-
-            extracted <- extract_POStoID_pgen(
-              pos_list = pos_list,
-              pgen_prefix = pgen_prefix,
-              output_dir = temp_dir
+          if (!is.null(input$markerFile)) {
+            input_file <- input$markerFile$datapath
+            convert_to_plink2(input_file,
+              original_name = input$markerFile$name,
+              name = pgen_prefix
             )
           } else {
-            extracted <- extract_by_pos_pgen(
-              pos_list = pos_list,
+            bed_prefix <- tools::file_path_sans_ext(input$bedFile$datapath)
+            convert_to_plink2(bed_prefix,
+              original_name = NULL,
+              name = pgen_prefix
+            )
+          }
+
+          merged_name <- "extracted_markers"
+          incProgress(0.4, detail = "Evaluating data for extraction...")
+          if (rsID_available() && input$markerType == "rsID") {
+            snps_list <- tempfile(fileext = ".txt")
+            if (input$rsIDInputType == "manual") {
+              rsIDs <- trimws(unlist(strsplit(input$typedrsIDs, "\n")))
+              rsIDs <- rsIDs[nzchar(rsIDs)]
+              writeLines(rsIDs, snps_list)
+            } else {
+              df <- load_csv_xlsx_files(input$markerList1$datapath)
+              writeLines(as.character(df[[1]]), snps_list)
+            }
+
+            extracted <- extract_by_ID_pgen(
               pgen_prefix = pgen_prefix,
+              snps_list = snps_list,
               output_dir = temp_dir,
               merged_file = merged_name
             )
+          } else {
+            req(input$markerList2)
+            pos_list <- as.data.frame(load_csv_xlsx_files(input$markerList2$datapath))
+
+            if (ncol(pos_list) < 2) {
+              stop("Position file must contain: chr and pos columns")
+            }
+
+            if (isTRUE(input$addrsID)) {
+              if (ncol(pos_list) < 3) {
+                stop("Position file must contain: rsID, chr, and pos columns")
+              }
+
+              extracted <- extract_POStoID_pgen(
+                pos_list = pos_list,
+                pgen_prefix = pgen_prefix,
+                output_dir = temp_dir
+              )
+            } else {
+              extracted <- extract_by_pos_pgen(
+                pos_list = pos_list,
+                pgen_prefix = pgen_prefix,
+                output_dir = temp_dir,
+                merged_file = merged_name
+              )
+            }
           }
+          extracted_file(extracted)
+          showNotification(
+            "Marker extraction completed successfully.",
+            type = "message"
+          )
+        },
+        error = function(e) {
+          showNotification(
+            paste("Extraction error:", e$message),
+            type = "error",
+            duration = 10
+          )
+        },
+        finally = {
+          enable("extractBtn")
         }
-        extracted_file(extracted)
-        showNotification(
-          "Marker extraction completed successfully.",
-          type = "message"
-        )
-      },
-      error = function(e) {
-        showNotification(
-          paste("Extraction error:", e$message),
-          type = "error",
-          duration = 10
-        )
-      },
-      finally = {
-        enable("extractBtn")
-      }
-    ) # end of trycatch
-      })
+      ) # end of trycatch
+    })
   })
 
   output$downloadVCF <- downloadHandler(
@@ -324,7 +324,7 @@ snp_extraction_server <- function(input, output, session, rv) {
           req(input$concordanceFile1$datapath, input$concordanceFile2$datapath)
 
           phased_flag <- input$isPhased
-          
+
           incProgress(0.2, detail = "Loading input files...")
           f1_ext <- tools::file_ext(input$concordanceFile1$name)
           if (f1_ext == "vcf") {
@@ -335,7 +335,7 @@ snp_extraction_server <- function(input, output, session, rv) {
           } else {
             stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
           }
-          
+
           f2_ext <- tools::file_ext(input$concordanceFile2$name)
           if (f2_ext == "vcf") {
             file2 <- vcf_to_csv(input$concordanceFile2$datapath)
@@ -345,16 +345,16 @@ snp_extraction_server <- function(input, output, session, rv) {
           } else {
             stop("Unsupported file format. Should be VCF, CSV, or Excel files.")
           }
-          
+
           val1 <- file1[1, 2]
           is_gt_f1 <- stringr::str_count(val1, "[A-Za-z]") == 2
           val2 <- file2[1, 2]
           is_gt_f2 <- stringr::str_count(val2, "[A-Za-z]") == 2
-          
+
           if (isFALSE(is_gt_f1) || isFALSE(is_gt_f2)) {
             stop("Unsupported format: Genotype should be present by the second column. Only biallelic markers are accepted.")
           }
-          
+
           incProgress(0.4, detail = "Calculating concordance...")
           result <- calc_concordance(file1, file2, phased = phased_flag)
           incProgress(0.6, detail = "Plotting concordance...")
@@ -368,7 +368,7 @@ snp_extraction_server <- function(input, output, session, rv) {
         }
       )
     })
-    
+
     enable("compareBtn")
   })
 

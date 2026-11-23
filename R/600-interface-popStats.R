@@ -11,17 +11,18 @@ popstats_tab <- function() {
             box(
               fileInput("popStatsFile", "Upload File", accept = c("xlsx", "xlsm", "xlsb", "xls", ".csv")),
               numericInput("markovHWE", "Set Markov Chains for HWE calculations", value = 1000, min = 1000),
-              selectInput("correctionModel", "Select Correction Model", 
-                          choices = c(
-                                      "None" = "none",
-                                      "Bonferroni" = "bonferroni",
-                                      "FDR" = "fdr",
-                                      "Holm" = "holm",
-                                      "Hochberg" = "hochberg",
-                                      "Hommel" = "hommel",
-                                      "Benjamini-Hochberg" = "BH",
-                                      "Benjamini-Yekutieli" = "BY"
-                                      )),
+              selectInput("correctionModel", "Select Correction Model",
+                choices = c(
+                  "None" = "none",
+                  "Bonferroni" = "bonferroni",
+                  "FDR" = "fdr",
+                  "Holm" = "holm",
+                  "Hochberg" = "hochberg",
+                  "Hommel" = "hommel",
+                  "Benjamini-Hochberg" = "BH",
+                  "Benjamini-Yekutieli" = "BY"
+                )
+              ),
               numericInput("alphaValue", "Set Alpha Value", value = 0.05, min = 0.00, max = 1),
               checkboxInput("incLabels", "Show FST values in Heatmap", value = FALSE),
               actionButton("runPopStats", "Analyze", icon = icon("magnifying-glass-chart")),
@@ -111,8 +112,10 @@ popstats_tab <- function() {
           title = "Arlecore",
           fluidRow(
             box(
-              radioButtons("inputArlecore", "Choose input type", choices = c("Genotype File" = "gtFile",
-                                                                             "ARP file (.arp)" = "arpFile")),
+              radioButtons("inputArlecore", "Choose input type", choices = c(
+                "Genotype File" = "gtFile",
+                "ARP file (.arp)" = "arpFile"
+              )),
               conditionalPanel(
                 condition = "input.inputArlecore == 'gtFile'",
                 fileInput("fileForArlecoreGT", "Upload Genotype File", accept = c("xlsx", "xlsm", "xlsb", "xls", "csv")),
@@ -139,19 +142,16 @@ popstats_tab <- function() {
                   condition = "input.calcLD",
                   helpText("The Markov Chains are automatically set to 10,000 steps")
                 ),
-                
                 checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
                 conditionalPanel(
                   condition = "input.calcHWE",
                   helpText("The Markov Chains are automatically set to 1,000,000 steps")
                 ),
-                
                 conditionalPanel(
                   condition = "input.calcHWE || input.calcLD",
                   helpText("Running will take some time and will take longer with more populations/samples.")
                 )
               ),
-              
               helpText("Run button will remain unavailable if Arlecore 64-bit executable is not found in the root directory."),
               actionButton("runArlecore", "Run Arlecore", icon = icon("arrow-up-right-from-square")),
               uiOutput("download_arlecore_results_UI")

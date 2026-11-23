@@ -9,7 +9,6 @@ forensic_params_tab <- function() {
           box(
             fileInput("iisnpsFile", "Upload File", accept = c(".csv", "xlsx", "xlsm", "xlsb", "xls")),
             helpText("See 'Sample Input File' for accepted formats. Frequency table and genotype files are accepted."),
-
             actionButton("calcIISNPs", "Calculate", icon = icon("calculator")),
             uiOutput("downloadMetrics_UI"),
             uiOutput("downloadAFTable_UI")
@@ -28,14 +27,15 @@ forensic_params_tab <- function() {
               p(strong("Input file:"), "CSV or Excel file containing population and genotype information."),
               p(strong("Expected output file:"), "CSV file"),
               hr(),
-              p(" Statistical calculations for identity-informative SNPs generally utilize 
-                the same formulae and follow the same interpretation guidelines as those used 
+              p(
+                " Statistical calculations for identity-informative SNPs generally utilize
+                the same formulae and follow the same interpretation guidelines as those used
                 with autosomal STRs, such as the use of likelihood ratios and random match probability",
                 tags$a("(SWGDAM, 2024)",
-                       href = "https://www.swgdam.org/_files/ugd/4344b0_5f5c69552b4340b0afb9af08caffb00f.pdf",
-                       target = "_blank"
+                  href = "https://www.swgdam.org/_files/ugd/4344b0_5f5c69552b4340b0afb9af08caffb00f.pdf",
+                  target = "_blank"
                 )
-                ),
+              ),
               p(
                 "Guidelines on statistical calculations for casework: ",
                 tags$a("Guidelines (for STR):",
@@ -93,7 +93,7 @@ forensic_params_tab <- function() {
             )
           )
         )
-      ), 
+      ),
       tabPanel(
         title = "Calculate RMP for a Profile",
         box(
@@ -132,7 +132,7 @@ forensic_params_tab <- function() {
             tags$a("Sample Allele Frequency Table", href = "pop_stat.xlsx", download = "pop_stat.xlsx"),
             tags$a("Sample Profile", href = "sample_profile.txt", download = "sample_profile.txt")
           )
-        ), 
+        ),
         fluidRow(
           tabBox(
             title = "Results",
