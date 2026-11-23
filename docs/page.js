@@ -19,15 +19,23 @@ function showPage(pageId) {
 }
 
 function showSection(pageId, sectionId) {
+   const targetPage = document.getElementById(pageId);
+
+   if (!targetPage) {
+      console.error("Page not found:", pageId);
+      return;
+   }
+
    showPage(pageId);
-   const section = document.getElementById(sectionId);
-   
+
+   const section = targetPage.querySelector(`#${sectionId}`);
+
    if (!section) {
       console.error("Section not found:", sectionId);
       return;
    }
-   
-   setTimeout(() => {
+
+   setTimeout(() -> {
       section.scrollIntoView({
          behavior: "smooth",
          block: "start"

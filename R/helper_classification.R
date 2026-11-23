@@ -45,7 +45,7 @@ calculate_loo <- function(file) {
     }
     
     for (snp in usable_snps) {
-      train[[snp]] <- droplevels(train[[snp]])
+      train[[snp]] <- droplevels(factor(train[[snp]]))
       test[[snp]] <- factor(
         as.character(test[[snp]]),
         levels = levels(train[[snp]])
@@ -83,7 +83,7 @@ calculate_loo <- function(file) {
   }
 
   # prepare the confusion matrix from the results
-  confMatrix <- caret::confusionMatrix(res$pred[valid], data_fsnps$label[valid], mode = "everything")
+  confMatrix <- caret::confusionMatrix(res$pred[valid], data_fsnps$Pop[valid], mode = "everything")
 
   # convert to table, get pred and ref values
   pred <- as.data.frame(confMatrix$table)

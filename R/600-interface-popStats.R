@@ -98,8 +98,6 @@ popstats_tab <- function() {
               tabPanel(
                 title = "7. Fst Values",
                 h4("Pairwise Fst Matrix"),
-                #uiOutput("fstMatrixUI"),
-                #h4("Tidy Pairwise Fst Data"),
                 DT::dataTableOutput("fstDfTable"),
                 br(),
                 h4("Fst Heatmap"),
@@ -182,7 +180,11 @@ popstats_tab <- function() {
                 title = "Download Sample Files",
                 h4("Sample File"),
                 tags$ul(
-                  tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                  tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                  br(),
+                  tags$a("Sample ARP file", href = "sample_arp.arp", download = "sample_arp.arp"),
+                  br(),
+                  tags$a("Sample parameter file - Arlecore (.ars file)", href = "arl_run.ars", download = "arl_run.ars")
                 )
               )
             ),
