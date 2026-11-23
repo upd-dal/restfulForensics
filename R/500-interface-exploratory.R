@@ -44,7 +44,10 @@ exploratory_tab <- function() {
         tabPanel(
           title = "Sample Input Format/s",
           h4("Example Input Format"),
-          tableOutput("examplePCA")
+          tableOutput("examplePCA"),
+          hr(),
+          p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N'.")
         ),
         tabPanel(
           title = "Download sample files",

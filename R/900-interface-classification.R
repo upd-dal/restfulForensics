@@ -48,7 +48,10 @@ classification_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input File",
-              DT::dataTableOutput("classificationRef_UI")
+              DT::dataTableOutput("classificationRef_UI"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N' and excluded from probability calculations as based on the naiveBayes() from the e1071 package.")
             ),
             tabPanel(
               title = "Download Sample File",
@@ -142,7 +145,10 @@ classification_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input File",
-              DT::dataTableOutput("classificationRefCV_UI")
+              DT::dataTableOutput("classificationRefCV_UI"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N' and excluded from probability calculations as based on the naiveBayes() from the e1071 package.")
             ),
             tabPanel(
               title = "Download Sample File",

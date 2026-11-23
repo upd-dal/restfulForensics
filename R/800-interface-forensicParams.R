@@ -55,7 +55,10 @@ forensic_params_tab <- function() {
               title = "Sample Input File",
               h4("Acceptable file inputs: genotype files or an allele frequency table:"),
               p("Genotype file"),
-              DT::dataTableOutput("referenceData_UI")
+              DT::dataTableOutput("referenceData_UI"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N'.")
             ),
             tabPanel(
               title = "Download Sample Files",

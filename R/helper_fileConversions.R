@@ -722,7 +722,9 @@ to_snipper <- function(input,
   )
   tosnipper <- as.data.frame(tosnipper)
   
-  # if single allele, automatic "NN"
+  tosnipper[-1] <- as.data.frame(lapply(tosnipper[-1], function(x) {
+    ifelse(nchar(x) == 1, paste(x, "N"), x)
+  }))
   
   tosnipper <- dplyr::rename(tosnipper, Sample = 1)
   reference <- dplyr::rename(references, Sample = 1, Pop = 2)

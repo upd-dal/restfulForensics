@@ -66,7 +66,10 @@ structure_runs <- function() {
         ),
         tabPanel(
           title = "Sample Input File/s",
-          DT::dataTableOutput("examplePop_STR2UI")
+          DT::dataTableOutput("examplePop_STR2UI"),
+          hr(),
+          p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '-9' as recognized by the STRUCTURE tool.")
         ),
         tabPanel(
           title = "Download Sample File",

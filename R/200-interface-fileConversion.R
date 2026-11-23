@@ -74,17 +74,15 @@ file_conversion_tab <- function() {
               ),
               p(strong("Expected output file/s:"), "VCF, PLINK-associated files, or CSV."),
               br(),
-              p(strong("Notes:")),
-              tags$ul(
-                tags$li("Missing values will appear as empty cells."),
-                tags$li("Maximum accepted file size: 5GB. It is recommended to split files with sizes larger than 5GB into multiple smaller files.")
-              )
+              p("Maximum accepted file size: 5GB. It is recommended to split files with sizes larger than 5GB into multiple smaller files.")
             ),
             tabPanel(
               title = "Sample Input Format/s",
               h4("For CSV/Excel File to VCF conversion, a separate file on marker information is needed."),
-              h4("Required marker info format:"),
-              DT::dataTableOutput("markerInfoFormat")
+              p("Required marker info format:"),
+              DT::dataTableOutput("markerInfoFormat"),
+              hr(),
+              p(strong("Notes:"), "Missing values will appear as empty cells.")
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -158,17 +156,17 @@ file_conversion_tab <- function() {
                 tags$li("Sample metadata (CSV/Excel file). Metadata file should contain all information on samples if using zipped files.
                         Select column names to be merged with the genotype data. Ensure sample IDs are the same.")
               ),
-              p(strong("Expected output file/s:"), "CSV file of sample with metadata."),
-              br(),
-              p(strong("Notes:"),
-              "Missing values from VCF/BCF files will appear as empty cells while
-                original representation of missing values from CSV/Excel files will be kept.")
+              p(strong("Expected output file/s:"), "CSV file of sample with metadata.")
             ),
             tabPanel(
               title = "Sample Input Format/s",
               h4("Sample metadata file:"),
               DT::dataTableOutput("ExampleRefFile"),
-              p("Sample column should match sample IDs in the genotype file.")
+              p("Sample column should match sample IDs in the genotype file."),
+              hr(),
+              p(strong("Notes:"),
+                "Missing values from VCF/BCF files will appear as empty cells while
+                original representation of missing values from CSV/Excel files will be kept.")
             ),
             tabPanel(
               title = "Download Sample Files",
@@ -228,15 +226,15 @@ file_conversion_tab <- function() {
               title = "Instructions",
               h4("Convert zipped files (CSV/Excel file) containing SNP calls in long format into a single .xslx file in a wide format"),
               p(strong("Input file/s:"), "Compressed folder (.zip or .tar) containing CSV/Excel files."),
-              p(strong("Expected output file/s:"), "Single CSV file (merged CSV/Excel files)."),
-              br(),
-              p(strong("Notes:"),
-              "Input files are assumed to contain biallelic markers without dropouts.")
+              p(strong("Expected output file/s:"), "Single CSV file (merged CSV/Excel files).")
             ),
             tabPanel(
               title = "Sample Input Format/s",
               h4("Sample input file. All alleles of available SNPs per sample are listed in a long format."),
-              tableOutput("exampleXLSX")
+              tableOutput("exampleXLSX"),
+              hr(),
+              p(strong("Notes:"),
+                "Input files are assumed to contain biallelic markers without dropouts.")
             )
           )
         ),
@@ -312,17 +310,18 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              h4("Sample Input File"),
-              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
-              Missing data are standardized to 'NN' as recognized by the SNIPPER tool."),
-              p("Format if input file does", strong("not"), "contain population metadata:"),
+              #h4("Sample Input File"),
+              h4("Format if input file does", strong("not"), "contain population metadata:"),
               DT::dataTableOutput("exampleTableSnipper1"),
               br(),
-              p("Format if input file", strong("contains"), "population metadata:"),
+              h4("Format if input file", strong("contains"), "population metadata:"),
               DT::dataTableOutput("exampleTableSnipper2"),
               br(),
               h4("Sample reference file"),
-              DT::dataTableOutput("exampleRefSnipper")
+              DT::dataTableOutput("exampleRefSnipper"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'NN' as recognized by the SNIPPER tool. An 'N' is added if only a single allele is present.")
             ),
             tabPanel(
               title = "Download Sample File",
@@ -392,9 +391,10 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
-              Missing data are standardized to '-9' as recognized by the STRUCTURE tool."),
-              DT::dataTableOutput("examplePop_STRUI")
+              DT::dataTableOutput("examplePop_STRUI"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '-9' as recognized by the STRUCTURE tool.")
             ),
             tabPanel(
               title = "Download Sample File",
@@ -458,9 +458,10 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Sample Input Format/s",
-              p("Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
-              Missing data are standardized to '?' as recognized by the Arlequin/Arlecore tool."),
-              DT::dataTableOutput("exampleForArlecore_UI")
+              DT::dataTableOutput("exampleForArlecore_UI"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '?' as recognized by the Arlequin/Arlecore tool.")
             ),
             tabPanel(
               title = "Download Sample Files",

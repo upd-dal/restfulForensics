@@ -8,28 +8,82 @@ calculate_loo <- function(file) {
   data_fsnps <- clean_input_data(data_fsnps)
   #validate_file(file)
   data_fsnps <- dplyr::rename(data_fsnps, Sample = 1, Pop = 2)
-  data_fsnps[] <- lapply(data_fsnps, factor)
-  predictors <- !grepl("Pop", colnames(data_fsnps))
-  label <- "Pop"
-  data_fsnps <- as.data.frame(data_fsnps)
+  data_fsnps$Sample <- as.character(data_fsnps$Sample)
+  data_fsnps$Pop <- factor(data_fsnps$Pop)
+  
+  if (any(is.na(data_fsnps$Pop))) {
+    stop("Missing population labels detected.")
+  }
+  
+  samples <- data_fsnps$Sample
+  populations <- data_fsnps$Pop
+  population_levels <- levels(populations)
+  
+  snp_cols <- setdiff(colnames(data_fsnps), c("Sample", "Pop"))
+  
+  if (length(snp_cols) == 0) {
+    stop("No SNP predictors detected.")
+  }
+  
+  observed_snps <- rowSums(!is.na(data_fsnps[, snp_cols, drop = FALSE]))
 
   # training the naive bayes classifier using a leave-one-out cross validation method
-  res <- lapply(1:nrow(data_fsnps), function(i) {
-    fit <- e1071::naiveBayes(
-      y = factor(data_fsnps[-i, label]),
-      x = as.matrix(data_fsnps[-i, predictors])
-    )
+  res <- lapply(seq_len(nrow(data_fsnps)), function(i) {
+    train <- data_fsnps[-i, , drop = FALSE]
+    test <- data_fsnps[i, , drop = FALSE]
+    
+    usable_snps <- snp_cols[colSums(!is.na(
+      train[, snp_cols, drop = FALSE])) > 0]
+    
+    # if there are no available snps
+    if (length(usable_snps) == 0 || observed_snps[i] == 0) {
+      return(data.frame(
+        label = as.character(populations[i]),
+        pred = NA_character_,
+        n_SNPs = 0
+      ))
+    }
+    
+    for (snp in usable_snps) {
+      train[[snp]] <- droplevels(train[[snp]])
+      test[[snp]] <- factor(
+        as.character(test[[snp]]),
+        levels = levels(train[[snp]])
+      )
+    }
+    
+    available_snps <- usable_snps[!is.na(test[1, usable_snps, drop = TRUE])]
+    
+    if (length(available_snps) == 0){
+      return(data.frame(label = as.character(populations[i]),
+                        pred = NA_character_,
+                        n_SNPs = 0))
+    }
+    
+    # train classifier
+    model_formula <- stats::reformulate(available_snps, response = "Pop")
+    fit <- e1071::naiveBayes(formula = model_formula, data = train, laplace = 1, na.action = na.pass)
+    prediction <- predict(fit, newdata = test[, available_snps, drop = FALSE])
     data.frame(
-      label = data_fsnps[i, label],
-      pred = predict(fit, as.matrix(data_fsnps[i, predictors], nrow = 1))
+      label = as.character(populations[i]),
+      pred = as.character(prediction),
+      n_SNPs = length(available_snps)
     )
   })
+  
 
   # summarise predictions
   res <- do.call(rbind, res)
+  res$label <- factor(res$label, levels = population_levels)
+  res$pred <- factor(res$pred, levels = population_levels)
+  valid <- !is.na(res$pred)
+  
+  if (!any(valid)) {
+    stop("No samples were classified using the available data")
+  }
 
   # prepare the confusion matrix from the results
-  confMatrix <- caret::confusionMatrix(res$pred, data_fsnps$Pop, mode = "everything")
+  confMatrix <- caret::confusionMatrix(res$pred[valid], data_fsnps$label[valid], mode = "everything")
 
   # convert to table, get pred and ref values
   pred <- as.data.frame(confMatrix$table)
@@ -47,13 +101,21 @@ calculate_loo <- function(file) {
   otherStat <- as.data.frame(confMatrix$byClass)
   
   Sample <- data_fsnps$Sample
-  predictions <- data.frame(Sample, res)
-
+  predictions <- data.frame(Sample = samples, res, stringsAsFactors = FALSE)
+  missing_summary <- data.frame(
+    Sample = samples,
+    Population = populations,
+    Observed_SNPs = observed_snps,
+    Missing_SNPs = length(snp_cols) - observed_snps,
+    Classified = valid
+  )
+  
   return(list(
     predTable = predWide,
     predStat = predStat,
     otherStat = otherStat,
-    preds = predictions
+    preds = predictions,
+    missingData = missing_summary
   ))
 }
 

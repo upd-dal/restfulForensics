@@ -107,8 +107,10 @@ snp_extraction_tab <- function() {
             tabPanel(
               title = "Sample Input Format/s",
               h4("File Format (for concordance)"),
-              p(""),
-              tableOutput("exampleTable")
+              tableOutput("exampleTable"),
+              hr(),
+              p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N'.")
             ),
             tabPanel(
               title = "Download Sample Files",

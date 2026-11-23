@@ -38,7 +38,10 @@ popstats_tab <- function() {
               tabPanel(
                 title = "Sample Input Format/s",
                 h4("Example: Population File Format"),
-                DT::dataTableOutput("examplePop_UI")
+                DT::dataTableOutput("examplePop_UI"),
+                hr(),
+                p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to 'N'.")
               ),
               tabPanel(
                 title = "Download Sample Files",
@@ -170,7 +173,10 @@ popstats_tab <- function() {
               ),
               tabPanel(
                 title = "Sample Input Format/s",
-                DT::dataTableOutput("exampleForArlecore")
+                DT::dataTableOutput("exampleForArlecore"),
+                hr(),
+                p(strong("Notes:"), "Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells.
+              Missing data are standardized to '?' as recognized by the Arlequin/Arlecore tool.")
               ),
               tabPanel(
                 title = "Download Sample Files",

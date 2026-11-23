@@ -315,7 +315,7 @@ pop_stats_server <- function(input, output, session, rv) {
         incProgress(0.2, detail = "Loading input file...")
         
         file_ext <- tools::file_ext(input$fileForArlecoreGT$datapath)
-        
+        rsids <- NULL
         if ((!is.null(input$fileForArlecoreGT)) &&
             (tools::file_ext(input$fileForArlecoreGT$datapath) %in% c("xlsx", "xlsm", "xlsb", "xls", "csv"))
             ) {
@@ -381,9 +381,13 @@ pop_stats_server <- function(input, output, session, rv) {
       pop_labels <- parse_pop_labels(doc)
       heterozygosity <- parse_sections_arlequin(doc, "helper_sumExpHeterozygosity", sumExpectedHeterozygosity) # bar plot
       hwe <- heterozygosity[["data"]]
-      hwe$Locus <- rsids[[2]][
-        match(as.numeric(hwe$Locus), as.numeric(rsids[[1]]))
-      ]
+      
+      if (!is.null(rsids)) {
+        hwe$Locus <- rsids[[2]][
+          match(as.numeric(hwe$Locus), as.numeric(rsids[[1]]))
+        ]
+      }
+      
       heterozygosity[["data"]] <- hwe
 
       fst_matrix <- parse_sections_arlequin(doc, "helper_PairFstMat", pairFstMatrix) # matrix of pairwise fst
@@ -393,23 +397,31 @@ pop_stats_server <- function(input, output, session, rv) {
       
       if (isTRUE(input$calcHWE)) {
         population_diversity <- parse_pop_diversity(doc)
-        population_diversity$Locus <- rsids[[2]][
-          match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
-        ]
+        
+        if (!is.null(rsids)) {
+          population_diversity$Locus <- rsids[[2]][
+            match(as.numeric(population_diversity$Locus), as.numeric(rsids[[1]]))
+          ] 
+        }
       } else {
         population_diversity <- NULL
       }
 
       if (isTRUE(input$calcLD)) {
-        rsids_zero <- rsids
-        rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
         ld_vals <- parse_ld(doc)
-        ld_vals$Locus1 <- rsids_zero[[2]][
-          match(ld_vals$Locus1, rsids_zero[[1]])
-        ]
-        ld_vals$Locus2 <- rsids_zero[[2]][
-          match(ld_vals$Locus2, rsids_zero[[1]])
-        ]
+        
+        if (!is.null(rsids)) {
+          rsids_zero <- rsids
+          rsids_zero[[1]] <- seq(0, nrow(rsids_zero) - 1)
+          
+          ld_vals$Locus1 <- rsids_zero[[2]][
+            match(ld_vals$Locus1, rsids_zero[[1]])
+          ]
+          ld_vals$Locus2 <- rsids_zero[[2]][
+            match(ld_vals$Locus2, rsids_zero[[1]])
+          ]
+        }
+
       } else {
         ld_vals <- NULL
       }
