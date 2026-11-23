@@ -116,7 +116,7 @@ This is a Windows-based shiny application.
 1. Clone the repository  
   
 *Using Windows PowerShell*  
-- Ensure that Git is installed in your system. If not, download from the official (website)(https://git-scm.com/) and install.  
+- Ensure that Git is installed in your system. If not, download from the [official website](https://git-scm.com/) and install.  
 - Within PowerShell, configure username and email:  
 ```
 git config --global user.name "Your Name" 
@@ -209,6 +209,8 @@ Additional options to set main and extra parameters and standardize visualizatio
 Add option to perform pairwise alignments and export alignment as BAM/SAM.
 
 5. _*Additional Feature*_: Incorporation of ADMIXTURE software. 
+
+6. _*Additional Feature*_: Validation checks for total samples and populations before analysis.
 
 ## Citation Guide  
 To cite the application: Samin LC [aut], Soliven NFJ [aut], Salvador J [ctb], &  Matias MA [ctb]. (2025). restfulForensics (Version 1.0) [Computer software]. GitHub. https://github.com/upd-dal/restfulForensics
