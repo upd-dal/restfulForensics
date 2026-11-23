@@ -35,7 +35,7 @@ function showSection(pageId, sectionId) {
       return;
    }
 
-   setTimeout(() -> {
+   setTimeout(() => {
       section.scrollIntoView({
          behavior: "smooth",
          block: "start"
