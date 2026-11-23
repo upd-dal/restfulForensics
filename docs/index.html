@@ -1161,8 +1161,8 @@
                      <p><strong>Input file</strong>: CSV/Excel file containing genotype and population information</p>
                      <p><strong>Expected output</strong>: Tabled results in an excel (.xlsx) file</p>
                   <br>
-                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
-                  'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
+                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. 
+                  Missing data are standardized to 'N' and excluded from probability calculations as based on the naiveBayes() from the e1071 package.</p>
                </section>
                
                <section id="cvclassification" class="section">
@@ -1172,7 +1172,7 @@
                         <a href="https://CRAN.R-project.org/package=e1071">e1071</a> and 
                         <a href="https://CRAN.R-project.org/package=caret">caret</a> R packages.
                   </p>
-                  <p><strong>Input file</strong>:CSV/Excel file containing training data or merged training and test data.</p>
+                  <p><strong>Input file</strong>: CSV/Excel file containing training data or merged training and test data.</p>
                <p><strong>Parameters</strong>:
                <ul>
                   <li><p>Set 'optimize' to TRUE to perform grid search. Laplace values are automatically set to range (0, 0.5, 1, 2) and adjust to (0.5, 1.0, 1.5).</p></li>
@@ -1182,8 +1182,8 @@
                </p>
                   <p><strong>Expected output</strong>: Excel (.xlsx) file</p>
                   <br>
-                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 
-                  'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. Missing data are standardized to 'N'.</p>
+                  <p><b>Notes:</b> Types of representations recognized as 'missing data' are 'N/A', 'NA', 'N/N', 'NN', './.', '.', and empty cells. 
+                  Missing data are standardized to 'N' and excluded from probability calculations as based on the naiveBayes() from the e1071 package.</p>
                </section>
                
                      <div class="page-navigation">
