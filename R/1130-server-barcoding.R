@@ -89,10 +89,10 @@ barcoding_server <- function(input, output, session, rv) {
         print("Species identification success rate unavailable when using 'Bayesian' method.")
       }
       rate <- resultIdentity()[[1]]
-      print(rate * 100)
+      #print(rate * 100)
     } else {
       rate <- resultIdentity()[[1]]
-      print(rate * 100)
+      #print(rate * 100)
     }
   })
 

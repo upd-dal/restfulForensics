@@ -106,6 +106,7 @@ plot_structure_runs <- function() {
               tabPanel(
                 "Instructions",
                 h4("Run CLUMPP and plot STRUCTURE results"),
+                helpText("For visualization purposes only. Outputs are not publication-ready."),
                 p(strong("Input file:"), "Zipped structure files or structure result from Run STRUCTURE v2.3.4 tab."),
                 p(
                   strong("Parameters:"),

@@ -55,7 +55,8 @@ snp_extraction_tab <- function() {
             tabPanel(
               title = "Download Sample Files",
               tags$ul(
-                tags$a("A. Sample VCF file", href = "sample_hgdp.vcf", download = "sample_hgdp.vcf"),
+                tags$a("A. Sample VCF file", href = "sample.vcf", download = "sample.vcf"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel."),
                 br(),
                 tags$a("B. Sample marker metadata file (with rsID)", href = "marker_info2.csv", download = "marker_info2.csv"),
                 br(),
@@ -116,8 +117,11 @@ snp_extraction_tab <- function() {
               title = "Download Sample Files",
               tags$ul(
                 tags$a("Sample CSV file (1)", href = "sample1_for_concordance.csv", download = "sample1_for_concordance.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels."),
                 br(),
-                tags$a("Sample CSV file (2)", href = "sample2_for_concordance.csv", download = "sample2_for_concordance.csv")
+                tags$a("Sample CSV file (2)", href = "sample2_for_concordance.csv", download = "sample2_for_concordance.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels. 
+                         Some genotypes are removed for demonstration purposes."),
               )
             )
           )

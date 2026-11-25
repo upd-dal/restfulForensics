@@ -47,7 +47,14 @@ msa_tab <- function() {
               title = "Download Sample File",
               p("The zipped data contains pangolin case samples (Luzcon et al., 2016)."),
               tags$ul(
-                tags$a("Sample zipped FASTA file", href = "pangolins.zip", download = "pangolins.zip")
+                tags$a("Sample zipped FASTA file", href = "pangolins.zip", download = "pangolins.zip"),
+                p("FASTA files are case and select reference samples from",
+                  tags$a("Luczon et al. (2016)",
+                         href = "https://pmc.ncbi.nlm.nih.gov/articles/PMC7800584/",
+                         target = "_blank"
+                  ),
+                  " that are available on GenBank."
+                )
               ),
             )
           ),
@@ -250,16 +257,20 @@ barcoding_tab <- function() {
                 tags$ul(
                   tags$a("A. Sample files", href = "pangolins_samples.fa", download = "pangolins_samples.fa"),
                   br(),
-                  tags$a("B. Sample reference files", href = "pangolins_ref.fa", download = "pangolins_ref.fa")
+                  tags$a("B. Sample reference files", href = "pangolins_ref.fa", download = "pangolins_ref.fa"),
+                  p("FASTA files used are case and select reference samples from",
+                    tags$a("Luczon et al. (2016)",
+                           href = "https://pmc.ncbi.nlm.nih.gov/articles/PMC7800584/",
+                           target = "_blank"
+                    ),
+                    " that are available on GenBank. Files are aligned using the 'MSA' submodule."
+                  )
                 )
               )
             ),
             box(
               title = "Results",
               width = 12,
-              p("Species Identification Success Rate"),
-              verbatimTextOutput("identificationResult"),
-              br(),
               p("Species inferred and corresponding confidence levels:"),
               DT::DTOutput("identified_samples")
             )

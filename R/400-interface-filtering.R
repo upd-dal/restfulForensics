@@ -112,7 +112,8 @@ filtering_tab <- function() {
         ),
         tabPanel(
           title = "Download sample files",
-          tags$a("Sample VCF", href = "sample_hgdp.vcf", download = "sample_hgdp.vcf")
+          tags$a("Sample VCF File", href = "sample.vcf", download = "sample.vcf"),
+          helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel.")
         )
       ),
       tabBox(

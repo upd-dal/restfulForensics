@@ -53,7 +53,8 @@ exploratory_tab <- function() {
         tabPanel(
           title = "Download sample files",
           tags$ul(
-            tags$a("Sample file", href = "sample.csv", download = "sample.csv")
+            tags$a("Sample file", href = "sample.csv", download = "sample.csv"),
+            helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
           )
         )
       )

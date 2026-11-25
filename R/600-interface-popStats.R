@@ -47,7 +47,8 @@ popstats_tab <- function() {
               tabPanel(
                 title = "Download Sample Files",
                 tags$ul(
-                  tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                  tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                  helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
                 )
               )
             )
@@ -129,29 +130,43 @@ popstats_tab <- function() {
                 fileInput("fileForArlecoreARP", "Upload .arp File", accept = "arp")
               ),
               hr(),
-              checkboxInput("uploadARS", "Upload own parameter file (.ars)?", value = FALSE),
+              checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
               conditionalPanel(
-                condition = "input.uploadARS",
-                fileInput("arsFile", "Upload .ars file", accept = "ars")
+                condition = "input.calcLD",
+                helpText("The Markov Chains are automatically set to 10,000 steps")
+              ),
+              checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
+              conditionalPanel(
+                condition = "input.calcHWE",
+                helpText("The Markov Chains are automatically set to 1,000,000 steps")
               ),
               conditionalPanel(
-                condition = "!input.uploadARS",
-                helpText("Options if using standard ars file included in restful forensics:"),
-                checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
-                conditionalPanel(
-                  condition = "input.calcLD",
-                  helpText("The Markov Chains are automatically set to 10,000 steps")
-                ),
-                checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
-                conditionalPanel(
-                  condition = "input.calcHWE",
-                  helpText("The Markov Chains are automatically set to 1,000,000 steps")
-                ),
-                conditionalPanel(
-                  condition = "input.calcHWE || input.calcLD",
-                  helpText("Running will take some time and will take longer with more populations/samples.")
-                )
+                condition = "input.calcHWE || input.calcLD",
+                helpText("Running will take some time and will take longer with more populations/samples.")
               ),
+#              checkboxInput("uploadARS", "Upload own parameter file (.ars)?", value = FALSE),
+#              conditionalPanel(
+#                condition = "input.uploadARS",
+#                fileInput("arsFile", "Upload .ars file", accept = "ars")
+#              ),
+#              conditionalPanel(
+#                condition = "!input.uploadARS",
+#                helpText("Options if using standard ars file included in restful forensics:"),
+#                checkboxInput("calcLD", "Perform linkage disequilibrium test?", value = FALSE),
+#                conditionalPanel(
+#                  condition = "input.calcLD",
+#                  helpText("The Markov Chains are automatically set to 10,000 steps")
+#                ),
+#                checkboxInput("calcHWE", "Perform exact test of HWE?", value = FALSE),
+#                conditionalPanel(
+#                  condition = "input.calcHWE",
+#                  helpText("The Markov Chains are automatically set to 1,000,000 steps")
+#                ),
+#                conditionalPanel(
+#                  condition = "input.calcHWE || input.calcLD",
+#                  helpText("Running will take some time and will take longer with more populations/samples.")
+#                )
+#              ),
               helpText("Run button will remain unavailable if Arlecore 64-bit executable is not found in the root directory."),
               actionButton("runArlecore", "Run Arlecore", icon = icon("arrow-up-right-from-square")),
               uiOutput("download_arlecore_results_UI")
@@ -181,10 +196,12 @@ popstats_tab <- function() {
                 h4("Sample File"),
                 tags$ul(
                   tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                  helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels."),
                   br(),
                   tags$a("Sample ARP file", href = "sample_arp.arp", download = "sample_arp.arp"),
-                  br(),
-                  tags$a("Sample parameter file - Arlecore (.ars file)", href = "arl_run.ars", download = "arl_run.ars")
+                  helpText("ARP file generated using the 'To Arlequin file' submodule with 'Sample CSV file' as input.")
+#                  br(),
+#                  tags$a("Sample parameter file - Arlecore (.ars file)", href = "arl_run.ars", download = "arl_run.ars")
                 )
               )
             ),

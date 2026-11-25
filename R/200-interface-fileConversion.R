@@ -86,11 +86,14 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Download Sample Files",
-              tags$a("A. Sample VCF", href = "sample_hgdp.vcf", download = "sample_hgdp.vcf"),
+              tags$a("A. Sample VCF", href = "sample.vcf", download = "sample.vcf"),
+              helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel."),
               br(),
               tags$a("B. Sample zipped file (VCF files)", href = "vcf_sample_files.zip", download = "vcf_sample_files.zip"),
+              helpText("File consists of 1KGP and HGDP VCF files containing 56 aiSNP data based on the Kidd (2018) panel."),
               br(),
               tags$a("C. Sample CSV file (for VCF conversion)", href = "sample.csv", download = "sample.csv"),
+              helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels."),
               br(),
               tags$a("D. Sample marker metadata file (for CSV-VCF conversion)", href = "marker_info.csv", download = "marker_info.csv")
             )
@@ -172,9 +175,11 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Download Sample Files",
-              tags$a("A. Sample VCF", href = "sample_hgdp.vcf", download = "sample_hgdp.vcf"),
+              tags$a("A. Sample VCF File", href = "sample.vcf", download = "sample.vcf"),
+              helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel."),
               br(),
-              tags$a("B. Sample zipped file (VCF files)", href = "vcf_sample_files.zip", download = "vcf_sample_files.zip")
+              tags$a("B. Sample zipped file (VCF files)", href = "vcf_sample_files.zip", download = "vcf_sample_files.zip"),
+              helpText("File consists of 1KGP and HGDP VCF files containing 56 aiSNP data based on the Kidd (2018) panel.")
             )
           )
         ),
@@ -331,6 +336,7 @@ file_conversion_tab <- function() {
               title = "Download Sample File",
               tags$ul(
                 tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
               )
             )
           )
@@ -402,7 +408,8 @@ file_conversion_tab <- function() {
             ),
             tabPanel(
               title = "Download Sample File",
-              tags$a("Sample file", href = "sample.csv", download = "sample.csv")
+              tags$a("Sample file", href = "sample.csv", download = "sample.csv"),
+              helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
             )
           )
         ),
@@ -470,7 +477,8 @@ file_conversion_tab <- function() {
             tabPanel(
               title = "Download Sample Files",
               tags$ul(
-                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
               )
             )
           )

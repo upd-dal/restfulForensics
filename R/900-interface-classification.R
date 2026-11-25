@@ -56,7 +56,8 @@ classification_tab <- function() {
             tabPanel(
               title = "Download Sample File",
               tags$ul(
-                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
               )
             )
           )
@@ -154,11 +155,12 @@ classification_tab <- function() {
             tabPanel(
               title = "Download Sample File",
               tags$ul(
-                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
               )
             )
           )
-        ), # end of first fluid row
+        ), 
         fluidRow(
           tabBox(
             title = "Results",

@@ -63,10 +63,12 @@ forensic_params_tab <- function() {
             tabPanel(
               title = "Download Sample Files",
               tags$ul(
-                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv")
+                tags$a("Sample CSV file", href = "sample.csv", download = "sample.csv"),
+                helpText("File consists of merged 1KGP and HGDP 56 aiSNP data based on the Kidd (2018) panel with population labels.")
               ),
               tags$ul(
-                tags$a("Sample Allele Frequency Table", href = "pop_stat.xlsx", download = "pop_stat.xlsx")
+                tags$a("Sample Allele Frequency Table", href = "pop_stat.xlsx", download = "pop_stat.xlsx"),
+                helpText("AF table generated using the 'Sample CSV file'.")
               )
             )
           )
@@ -130,6 +132,7 @@ forensic_params_tab <- function() {
           tabPanel(
             title = "Download Sample Files",
             tags$a("Sample Allele Frequency Table", href = "pop_stat.xlsx", download = "pop_stat.xlsx"),
+            helpText("AF table generated using the 'Sample CSV file'."),
             tags$a("Sample Profile", href = "sample_profile.txt", download = "sample_profile.txt")
           )
         ),
